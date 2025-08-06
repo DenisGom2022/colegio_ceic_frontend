@@ -6,7 +6,7 @@ export function useEliminarCiclo() {
   const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const eliminarCiclo = async (id: number): Promise<boolean> => {
+  const eliminarCiclo = async (id: number): Promise<any> => {
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -14,14 +14,14 @@ export function useEliminarCiclo() {
     try {
       await deleteCiclo(id);
       setSuccess(true);
-      return true;
+      return { success: true};
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || 
                           err.message || 
                           'Error al eliminar el ciclo';
       setError(errorMessage);
       console.error('Error en useEliminarCiclo:', errorMessage);
-      return false;
+      return { success: false, error: errorMessage};;
     } finally {
       setLoading(false);
     }

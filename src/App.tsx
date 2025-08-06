@@ -25,6 +25,7 @@ import EditarAlumno from "./pages/admin/EditarAlumno";
 import Ciclos from "./pages/admin/Ciclos";
 import DetalleCiclo from "./pages/admin/DetalleCiclo";
 import CrearCiclo from "./pages/admin/CrearCiclo";
+import EditarCiclo from "./pages/admin/EditarCiclo";
 
 function App() {
   return (
@@ -179,6 +180,13 @@ function App() {
                 <ProtectedRouteAdmin>
                   <MainLayout title="Crear Ciclo Escolar">
                     <CrearCiclo />
+                  </MainLayout>
+                </ProtectedRouteAdmin>
+              } />
+              <Route path="editar-ciclo/:id" element={
+                <ProtectedRouteAdmin>
+                  <MainLayout title="Editar Ciclo Escolar">
+                    <EditarCiclo />
                   </MainLayout>
                 </ProtectedRouteAdmin>
               } />

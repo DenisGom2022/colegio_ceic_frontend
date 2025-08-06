@@ -5,13 +5,16 @@ import styles from './DetalleCiclo.module.css';
 import DeleteConfirmModal from '../../components/DeleteConfirmModal';
 // import { useEliminarCiclo } from '../../hooks/useEliminarCiclo';
 // Esta línea debe ser descomentada cuando exista el hook
+import { useFinalizarCiclo } from '../../hooks/useFinalizarCiclo';
 import FloatingNotification from '../../components/FloatingNotification/FloatingNotification';
 import { 
     FaCalendarAlt,
     FaGraduationCap,
     FaClock,
     FaMoneyBillWave,
-    FaRegCalendarCheck
+    FaRegCalendarCheck,
+    FaCalendarCheck,
+    FaCheckCircle
 } from 'react-icons/fa';
 
 // Interfaz para los eventos de log
@@ -24,7 +27,7 @@ interface EventoLog {
   icono: string;
 }
 
-const DetalleCiclo: React.FC = () => {
+const DetalleCiclo = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const cicloId = id ? parseInt(id, 10) : 0;
@@ -37,7 +40,11 @@ const DetalleCiclo: React.FC = () => {
       return true;
     };
     
+    // Hook para finalizar ciclo
+    const { ejecutarFinalizarCiclo, loading: loadingFinalizar, error: errorFinalizar } = useFinalizarCiclo();
+    
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showFinalizeModal, setShowFinalizeModal] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
     const [notificationType, setNotificationType] = useState<'success' | 'error'>('success');
     
@@ -105,8 +112,31 @@ const DetalleCiclo: React.FC = () => {
       } catch (error) {
         setNotificationMessage('Error al eliminar el ciclo');
         setNotificationType('error');
+      } finally {
+        setShowDeleteModal(false);
       }
-      setShowDeleteModal(false);
+    };
+    
+    const handleFinalize = async () => {
+      if (!id) return;
+      
+      try {
+        const result = await ejecutarFinalizarCiclo(parseInt(id, 10));
+        if (result.success) {
+          setNotificationType('success');
+          setNotificationMessage(result.message || 'Ciclo finalizado correctamente');
+          // Recargar los datos del ciclo para mostrar su estado actualizado
+          window.location.reload();
+        } else {
+          setNotificationType('error');
+          setNotificationMessage(result.error || 'Error al finalizar el ciclo');
+        }
+      } catch (error: any) {
+        setNotificationType('error');
+        setNotificationMessage(error.message || 'Error al finalizar el ciclo');
+      } finally {
+        setShowFinalizeModal(false);
+      }
     };
 
     // Formatear fecha a un formato legible
@@ -256,6 +286,19 @@ const DetalleCiclo: React.FC = () => {
                     </svg>
                     Editar
                   </Link>
+                  {/* Botón para finalizar ciclo */}
+                  {!ciclo.fechaFin && (
+                    <button 
+                      onClick={() => setShowFinalizeModal(true)} 
+                      className={styles.buttonFinalize}
+                      disabled={loadingFinalizar}
+                    >
+                      <FaCalendarCheck size={14} style={{marginRight: '6px'}} />
+                      {loadingFinalizar ? 'Finalizando...' : 'Finalizar Ciclo'}
+                    </button>
+                  )}
+                  
+                  {/* Botón para eliminar ciclo */}
                   <button 
                     onClick={() => setShowDeleteModal(true)} 
                     className={styles.buttonDelete}
@@ -447,6 +490,7 @@ const DetalleCiclo: React.FC = () => {
                 </div>
             </div>
             
+            {/* Modal para eliminar ciclo */}
             {showDeleteModal && (
                 <DeleteConfirmModal
                     isOpen={showDeleteModal}
@@ -456,6 +500,23 @@ const DetalleCiclo: React.FC = () => {
                     message={`¿Está seguro que desea eliminar el ciclo ${ciclo.descripcion}?`}
                     itemId={id || ''}
                     isLoading={loadingEliminar}
+                />
+            )}
+            
+            {/* Modal para finalizar ciclo */}
+            {showFinalizeModal && (
+                <DeleteConfirmModal
+                    isOpen={showFinalizeModal}
+                    onCancel={() => setShowFinalizeModal(false)}
+                    onConfirm={() => handleFinalize()}
+                    title="Finalizar Ciclo"
+                    message={`¿Está seguro que desea finalizar el ciclo ${ciclo.descripcion}? Esta acción cerrará el ciclo y no se podrán realizar más cambios.`}
+                    itemId={id || ''}
+                    isLoading={loadingFinalizar}
+                    confirmButtonText="Finalizar"
+                    confirmButtonClass="finalize"
+                    modalClass="finalize"
+                    icon={<FaCalendarCheck size={24} />}
                 />
             )}
         </div>

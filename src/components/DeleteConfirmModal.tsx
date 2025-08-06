@@ -10,6 +10,10 @@ interface DeleteConfirmModalProps {
     onConfirm: (itemId: string) => void;
     onCancel: () => void;
     isLoading?: boolean;
+    confirmButtonText?: string;
+    confirmButtonClass?: string;
+    modalClass?: string;
+    icon?: React.ReactNode;
 }
 
 const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
@@ -19,7 +23,11 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
     itemId,
     onConfirm,
     onCancel,
-    isLoading = false
+    isLoading = false,
+    confirmButtonText = 'Eliminar',
+    confirmButtonClass = '',
+    modalClass = '',
+    icon
 }) => {
     if (!isOpen) return null;
 
@@ -29,12 +37,12 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
 
     return (
         <div className={styles.modalOverlay}>
-            <div className={styles.modalContent}>
-                <div className={styles.modalHeader}>
-                    <div className={styles.warningIcon}>
-                        <FaExclamationTriangle size={24} />
+            <div className={`${styles.modalContent} ${modalClass ? styles[modalClass] : ''}`}>
+                <div className={`${styles.modalHeader} ${modalClass ? styles[modalClass] : ''}`}>
+                    <div className={`${styles.warningIcon} ${modalClass ? styles[modalClass] : ''}`}>
+                        {icon || <FaExclamationTriangle size={24} />}
                     </div>
-                    <h2 className={styles.modalTitle}>{title}</h2>
+                    <h2 className={`${styles.modalTitle} ${modalClass ? styles[modalClass] : ''}`}>{title}</h2>
                 </div>
                 
                 <div className={styles.modalBody}>
@@ -50,11 +58,11 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
                         Cancelar
                     </button>
                     <button 
-                        className={styles.confirmButton} 
+                        className={`${styles.confirmButton} ${confirmButtonClass ? styles[confirmButtonClass] : ''}`}
                         onClick={handleConfirm}
                         disabled={isLoading}
                     >
-                        {isLoading ? 'Eliminando...' : 'Eliminar'}
+                        {isLoading ? `Procesando...` : confirmButtonText}
                     </button>
                 </div>
             </div>

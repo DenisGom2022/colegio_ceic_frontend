@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTablaCiclo } from "../../hooks/useTablaCiclo";
 import { useEliminarCiclo } from "../../hooks/useEliminarCiclo";
+import { useFinalizarCiclo } from "../../hooks/useFinalizarCiclo";
 import styles from "./Ciclos.module.css";
 import { Link } from "react-router-dom";
 import {
@@ -11,7 +12,9 @@ import {
     FaPlus,
     FaCalendarAlt,
     FaCheckCircle,
-    FaTimesCircle
+    FaTimesCircle,
+    FaCalendarCheck,
+    FaSpinner
 } from "react-icons/fa";
 import type { Ciclo } from "../../services/cicloService";
 import DeleteConfirmModal from "../../components/DeleteConfirmModal";
@@ -47,6 +50,13 @@ const Ciclos = () => {
     const [deleteSuccess, setDeleteSuccess] = useState(false);
     const [deleteError, setDeleteError] = useState<string | null>(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
+    
+    // Estados para finalizar ciclo
+    const [finalizeModalOpen, setFinalizeModalOpen] = useState(false);
+    const [cicloToFinalize, setCicloToFinalize] = useState<string>("");
+    const [finalizeSuccess, setFinalizeSuccess] = useState(false);
+    const [finalizeError, setFinalizeError] = useState<string | null>(null);
+    const [finalizeMessage, setFinalizeMessage] = useState<string | null>(null);
     
     // Funciones para gestionar tooltips
     const showTooltip = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -102,7 +112,8 @@ const Ciclos = () => {
         // No pasamos parámetros de ordenación para mantener el orden del backend
     );
     
-    const { eliminarCiclo } = useEliminarCiclo();
+    const { eliminarCiclo, error: errorEliminaCiclo } = useEliminarCiclo();
+    const { ejecutarFinalizarCiclo, loading: loadingFinalizaCiclo, error: errorFinalizaCiclo } = useFinalizarCiclo();
     
     // Guardar filtros cuando cambien (sin ordenación)
     useEffect(() => {
@@ -158,11 +169,22 @@ const Ciclos = () => {
         setCicloToDelete("");
     };
     
+    // Funciones para manejar el modal de finalización
+    const handleOpenFinalizeModal = (ciclo: Ciclo) => {
+        setCicloToFinalize(ciclo.id.toString());
+        setFinalizeModalOpen(true);
+    };
+    
+    const handleCloseFinalizeModal = () => {
+        setFinalizeModalOpen(false);
+        setCicloToFinalize("");
+    };
+    
     const handleConfirmDelete = async (id: string) => {
         setDeleteLoading(true);
         try {
             const result = await eliminarCiclo(Number(id));
-            if (result) {
+            if (result.success) {
                 setDeleteSuccess(true);
                 setDeleteModalOpen(false);
                 // Mostrar notificación temporal de éxito
@@ -172,12 +194,61 @@ const Ciclos = () => {
                 // Usar la función recargarDatos para actualizar la tabla
                 recargarDatos();
             } else {
-                setDeleteError("No se pudo eliminar el ciclo. Intente nuevamente.");
+                setDeleteError(result.error);
+                // Cerrar el modal en caso de error
+                setDeleteModalOpen(false);
+                // Ocultar el mensaje de error después de 5 segundos
+                setTimeout(() => {
+                    setDeleteError(null);
+                }, 5000);
             }
         } catch (error: any) {
-            setDeleteError(error.message || "Error al eliminar el ciclo");
-        } finally {
-            setDeleteLoading(false);
+            setDeleteError(errorEliminaCiclo || "Error al eliminar el ciclo");
+            // Cerrar el modal en caso de error
+            setDeleteModalOpen(false);
+            // Ocultar el mensaje de error después de 5 segundos
+            setTimeout(() => {
+                setDeleteError(null);
+            });
+        }
+    };
+    
+    // Función para confirmar la finalización de un ciclo
+    const handleConfirmFinalize = async (id: string) => {
+        try {
+            const result = await ejecutarFinalizarCiclo(Number(id));
+            if (result.success) {
+                setFinalizeSuccess(true);
+                setFinalizeModalOpen(false);
+                setFinalizeMessage(result.message || "Ciclo finalizado exitosamente");
+                
+                // Mostrar notificación temporal de éxito
+                setTimeout(() => {
+                    setFinalizeSuccess(false);
+                    setFinalizeMessage(null);
+                }, 5000);
+                
+                // Recargar datos para actualizar la tabla
+                recargarDatos();
+            } else {
+                setFinalizeError(result.error);
+                // Cerrar el modal en caso de error
+                setFinalizeModalOpen(false);
+                
+                // Ocultar el mensaje de error después de 5 segundos
+                setTimeout(() => {
+                    setFinalizeError(null);
+                }, 5000);
+            }
+        } catch (error: any) {
+            setFinalizeError(errorFinalizaCiclo || "Error al finalizar el ciclo");
+            // Cerrar el modal en caso de error
+            setFinalizeModalOpen(false);
+            
+            // Ocultar el mensaje de error después de 5 segundos
+            setTimeout(() => {
+                setFinalizeError(null);
+            }, 5000);
         }
     };
 
@@ -373,6 +444,13 @@ const Ciclos = () => {
                                             <FaPencilAlt size={15} />
                                         </Link>
                                         <button 
+                                            className={`${styles.actionButton} ${styles.finalize}`} 
+                                            title="Finalizar ciclo"
+                                            onClick={() => handleOpenFinalizeModal(ciclo)}
+                                        >
+                                            <FaCalendarCheck size={15} />
+                                        </button>
+                                        <button 
                                             className={`${styles.actionButton} ${styles.delete}`} 
                                             title="Eliminar ciclo"
                                             onClick={() => handleOpenDeleteModal(ciclo)}
@@ -475,11 +553,33 @@ const Ciclos = () => {
                 isLoading={deleteLoading}
             />
             
+            {/* Modal de confirmación para finalizar ciclo */}
+            <DeleteConfirmModal 
+                isOpen={finalizeModalOpen}
+                title="Finalizar Ciclo"
+                message={`¿Estás seguro que deseas finalizar el ciclo con ID "${cicloToFinalize}"? Esta acción cerrará el ciclo y no se podrán realizar más cambios.`}
+                itemId={cicloToFinalize}
+                onConfirm={handleConfirmFinalize}
+                onCancel={handleCloseFinalizeModal}
+                isLoading={loadingFinalizaCiclo}
+                confirmButtonText="Finalizar"
+                confirmButtonClass="finalize"
+                modalClass="finalize"
+                icon={<FaCalendarCheck size={24} />}
+            />
+            
             {/* Notificaciones */}
             {deleteSuccess && (
                 <div className={styles.notification}>
                     <div className={styles.successNotification}>
                         <strong>¡Éxito!</strong> Ciclo eliminado correctamente.
+                        <button 
+                            onClick={() => setDeleteSuccess(false)} 
+                            className={styles.closeNotification}
+                            aria-label="Cerrar notificación"
+                        >
+                            ×
+                        </button>
                     </div>
                 </div>
             )}
@@ -488,6 +588,46 @@ const Ciclos = () => {
                 <div className={styles.notification}>
                     <div className={styles.errorNotification}>
                         <strong>Error:</strong> {deleteError}
+                        <button 
+                            onClick={() => setDeleteError(null)} 
+                            className={styles.closeNotification}
+                            aria-label="Cerrar notificación"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </div>
+            )}
+            
+            {finalizeSuccess && (
+                <div className={styles.notification}>
+                    <div className={styles.successNotification}>
+                        <strong>¡Éxito!</strong> {finalizeMessage || "Ciclo finalizado correctamente."}
+                        <button 
+                            onClick={() => {
+                                setFinalizeSuccess(false);
+                                setFinalizeMessage(null);
+                            }} 
+                            className={styles.closeNotification}
+                            aria-label="Cerrar notificación"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </div>
+            )}
+            
+            {finalizeError && (
+                <div className={styles.notification}>
+                    <div className={styles.errorNotification}>
+                        <strong>Error:</strong> {finalizeError}
+                        <button 
+                            onClick={() => setFinalizeError(null)} 
+                            className={styles.closeNotification}
+                            aria-label="Cerrar notificación"
+                        >
+                            ×
+                        </button>
                     </div>
                 </div>
             )}

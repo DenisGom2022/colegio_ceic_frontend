@@ -101,13 +101,25 @@ export const createCiclo = async (cicloData: CicloCreateData): Promise<any> => {
 
 // Actualizar un ciclo existente
 export const updateCiclo = async (cicloData: CicloUpdateData): Promise<any> => {
-  const response = await axios.put(`${environments.VITE_API_URL}/ciclo/${cicloData.id}`, cicloData);
+  const response = await axios.put(`${environments.VITE_API_URL}/ciclo`, cicloData, {
+    headers: getAuthHeaders()
+  });
   return response.data;
 };
 
 // Eliminar un ciclo
 export const deleteCiclo = async (id: number): Promise<any> => {
-  const response = await axios.delete(`${environments.VITE_API_URL}/ciclo/${id}`);
+  const response = await axios.delete(`${environments.VITE_API_URL}/ciclo/${id}`,  {
+    headers: getAuthHeaders()
+  });
+  return response.data;
+};
+
+// Finalizar un ciclo
+export const finalizarCiclo = async (id: number): Promise<any> => {
+  const response = await axios.patch(`${environments.VITE_API_URL}/ciclo/finaliza-ciclo/${id}`, {}, {
+    headers: getAuthHeaders()
+  });
   return response.data;
 };
 
