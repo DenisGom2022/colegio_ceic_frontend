@@ -64,6 +64,8 @@ const CrearCiclo = () => {
         }, 1500);
       }
     } catch (error: any) {
+      console.error('Error al crear ciclo:', error);
+      // El mensaje de error ya viene procesado del hook
       mostrarNotificacion(error.message || 'Error al crear el ciclo', 'error');
     }
   };

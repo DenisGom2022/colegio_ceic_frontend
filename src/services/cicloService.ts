@@ -93,7 +93,9 @@ export const getCiclos = async (): Promise<CicloResponse> => {
 
 // Crear un nuevo ciclo
 export const createCiclo = async (cicloData: CicloCreateData): Promise<any> => {
-  const response = await axios.post(`${environments.VITE_API_URL}/ciclo`, cicloData);
+  const response = await axios.post(`${environments.VITE_API_URL}/ciclo`, cicloData, {
+    headers: getAuthHeaders()
+  });
   return response.data;
 };
 

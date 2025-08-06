@@ -33,9 +33,17 @@ export function useCrearCiclo(): CrearCicloResult {
       setSuccess(true);
       return true;
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || err.message || "Error al crear el ciclo";
+      console.error('Error en useCrearCiclo:', err);
+      // Manejar diferentes formatos de error desde el backend
+      const errorMessage = 
+        err.response?.data?.message || 
+        err.response?.data?.error || 
+        (err.response?.data && typeof err.response.data === 'string' ? err.response.data : null) || 
+        err.message || 
+        "Error al crear el ciclo";
       setError(errorMessage);
-      return false;
+      // Propagar el error para que el componente pueda manejarlo
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }
