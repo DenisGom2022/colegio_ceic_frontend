@@ -1,0 +1,390 @@
+/* Contenedor principal */
+.pageContainer {
+  min-height: 100vh;
+  background-color: #f9fafb;
+  overflow: hidden;
+}
+
+.pageContent {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Panel izquierdo */
+.leftPanel {
+  flex: 1;
+  background-color: #1E1D4A;
+  color: white;
+  padding: 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 3rem;
+}
+
+.logoIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.logoText {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.leftPanelContent {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 2rem 0;
+  flex: 1;
+}
+
+.mainTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 24px;
+}
+
+.description {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  opacity: 0.9;
+  margin-bottom: 3rem;
+}
+
+.securityTips {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.tipsTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.tipsList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tipsList li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.9375rem;
+}
+
+.tipsList li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #60a5fa;
+}
+
+.bottomNote {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+/* Panel derecho - formulario */
+.rightPanel {
+  flex: 1;
+  background-color: white;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-y: auto;
+}
+
+.backButton {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #64748b;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.backButton:hover {
+  color: #1E1D4A;
+}
+
+/* Formulario */
+.formContainer {
+  max-width: 480px;
+  width: 100%;
+  margin: 3rem auto;
+  padding: 1.5rem;
+}
+
+.formHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.iconContainer {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background-color: #1E1D4A;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.formTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1E1D4A;
+  margin: 0 0 0.25rem 0;
+}
+
+.formSubtitle {
+  font-size: 0.9375rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.passwordForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputGroup label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.inputWithIcon {
+  position: relative;
+  width: 100%;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+}
+
+.formInput {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 2.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  transition: border-color 0.2s;
+  background-color: #f9fafb;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: #1E1D4A;
+  box-shadow: 0 0 0 3px rgba(30, 29, 74, 0.1);
+}
+
+.inputError {
+  border-color: #ef4444;
+}
+
+.passwordContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.togglePassword {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.togglePassword:focus {
+  outline: none;
+  color: #1E1D4A;
+}
+
+.errorText {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.errorAlert {
+  background-color: #fee2e2;
+  border-left: 4px solid #ef4444;
+  color: #b91c1c;
+  padding: 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.submitButton {
+  margin-top: 1rem;
+  padding: 0.875rem 1.5rem;
+  background-color: #1E1D4A;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: #2C2B61;
+}
+
+.submitButton:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Mensaje de éxito */
+.successContainer {
+  max-width: 400px;
+  margin: auto;
+  text-align: center;
+  padding: 2rem;
+}
+
+.successIcon {
+  font-size: 4rem;
+  color: #10b981;
+  margin-bottom: 1.5rem;
+}
+
+.successTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1E1D4A;
+  margin-bottom: 1rem;
+}
+
+.successMessage {
+  font-size: 1rem;
+  color: #64748b;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.loginButton {
+  background-color: #1E1D4A;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.loginButton:hover {
+  background-color: #2C2B61;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .pageContent {
+    flex-direction: column;
+  }
+  
+  .leftPanel {
+    padding: 2rem 1.5rem;
+  }
+  
+  .leftPanelContent {
+    padding: 1rem 0;
+  }
+  
+  .mainTitle {
+    font-size: 2rem;
+  }
+  
+  .rightPanel {
+    padding: 1.5rem;
+  }
+  
+  .formContainer {
+    margin: 1.5rem auto;
+    padding: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .leftPanel {
+    padding: 1.5rem 1rem;
+  }
+  
+  .mainTitle {
+    font-size: 1.75rem;
+  }
+  
+  .description {
+    font-size: 1rem;
+  }
+  
+  .rightPanel {
+    padding: 1rem;
+  }
+  
+  .backButton {
+    top: 1rem;
+    left: 1rem;
+  }
+  
+  .formContainer {
+    margin: 3rem auto 1rem;
+  }
+}

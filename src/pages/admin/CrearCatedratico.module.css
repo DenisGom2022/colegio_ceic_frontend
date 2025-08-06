@@ -1,0 +1,725 @@
+.editContainer {
+  width: 100%;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.breadcrumbLink {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.breadcrumbLink:hover {
+  text-decoration: underline;
+}
+
+.breadcrumbSeparator {
+  color: #9ca3af;
+}
+
+.breadcrumbCurrent {
+  color: #111827;
+  font-weight: 500;
+}
+
+.buttonReturn {
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.buttonReturn:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.breadcrumbSeparator {
+  color: #9ca3af;
+}
+
+.breadcrumbCurrent {
+  color: #111827;
+  font-weight: 500;
+}
+
+.editCard {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.headerIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #eff6ff;
+  color: #3b82f6;
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.errorMessage {
+  margin: 16px 24px 0;
+  padding: 12px 16px;
+  background-color: #fef2f2;
+  color: #ef4444;
+  border: 1px solid #fee2e2;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.successMessage {
+  margin: 16px 24px 0;
+  padding: 12px 16px;
+  background-color: #ecfdf5;
+  color: #10b981;
+  border: 1px solid #d1fae5;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.form {
+  padding: 24px;
+}
+
+.formSection {
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 640px) {
+  .formRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inputLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.inputField {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #111827;
+  transition: border-color 0.2s;
+}
+
+.inputField:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.inputField:disabled {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+}
+
+.inputHelp {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.buttonCancel {
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: white;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.buttonCancel:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+/* Estilos para el selector de usuario */
+.userSelectContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.selectUserButton {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #f9fafb;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.selectUserButton:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+/* Estilos para mostrar la información del usuario seleccionado */
+.selectedUserInfo {
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+  padding: 12px;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+}
+
+.selectedUserAvatar {
+  width: 40px;
+  height: 40px;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  margin-right: 12px;
+  font-size: 0.875rem;
+}
+
+.selectedUserDetails {
+  flex: 1;
+}
+
+.selectedUserName {
+  font-weight: 500;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+  font-size: 0.875rem;
+}
+
+.selectedUserUsername {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0 0 4px 0;
+}
+
+.selectedUserType {
+  display: inline-block;
+  padding: 2px 8px;
+  background-color: #dbeafe;
+  color: #2563eb;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+}
+
+.buttonSave {
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  border-radius: 6px;
+  background-color: #3b82f6;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.buttonSave:hover {
+  background-color: #2563eb;
+}
+
+.buttonSave:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.helpText {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.errorText {
+  font-size: 0.75rem;
+  color: #ef4444;
+  margin-top: 4px;
+}
+
+.successIndicator {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #10b981;
+  font-size: 1rem;
+}
+
+.errorIndicator {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ef4444;
+  font-size: 1rem;
+}
+
+.loadingSpinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #3b82f6;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+.spinnerSmall {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-left-color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estilos para el botón selector */
+/* Estilos para el selector de usuario */
+.userSelectContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.selectUserButton {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #f9fafb;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.selectUserButton:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.selectorButton {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #4B5563;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.selectorButton:hover {
+  color: #1F2937;
+  background: rgba(229, 231, 235, 0.5);
+}
+
+/* Estilos para el modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContainer {
+  background-color: #fff;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modalHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid #E5E7EB;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.modalCloseButton {
+  background: transparent;
+  border: none;
+  color: #6B7280;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.modalCloseButton:hover {
+  color: #EF4444;
+  background-color: #F3F4F6;
+}
+
+.modalSearch {
+  padding: 12px 20px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.modalBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  max-height: 400px;
+}
+
+.usersList {
+  display: flex;
+  flex-direction: column;
+}
+
+.userItem {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #F3F4F6;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.userItem:hover {
+  background-color: #F9FAFB;
+}
+
+.userItemAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #E0E7FF;
+  color: #4F46E5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-right: 12px;
+}
+
+.userItemInfo {
+  flex: 1;
+}
+
+.userItemName {
+  font-weight: 500;
+  color: #111827;
+  font-size: 0.95rem;
+}
+
+.userItemUsername {
+  color: #6B7280;
+  font-size: 0.8rem;
+}
+
+.userItemDPI {
+  color: #4B5563;
+  font-size: 0.8rem;
+  margin-top: 2px;
+  font-style: italic;
+}
+
+.userItemType {
+  background-color: #F3F4F6;
+  color: #4B5563;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+.modalFooter {
+  padding: 12px 20px;
+  border-top: 1px solid #E5E7EB;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pagination {
+  display: flex;
+  gap: 4px;
+}
+
+.rowsPerPage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #4B5563;
+}
+
+.selectPageSize {
+  padding: 4px 8px;
+  border: 1px solid #D1D5DB;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #374151;
+  background: white;
+}
+
+.paginationInfo {
+  font-size: 0.85rem;
+  color: #6B7280;
+}
+
+.pageButton {
+  min-width: 32px;
+  height: 32px;
+  border: 1px solid #D1D5DB;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: #4B5563;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pageButton:hover:not(:disabled) {
+  border-color: #3B82F6;
+  color: #3B82F6;
+}
+
+.pageButton.active {
+  background: #3B82F6;
+  color: white;
+  border-color: #3B82F6;
+}
+
+.pageButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  padding: 8px 16px;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  background: white;
+  color: #4B5563;
+  font-weight: 500;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelButton:hover {
+  background: #F3F4F6;
+}
+
+/* Estilos para la información del usuario seleccionado */
+.selectedUserInfo {
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #F0F9FF;
+  border-radius: 8px;
+  border: 1px solid #BAE6FD;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.selectedUserAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #3B82F6;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-right: 14px;
+}
+
+.selectedUserDetails {
+  flex: 1;
+}
+
+.selectedUserName {
+  font-weight: 600;
+  color: #1F2937;
+  font-size: 1rem;
+  margin: 0 0 2px 0;
+}
+
+.selectedUserUsername {
+  color: #6B7280;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.selectedUserType {
+  display: inline-block;
+  margin-top: 5px;
+  background-color: #DBEAFE;
+  color: #2563EB;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+}

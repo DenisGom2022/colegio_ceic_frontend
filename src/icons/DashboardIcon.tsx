@@ -1,0 +1,8 @@
+export const DashboardIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="7" height="7" rx="2" fill="#2563eb"/>
+    <rect x="14" y="3" width="7" height="4" rx="2" fill="#2563eb" fillOpacity="0.7"/>
+    <rect x="14" y="10" width="7" height="11" rx="2" fill="#2563eb" fillOpacity="0.5"/>
+    <rect x="3" y="14" width="7" height="7" rx="2" fill="#2563eb" fillOpacity="0.3"/>
+  </svg>
+);

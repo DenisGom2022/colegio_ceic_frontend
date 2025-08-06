@@ -1,0 +1,386 @@
+.detailContainer {
+  width: 100%;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 24px;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.breadcrumbSeparator {
+  color: #9ca3af;
+}
+
+.breadcrumbCurrent {
+  color: #111827;
+  font-weight: 500;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.buttonReturn {
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.buttonReturn:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.buttonEdit {
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #3b82f6;
+  border-radius: 6px;
+  background-color: #eff6ff;
+  color: #3b82f6;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.buttonEdit:hover {
+  background-color: #dbeafe;
+  border-color: #2563eb;
+}
+
+.buttonPassword {
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  background-color: #fffbeb;
+  color: #f59e0b;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.buttonPassword:hover {
+  background-color: #fef3c7;
+  border-color: #d97706;
+}
+
+.userDetailCard {
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+.userHeader {
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.avatarLarge {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: #eff6ff;
+  color: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  font-weight: 600;
+  border: 3px solid #dbeafe;
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.userName {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.userMeta {
+  display: flex;
+  gap: 16px;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.userMetaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.userStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.statusDot.active {
+  background-color: #10b981;
+}
+
+.statusDot.inactive {
+  background-color: #f59e0b;
+}
+
+.statusDot.locked {
+  background-color: #ef4444;
+}
+
+.statusText {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.statusText.active {
+  color: #10b981;
+}
+
+.statusText.inactive {
+  color: #f59e0b;
+}
+
+.statusText.locked {
+  color: #ef4444;
+}
+
+.userBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: #eff6ff;
+  color: #3b82f6;
+}
+
+.userBadgeAdmin {
+  background-color: #ede9fe;
+  color: #6d28d9;
+}
+
+.userBadgeTeacher {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+.userBadgeStudent {
+  background-color: #dcfce7;
+  color: #059669;
+}
+
+.userBadgeParent {
+  background-color: #ffedd5;
+  color: #d97706;
+}
+
+.detailSection {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.detailSection:last-child {
+  border-bottom: none;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.sectionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background-color: #f3f4f6;
+  color: #3b82f6;
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.detailItem {
+  margin-bottom: 16px;
+}
+
+.detailLabel {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.detailValue {
+  font-size: 0.875rem;
+  color: #111827;
+  font-weight: 500;
+}
+
+.valueEmpty {
+  color: #9ca3af;
+  font-style: italic;
+  font-weight: normal;
+}
+
+.activitySection {
+  padding: 24px;
+}
+
+.activityHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.activityTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.activityItem {
+  display: flex;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.activityItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.activityIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+}
+
+.activityContent {
+  flex: 1;
+}
+
+.activityText {
+  font-size: 0.875rem;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.activityDescription {
+  color: #4b5563;
+}
+
+.activityHighlight {
+  font-weight: 500;
+  color: #111827;
+}
+
+.activityDate {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.passwordStatusContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.resetPasswordLink {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #fffbeb;
+  color: #f59e0b;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.resetPasswordLink:hover {
+  background-color: #fef3c7;
+  color: #d97706;
+}

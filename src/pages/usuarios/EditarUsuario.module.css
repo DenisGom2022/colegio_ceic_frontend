@@ -1,0 +1,441 @@
+.container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  position: relative;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 15px;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: #4b5563;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  position: absolute;
+  left: 0;
+}
+
+.backButton:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.icon {
+  color: #1e40af;
+}
+
+/* Estilos basados en crearUsuario.module.css */
+.formCard {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: linear-gradient(145deg, #ffffff, #f8fafc);
+  margin-bottom: 24px;
+}
+
+.formCard:hover {
+  box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1), 0 4px 8px -4px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.formHeader {
+  background: #ffffff;
+  position: relative;
+  padding: 2.5rem 3rem;
+  border: none;
+  margin-bottom: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.formHeader::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: #1e40af;
+  opacity: 1;
+}
+
+.formHeader::after {
+  content: '';
+  position: absolute;
+  top: 1.5rem;
+  right: 3rem;
+  width: 40px;
+  height: 40px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  opacity: 0.7;
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231e40af'%3E%3Cpath d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'/%3E%3C/svg%3E");
+  background-size: 24px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.formHeader h2 {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  position: relative;
+  padding: 0 0 1rem 0;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #1e40af;
+  letter-spacing: 0.025em;
+  border-bottom: 1px solid #e2e8f0;
+  text-transform: uppercase;
+}
+
+.formHeader h2::before {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, currentColor 0%, transparent 100%);
+  opacity: 0.1;
+}
+
+.formHeader h2 svg {
+  margin-right: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.username {
+  color: #1e40af;
+  font-weight: 600;
+}
+
+.instructions {
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  max-width: 600px;
+}
+
+.formSection {
+  background: #ffffff;
+  position: relative;
+  padding: 2.5rem 3rem;
+  border: none;
+  margin-bottom: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.formSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: #5b21b6;
+  opacity: 1;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  position: relative;
+  padding: 0 0 1rem 0;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #5b21b6;
+  letter-spacing: 0.025em;
+  border-bottom: 1px solid #e2e8f0;
+  text-transform: uppercase;
+}
+
+.sectionTitle::before {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, currentColor 0%, transparent 100%);
+  opacity: 0.1;
+}
+
+.sectionTitle svg {
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+  padding: 0 3rem;
+}
+
+@media (max-width: 768px) {
+  .formGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.label::after {
+  content: '';
+}
+
+.label[for="primerNombre"]::after,
+.label[for="primerApellido"]::after,
+.label[for="telefono"]::after,
+.label[for="idTipoUsuario"]::after {
+  content: '*';
+  color: #dc2626;
+  margin-left: 4px;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+.input,
+.select {
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #1e293b;
+  background: #f8fafc;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) inset;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: #1e40af;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+.errorMessage {
+  background: #fee2e2;
+  border-left: 4px solid #ef4444;
+  padding: 16px 20px;
+  color: #b91c1c;
+  font-size: 0.875rem;
+  border-radius: 4px;
+  margin: 20px 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.errorMessage::before {
+  content: '⚠️';
+  position: absolute;
+  right: 20px;
+  top: 16px;
+  font-size: 1rem;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  padding: 2rem 3rem;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 2rem;
+}
+
+.submitButton,
+.cancelButton {
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 0.875rem 2.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  border-radius: 3px;
+  min-width: 150px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.submitButton {
+  background: #1e293b;
+  color: white;
+  border: 1px solid #1e293b;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.submitButton:hover {
+  background: #0f172a;
+  border-color: #0f172a;
+}
+
+.submitButton:active {
+  background: #0f172a;
+  transform: translateY(1px);
+}
+
+.submitButton:disabled {
+  background: #94a3b8;
+  border-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  background: #f8fafc;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.cancelButton:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.notification {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  padding: 16px 24px;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  animation: slideIn 0.3s ease forwards;
+  z-index: 1000;
+  min-width: 300px;
+}
+
+.success {
+  background: #ecfdf5;
+  color: #10b981;
+  border-left: 4px solid #10b981;
+}
+
+.success::before {
+  content: '✓';
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.error {
+  background: #fee2e2;
+  color: #ef4444;
+  border-left: 4px solid #ef4444;
+}
+
+.error::before {
+  content: '⚠️';
+  margin-right: 8px;
+}
+
+.closeNotification {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.closeNotification:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: scale(1.1);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

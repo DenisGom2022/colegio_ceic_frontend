@@ -1,0 +1,374 @@
+.sideMenu {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #111827;
+    color: #f9fafb;
+    width: 250px;
+    transition: all 0.3s ease;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 10;
+}
+
+/* Admin mode style */
+.adminMode {
+    background-color: #111827;
+    border-right: 2px solid #6366f1;
+    box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.05);
+}
+
+.logoContainer {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #374151;
+}
+
+/* Admin mode logo container */
+.adminMode .logoContainer {
+    border-bottom: 1px solid rgba(165, 180, 252, 0.3);
+    background-color: rgba(79, 70, 229, 0.15);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background-color: #3b82f6;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+}
+
+.schoolName {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.navigation {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 0 0 0;
+    scrollbar-width: thin;
+    scrollbar-color: #4b5563 #1f2937;
+    display: flex;
+    flex-direction: column;
+}
+
+.navigation::-webkit-scrollbar {
+    width: 6px;
+}
+
+.navigation::-webkit-scrollbar-track {
+    background: #1f2937;
+    border-radius: 4px;
+}
+
+.navigation::-webkit-scrollbar-thumb {
+    background-color: #4b5563;
+    border-radius: 4px;
+    border: 2px solid #1f2937;
+}
+
+.navigation::-webkit-scrollbar-thumb:hover {
+    background-color: #6b7280;
+}
+
+.menuList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menuItem {
+    margin: 4px 0;
+}
+
+.menuLink, .submenuLink {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    color: #d1d5db;
+    text-decoration: none;
+    border-radius: 6px;
+    margin: 4px 8px;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* Special styling for admin mode menu items */
+.adminMode .menuLink, .adminMode .submenuLink {
+    color: #e0e7ff;
+    background-color: rgba(79, 70, 229, 0.1);
+    border-left: 2px solid transparent;
+}
+
+.menuLink:hover, .submenuLink:hover {
+    background-color: #1f2937;
+    color: #f9fafb;
+    transform: translateX(3px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Admin mode hover states */
+.adminMode .menuLink:hover, .adminMode .submenuLink:hover {
+    background-color: rgba(79, 70, 229, 0.2);
+    border-left: 2px solid #a5b4fc;
+}
+
+.menuLink.active, .submenuLink.active {
+    background-color: #3b82f6;
+    color: white;
+    box-shadow: 0 2px 5px rgba(59, 130, 246, 0.3);
+}
+
+/* Admin mode active states */
+.adminMode .menuLink.active, .adminMode .submenuLink.active {
+    background-color: #4f46e5;
+    border-left: 2px solid #a5b4fc;
+    box-shadow: 0 2px 5px rgba(79, 70, 229, 0.4);
+}
+
+.menuIcon {
+    margin-right: 12px;
+    font-size: 1.125rem;
+    min-width: 20px;
+}
+
+.menuArrow {
+    margin-left: auto;
+    transition: transform 0.2s;
+    font-size: 0.75rem;
+}
+
+.menuArrow.expanded {
+    transform: rotate(90deg);
+}
+
+.submenu {
+    list-style: none;
+    padding: 0;
+    margin: 6px 0 10px 30px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+    border-left: 1px solid #374151;
+}
+
+.submenuItem {
+    margin: 3px 0;
+    position: relative;
+}
+
+.sectionHeader {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #9ca3af;
+    margin: 16px 16px 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #374151;
+    font-weight: 600;
+}
+
+.submenuLink {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    margin-left: -1px;
+    border-radius: 0 6px 6px 0;
+}
+
+.userSection {
+    padding: 16px;
+    border-top: 1px solid #374151;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Admin mode user section */
+.adminMode .userSection {
+    border-top: 1px solid rgba(165, 180, 252, 0.3);
+    background-color: rgba(79, 70, 229, 0.15);
+}
+
+.userInfo {
+    display: flex;
+    align-items: center;
+}
+
+.userAvatar {
+    margin-right: 12px;
+}
+
+.userAvatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.userDisplayName {
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.userRole {
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+.logoutButton {
+    background: none;
+    border: none;
+    color: #d1d5db;
+    cursor: pointer;
+    font-size: 1.125rem;
+    padding: 6px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.logoutButton:hover {
+    background-color: #374151;
+    color: #f9fafb;
+}
+
+/* Admin menu item special styling */
+.adminSection {
+    margin-top: auto;
+    padding: 16px 8px;
+}
+
+.adminSectionTitle {
+    color: #9ca3af;
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    font-weight: 500;
+    padding: 0 12px;
+    margin: 6px 0;
+}
+
+.adminLink {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    color: #f3f4f6;
+    text-decoration: none;
+    background-color: #374151;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    border-left: 3px solid #93c5fd;
+    margin: 8px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.adminLink:hover {
+    background-color: #4B5563;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.adminLink.active {
+    background-color: #3B82F6;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.adminIcon {
+    margin-right: 12px;
+    font-size: 1.125rem;
+    min-width: 20px;
+    color: #93c5fd;
+}
+
+.menuDivider {
+    height: 1px;
+    background: rgba(55, 65, 81, 0.3);
+    margin: 8px 0;
+}
+
+/* Admin mode specific styles */
+.adminModeHeader {
+    padding: 10px 16px;
+    margin-bottom: 16px;
+}
+
+.backToMainLink {
+    display: flex;
+    align-items: center;
+    color: #9ca3af;
+    text-decoration: none;
+    padding: 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-weight: 400;
+    font-size: 0.85rem;
+}
+
+.backToMainLink:hover {
+    background-color: #1f2937;
+    color: #d1d5db;
+}
+
+.backToMainLink .menuIcon {
+    color: #6366f1;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+/* Admin mode indicator */
+.adminModeIndicator {
+    background-color: rgba(59, 130, 246, 0.05);
+    color: #93c5fd;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    font-weight: 400;
+    font-size: 0.8rem;
+    margin: 5px 10px 10px;
+    border-radius: 4px;
+    position: relative;
+    border: 1px dashed rgba(147, 197, 253, 0.3);
+}
+
+.adminModeIconContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 6px;
+}
+
+.adminModeIcon {
+    font-size: 0.8rem;
+    color: #60a5fa;
+}
+
+.adminModeText {
+    display: flex;
+    align-items: center;
+    font-style: italic;
+}
+
+.adminModeLabel {
+    font-size: 0.75rem;
+    margin-right: 4px;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+.adminModeName {
+    font-size: 0.8rem;
+    font-weight: 500;
+}
