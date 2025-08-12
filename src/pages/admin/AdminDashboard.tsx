@@ -1,11 +1,11 @@
 import React from 'react';
 import { FaUsersCog, FaChalkboardTeacher, FaBook, FaCalendarAlt, FaChartLine, FaCog, FaBell, FaGraduationCap, FaUserTie } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../features/auth/hooks/useAuth';
 import styles from './AdminDashboard.module.css';
 
 const AdminDashboard = () => {
-    const { usuario } = useAuth();
+    const { user } = useAuth();
     
     const cards = [
         {
@@ -72,7 +72,7 @@ const AdminDashboard = () => {
                 <div>
                     <h1 className={styles.title}>Panel de Administración</h1>
                     <p className={styles.subtitle}>
-                        Bienvenido, {usuario?.primerNombre} {usuario?.primerApellido}. Gestione todos los aspectos del colegio desde este panel.
+                        Bienvenido, {user?.primerNombre} {user?.primerApellido}. Gestione todos los aspectos del colegio desde este panel.
                     </p>
                 </div>
                 <div className={styles.notificationContainer}>

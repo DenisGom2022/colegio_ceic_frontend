@@ -1,4 +1,50 @@
-# React + TypeScript + Vite
+# Colegio CEIC - Frontend
+
+> **Nota**: Este proyecto está actualmente en proceso de migración a una estructura basada en características (feature-based). Consulta la [Guía de Migración](./MIGRATION-GUIDE.md) para más detalles.
+
+## Estructura del Proyecto
+
+El proyecto sigue una estructura basada en características (feature-based) para facilitar la organización y escalabilidad:
+
+```
+src/
+├── assets/                  # Recursos estáticos 
+├── components/              # Componentes compartidos entre features
+│   ├── ui/                  # Componentes UI reutilizables
+│   ├── Layout/              # Componentes de layout
+│   ├── Table/               # Componente de tabla reutilizable
+│   └── FloatingNotification/# Notificaciones
+├── enums/                   # Enumeraciones globales
+├── features/                # Características organizadas por dominio
+│   ├── auth/                # Autenticación
+│   │   ├── components/      # Componentes específicos de auth
+│   │   ├── hooks/           # Hooks de auth (useAuth, useLogin)
+│   │   └── pages/           # Páginas de auth (Login, Forbidden)
+│   ├── dashboard/           # Dashboard general
+│   └── admin/               # Módulo de administración
+│       ├── components/      # Componentes compartidos de admin
+│       ├── hooks/           # Hooks compartidos de admin
+│       └── features/        # Sub-features de administración
+│           ├── dashboard/   # Dashboard de administración
+│           ├── usuarios/    # Gestión de usuarios
+│           ├── alumnos/     # Gestión de alumnos
+│           ├── ciclos/      # Gestión de ciclos académicos
+│           └── catedraticos/# Gestión de catedráticos
+├── hooks/                   # Hooks globales
+├── icons/                   # Componentes de iconos
+├── layouts/                 # Layouts de aplicación
+├── models/                  # Interfaces y tipos
+├── routes/                  # Configuración de rutas
+├── services/                # Servicios de API
+└── utils/                   # Utilidades y funciones auxiliares
+```
+
+## Características principales
+
+- **Sistema de autenticación**: Login, recuperación de contraseña y protección de rutas
+- **Gestión de usuarios**: CRUD completo de usuarios con diferentes roles
+- **Panel administrativo**: Gestión de alumnos, catedráticos, ciclos y más
+- **Diseño responsivo**: Interfaz adaptable a dispositivos móviles y de escritoriopeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
@@ -11,43 +57,50 @@ Currently, two official plugins are available:
 
 If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Tecnologías utilizadas
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- React 18
+- TypeScript
+- Vite
+- React Router v6
+- Axios para peticiones HTTP
+- CSS Modules para estilos
+- Tailwind CSS
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Desarrollo
+
+### Requisitos previos
+
+- Node.js 16.x o superior
+- npm 8.x o superior
+
+### Instalación
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/DenisGom2022/colegio_ceic_frontend.git
+
+# Instalar dependencias
+cd colegio_ceic_frontend
+npm install
+
+# Iniciar el servidor de desarrollo
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Scripts disponibles
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `npm run dev` - Inicia el servidor de desarrollo
+- `npm run build` - Construye la aplicación para producción
+- `npm run lint` - Ejecuta el linter para verificar errores
+- `npm run preview` - Previsualiza la versión de producción
 
-export default tseslint.config([
-  globalIgnores(['dist']),
+## Patrones de diseño
+
+- **Feature-based structure**: Organización por características para mejor escalabilidad
+- **Container/Presentational Pattern**: Separación de lógica y presentación
+- **Custom Hooks**: Encapsulación de lógica reutilizable
+- **Protected Routes**: Rutas protegidas basadas en roles de usuario
   {
     files: ['**/*.{ts,tsx}'],
     extends: [

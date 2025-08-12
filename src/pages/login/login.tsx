@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLogin } from "../../hooks/useLogin";
-import { useAuth } from "../../hooks/useAuth";
+import { useLogin } from "../../features/auth/hooks/useLogin";
+import { useAuth } from "../../features/auth/hooks/useAuth";
 import styles from "./login.module.css";
 import { RESPUESTA_USER } from "../../enums/enums";
 import { LockIcon } from "../../icons/LockIcon";
@@ -12,15 +12,15 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const { login, loading, error } = useLogin();
-    const { usuario, evaluado } = useAuth();
+    const { user, isLoading } = useAuth();
     const navigate = useNavigate();
 
     // Navega a dashboard cuando usuario esté listo después de login
     useEffect(() => {
-        if (evaluado && usuario) {
+        if (!isLoading && user) {
             navigate("/dashboard");
         }
-    }, [usuario, evaluado, navigate]);
+    }, [user, isLoading, navigate]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

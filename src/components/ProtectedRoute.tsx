@@ -1,10 +1,10 @@
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../features/auth/hooks/useAuth";
 import { Navigate } from "react-router-dom";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode; role?: string }) {  
-    const { evaluado, usuario } = useAuth();
+    const { isLoading, user } = useAuth();
     
-    if (!evaluado) {
+    if (isLoading) {
         return (
             <div style={{ 
                 display: 'flex', 
@@ -37,7 +37,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode; role?:
         );
     }
     
-    if (!usuario) {
+    if (!user) {
         return <Navigate to="/login" replace />;
     }
     

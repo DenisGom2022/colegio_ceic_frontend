@@ -1,0 +1,259 @@
+/* Estilos para el contenedor principal */
+.editContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%; /* Cambiado de 1200px a 100% para ocupar todo el ancho disponible */
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Estilos para el encabezado de la página */
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.breadcrumbLink {
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumbLink:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.breadcrumbSeparator {
+  margin: 0 8px;
+  color: #6c757d;
+}
+
+.breadcrumbCurrent {
+  font-weight: 600;
+  color: #495057;
+}
+
+.buttonReturn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f8f9fa;
+  color: #495057;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 13px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.buttonReturn:hover {
+  background-color: #e9ecef;
+}
+
+/* Estilos para la tarjeta del formulario */
+.editCard {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 100%;
+  max-width: none; /* Eliminar cualquier restricción de ancho máximo */
+}
+
+.cardHeader {
+  background-color: #f8f9fa;
+  padding: 15px 20px;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.headerIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #e9ecef;
+  border-radius: 50%;
+  color: #0d6efd;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #343a40;
+}
+
+/* Estilos para el formulario */
+.form {
+  padding: 20px;
+  width: 100%; /* Asegurar que el formulario ocupe todo el ancho disponible */
+}
+
+.formSection {
+  margin-bottom: 25px;
+}
+
+.sectionTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #343a40;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+  gap: 20px;
+  width: 100%; /* Asegurar que ocupe todo el ancho disponible */
+}
+
+.formGroup {
+  flex: 1;
+  min-width: 250px;
+  margin-bottom: 15px;
+  width: 100%; /* Asegurar que ocupe todo el ancho disponible */
+}
+
+.inputLabel {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.inputField {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.inputField:focus {
+  border-color: #86b7fe;
+  outline: none;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.inputField:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+.inputError {
+  border-color: #dc3545;
+}
+
+.inputHelp {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-top: 4px;
+}
+
+.errorMessage {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 4px;
+}
+
+/* Estilos para los botones de acción */
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+.buttonCancel {
+  padding: 10px 16px;
+  background-color: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.buttonCancel:hover {
+  background-color: #e9ecef;
+}
+
+.buttonSave {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: #0d6efd;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.buttonSave:hover:not(:disabled) {
+  background-color: #0b5ed7;
+}
+
+.buttonSave:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Estilos para el spinner de carga */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 0;
+  width: 100%;
+}
+
+.loadingSpinner {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 3px solid #0d6efd;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+.spinnerSmall {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 2px solid #ffffff;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

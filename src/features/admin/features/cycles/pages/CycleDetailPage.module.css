@@ -1,0 +1,606 @@
+.detailContainer {
+  width: 100%;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.breadcrumbLink {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.breadcrumbLink:hover {
+  text-decoration: underline;
+}
+
+.breadcrumbSeparator {
+  color: #9ca3af;
+}
+
+.breadcrumbCurrent {
+  color: #111827;
+  font-weight: 500;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.buttonReturn {
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.buttonReturn:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.buttonEdit {
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #3b82f6;
+  border-radius: 6px;
+  background-color: #eff6ff;
+  color: #3b82f6;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.buttonEdit:hover {
+  background-color: #dbeafe;
+  border-color: #2563eb;
+}
+
+.buttonFinalize {
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #6366f1;
+  border-radius: 6px;
+  background-color: #eef2ff;
+  color: #4f46e5;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-right: 10px;
+}
+
+.buttonFinalize:hover {
+  background-color: #e0e7ff;
+  border-color: #4f46e5;
+}
+
+.buttonFinalize:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buttonDelete {
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #ef4444;
+  border-radius: 6px;
+  background-color: #fef2f2;
+  color: #ef4444;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.buttonDelete:hover {
+  background-color: #fee2e2;
+  border-color: #dc2626;
+}
+
+.detailCard {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+.detailHeader {
+  display: flex;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.profileImage {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-right: 24px;
+  flex-shrink: 0;
+}
+
+.headerInfo {
+  flex-grow: 1;
+}
+
+.nombre {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px 0;
+}
+
+.subInfo {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cicloId {
+  font-size: 1rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+.badgeActive {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.badgeInactive {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.detailSections {
+  padding: 24px;
+}
+
+.detailSection {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.detailSection:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.sectionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: #eff6ff;
+  color: #3b82f6;
+  border-radius: 50%;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.count {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 16px;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.detailItem {
+  margin-bottom: 16px;
+}
+
+.detailLabel {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.detailValue {
+  font-size: 0.9375rem;
+  color: #1f2937;
+  font-weight: 500;
+}
+
+/* Grados */
+.gradosGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.gradoCard {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gradoCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.gradoTitle {
+  margin: 0 0 4px 0;
+  font-size: 1.125rem;
+  color: #111827;
+}
+
+.gradoMeta {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.divider {
+  margin: 0 6px;
+  color: #d1d5db;
+}
+
+.gradoInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.infoIcon {
+  color: #6b7280;
+  margin-top: 3px;
+}
+
+.infoContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.infoLabel {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 2px;
+}
+
+.infoValue {
+  font-size: 0.9375rem;
+  color: #1f2937;
+  font-weight: 500;
+}
+
+/* Estado vacío */
+.emptyState {
+  background-color: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 24px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.9375rem;
+  margin: 16px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  transition: all 0.3s;
+}
+
+.emptyState:before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%239ca3af' viewBox='0 0 24 24'%3E%3Cpath d='M12 4a8 8 0 100 16 8 8 0 000-16zM2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12zm10-5v4.586l3.707 3.707-1.414 1.414L10 12.414V7h2z'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-bottom: 12px;
+}
+
+.logContainer {
+  margin-top: 16px;
+}
+
+.logTimeline {
+  position: relative;
+}
+
+.logTimeline:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 15px;
+  width: 2px;
+  background-color: #e5e7eb;
+}
+
+.logEvent {
+  position: relative;
+  padding-left: 45px;
+  padding-bottom: 24px;
+}
+
+.logEvent:last-child {
+  padding-bottom: 0;
+}
+
+.logEventIcon {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 32px;
+  height: 32px;
+  background-color: #f3f4f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  z-index: 1;
+  border: 2px solid white;
+}
+
+.logEventContent {
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+}
+
+.logEventHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.logEventTitle {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.logEventDate {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.logEventDetails {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+  color: #4b5563;
+}
+
+.logEventUser {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.logEventBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.badgecreacion {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.badgeedicion {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.badgematricula {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.badgeacceso {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .actionButtons {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .detailGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .detailHeader {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .profileImage {
+    margin-right: 0;
+    margin-bottom: 16px;
+  }
+  
+  .gradosGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Loading y error */
+.loadingContainer, .errorContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+.loadingSpinner {
+  border: 3px solid rgba(59, 130, 246, 0.1);
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Estilos para la tabla de grados */
+.gradesTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  font-size: 0.9375rem;
+}
+
+.gradesTable th,
+.gradesTable td {
+  border: 1px solid #e5e7eb;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.gradesTable th {
+  background-color: #f9fafb;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.gradesTable tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.gradesTable tr:hover {
+  background-color: #f3f4f6;
+}
+
+.gradesSection {
+  margin-top: 24px;
+}
+
+.gradesTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  font-size: 0.9375rem;
+}
+
+.gradesTable th,
+.gradesTable td {
+  border: 1px solid #e5e7eb;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.gradesTable th {
+  background-color: #f9fafb;
+  font-weight: 500;
+  color: #4b5563;
+}

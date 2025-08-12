@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type { ReactElement } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import styles from './SideMenu.module.css';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../features/auth/hooks/useAuth';
 import { 
     FaHome, FaUsers, FaBook, FaCalendarAlt, 
     FaCog, FaClipboardList, FaChalkboardTeacher, 
@@ -22,11 +22,11 @@ type MenuItem = {
 const SideMenu: React.FC = () => {
     const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
     const [adminModeActive, setAdminModeActive] = useState(false);
-    const { logout, usuario } = useAuth();
+    const { logout, user } = useAuth();
     const location = useLocation();
     
     // Check if user is admin
-    const isAdmin = usuario?.tipoUsuario?.id === ROLES.SUPERUSUARIO || usuario?.tipoUsuario?.id === ROLES.ADMIN;
+    const isAdmin = user?.tipoUsuario?.id === ROLES.SUPERUSUARIO || user?.tipoUsuario?.id === ROLES.ADMIN;
     
     // Check if we're in admin section based on URL
     React.useEffect(() => {
@@ -302,7 +302,7 @@ const SideMenu: React.FC = () => {
                                     <ul className={styles.submenu}>
                                         <li className={styles.submenuItem}>
                                             <NavLink 
-                                                to="/admin/alumnos"
+                                                to="/admin/estudiantes"
                                                 className={({ isActive }) => 
                                                     `${styles.submenuLink} ${isActive ? styles.active : ''}`
                                                 }
