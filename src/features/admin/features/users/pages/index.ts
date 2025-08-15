@@ -2,7 +2,7 @@
 export * from './UsersPage';
 // Original component with legacy structure
 export { CreateUserPage as CreateUserPageLegacy } from './CreateUser';
-// New component with identical structure to CrearUsuarioNew
+// New component with identical structure to
 export { CreateUserPage } from './CreateUserPage';
 export { UserDetailPage } from './UserDetail';
 export { default as EditUserPage } from './EditUser';

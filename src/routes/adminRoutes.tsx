@@ -6,7 +6,7 @@ import MainLayout from "../components/Layout/MainLayout";
 import AdminDashboard from "../features/admin/features/dashboard/pages/AdminDashboard";
 
 // Feature Routes
-import { userRoutes, teacherRoutes, studentRoutes, cycleRoutes } from "../features/admin/routes";
+import { userRoutes, teacherRoutes, studentRoutes, cycleRoutes, gradeRoutes } from "../features/admin/routes";
 
 export const adminRoutes = (
   <>
@@ -27,6 +27,9 @@ export const adminRoutes = (
     
     {/* Estudiantes - Rutas importadas del módulo de estudiantes */}
     {studentRoutes}
+    
+    {/* Grados - Rutas importadas del módulo de grados */}
+    {gradeRoutes}
     
     {/* Ciclos - Rutas importadas del módulo de ciclos */}
     {cycleRoutes.map(route => {

@@ -182,11 +182,23 @@ const TeachersPage = () => {
     }) : [];
 
     if (loading) {
-        return <div className={styles.loadingContainer}>Cargando maestros...</div>;
+        return (
+            <div className={styles.loadingContainer}>
+                <div className={styles.loadingSpinner}></div>
+                <div>Cargando maestros...</div>
+            </div>
+        );
     }
 
     if (error) {
-        return <div className={styles.errorContainer}>Error: {error}</div>;
+        return (
+            <div className={styles.errorContainer}>
+                <div>Error: {error}</div>
+                <button className={styles.reloadButton} onClick={() => window.location.reload()}>
+                    Reintentar
+                </button>
+            </div>
+        );
     }
 
     return (

@@ -6,7 +6,8 @@ import { useAuth } from '../../features/auth/hooks/useAuth';
 import { 
     FaHome, FaUsers, FaBook, FaCalendarAlt, 
     FaCog, FaClipboardList, FaChalkboardTeacher, 
-    FaChartBar, FaBell, FaSignOutAlt, FaUserShield
+    FaChartBar, FaBell, FaSignOutAlt, FaUserShield,
+    FaGraduationCap
 } from 'react-icons/fa';
 import { ROLES } from '../../enums/enums';
 
@@ -314,6 +315,34 @@ const SideMenu: React.FC = () => {
                                     </ul>
                                 )}
                             </li>
+                            <li className={styles.menuItem}>
+                                <div 
+                                    className={styles.menuLink} 
+                                    onClick={() => toggleSubmenu('AdminGrados')}
+                                >
+                                    <FaGraduationCap className={styles.menuIcon} />
+                                    <span>Grados</span>
+                                    <span className={`${styles.menuArrow} ${expandedItems['AdminGrados'] ? styles.expanded : ''}`}>
+                                        ▶
+                                    </span>
+                                </div>
+                                {expandedItems['AdminGrados'] && (
+                                    <ul className={styles.submenu}>
+                                        <li className={styles.submenuItem}>
+                                            <NavLink 
+                                                to="/admin/grados"
+                                                className={({ isActive }) => 
+                                                    `${styles.submenuLink} ${isActive ? styles.active : ''}`
+                                                }
+                                            >
+                                                <FaGraduationCap className={styles.menuIcon} />
+                                                <span>Lista de Grados</span>
+                                            </NavLink>
+                                        </li>
+                                    </ul>
+                                )}
+                            </li>
+                            
                             <li className={styles.menuItem}>
                                 <div 
                                     className={styles.menuLink} 
