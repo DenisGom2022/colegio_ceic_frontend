@@ -152,7 +152,7 @@ export const GradeDetailPage = () => {
             <FaArrowLeft size={14} />
             <span>Volver a la lista</span>
           </Link>
-          <Link to={`/admin/grados/editar/${grado.id}`} className={styles.buttonEdit}>
+          <Link to={`/admin/editar-grado/${grado.id}`} className={styles.buttonEdit}>
             <FaEdit size={14} />
             <span>Editar grado</span>
           </Link>

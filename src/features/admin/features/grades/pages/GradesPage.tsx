@@ -11,7 +11,7 @@ import {
 import { useGradeTable } from "../hooks/useGradeTable";
 import type { Grade } from "../models/Grade";
 import DeleteConfirmModal from "../../../../../components/DeleteConfirmModal";
-import { deleteGrade } from "../services/gradeService";
+import { deleteGrado } from "../services/gradoService";
 import styles from "./GradesPage.module.css";
 
 // Opciones para el número de registros por página
@@ -131,7 +131,7 @@ const GradesPage = () => {
     const handleConfirmDelete = async (id: string) => {
         setDeleteLoading(true);
         try {
-            await deleteGrade(parseInt(id));
+            await deleteGrado(parseInt(id));
             setDeleteSuccess(true);
             setDeleteModalOpen(false);
             // Mostrar notificación temporal de éxito
