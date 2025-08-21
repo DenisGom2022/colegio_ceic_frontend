@@ -2,22 +2,10 @@
     display: flex;
     width: 100%;
     min-height: 100vh;
-    background-color: #f5f7fa; /* Gray background for the container */
+    margin: 0;
+    padding: 0;
+    background-color: #f5f7fa; /* Light gray background */
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-}
-
-.sideMenuWrapper {
-    width: 250px;
-    min-height: 100vh; /* Menu always takes full height */
-    position: sticky;
-    top: 0;
-    height: 100vh; /* Fixed height */
-    background-color: #111827; /* Match SideMenu background color */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    z-index: 10;
-    flex-shrink: 0; /* Prevent menu from shrinking */
-    display: flex;
-    flex-direction: column;
 }
 
 .contentWrapper {
@@ -26,49 +14,109 @@
     flex-direction: column;
     min-height: 100vh;
     overflow: auto; /* Allow content to scroll */
+    margin-left: 260px; /* Match the width of the side menu */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: calc(100% - 260px);
+    padding: 0;
+    position: relative;
+}
+
+/* When the menu is collapsed, reduce the margin */
+.contentWrapperCollapsed {
+    margin-left: 80px; /* Match the width of the collapsed side menu */
+    width: calc(100% - 80px);
+}
+
+/* When the menu is open on mobile */
+.contentWrapperMobile {
+    margin-left: 0;
+    width: 100%;
+}
+
+.contentContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: hidden;
+    min-height: 100vh;
 }
 
 .contentHeader {
+    padding: 20px 28px;
     background-color: #ffffff;
-    padding: 20px 32px;
-    border-bottom: 1px solid #e5e7eb;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-    position: sticky;
-    top: 0;
-    z-index: 5;
+    border-bottom: 1px solid #edf2f7;
+    position: relative;
+    margin-top: 0;
+}
+
+.contentHeader::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.5) 0%, rgba(168, 85, 247, 0.35) 100%);
+    z-index: 1;
 }
 
 .contentTitle {
     font-size: 1.75rem;
     font-weight: 700;
-    color: #111827;
-    margin: 0 0 24px 0;
+    color: #1a202c;
+    margin: 0;
+    letter-spacing: -0.02em;
 }
 
 .contentMain {
     flex: 1;
-    padding: 20px 32px;
+    padding: 20px 28px;
     overflow-y: auto; /* Content area can scroll */
+    background-color: #ffffff;
+    min-height: calc(100vh - 80px); /* Ensure it takes full height minus header */
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .layoutContainer {
-        flex-direction: column;
-    }
-
-    .sideMenuWrapper {
+    .contentWrapper {
+        margin-left: 0;
         width: 100%;
-        height: auto;
-        min-height: auto;
-        position: static;
+        padding: 0;
+        padding-top: 60px; /* Add space for the mobile menu toggle button */
     }
-
+    
+    .contentContainer {
+        border-radius: 0;
+        box-shadow: none;
+    }
+    
     .contentHeader {
-        position: static;
+        padding: 16px 20px;
     }
 
     .contentMain {
-        padding: 16px;
+        padding: 16px 20px;
+    }
+    
+    .contentTitle {
+        font-size: 1.5rem;
+    }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .contentWrapper {
+        padding: 20px;
+    }
+    
+    .contentHeader {
+        padding: 22px 24px;
+    }
+    
+    .contentMain {
+        padding: 24px;
     }
 }

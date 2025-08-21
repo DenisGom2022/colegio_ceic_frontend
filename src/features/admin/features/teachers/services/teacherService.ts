@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { environments } from '../../../../../utils/environments';
-import type { Teacher } from '../models/Teacher';
+import type { Teacher, TeacherDetailResponse } from '../models/Teacher';
 
 const API_URL = environments.VITE_API_URL;
 
@@ -69,12 +69,12 @@ export const getTeachers = async (
 // Obtener un catedrático por su ID (usuario/DPI)
 export const getTeacherById = async (idUsuarioODpi: string): Promise<Teacher> => {
   try {
-    const response = await axios.get<{message: string, catedratico: Teacher}>(`${API_URL}/catedratico/${idUsuarioODpi}`, {
+    const response = await axios.get<TeacherDetailResponse>(`${API_URL}/catedratico/${idUsuarioODpi}`, {
       headers: getAuthHeaders()
     });
     
     // Validar y asegurar que los datos tienen la estructura esperada
-    const catedratico = response.data.catedratico;
+    const { catedratico, cursosActivos, cursosFinalizados } = response.data;
     
     if (!catedratico) {
       throw new Error('No se recibieron datos del catedrático');
@@ -86,7 +86,9 @@ export const getTeacherById = async (idUsuarioODpi: string): Promise<Teacher> =>
       createdAt: catedratico.createdAt || '',
       updatedAt: catedratico.updatedAt || '',
       deletedAt: catedratico.deletedAt,
-      usuario: catedratico.usuario || null
+      usuario: catedratico.usuario || null,
+      cursosActivos: cursosActivos || [],
+      cursosFinalizados: cursosFinalizados || []
     };
   } catch (error) {
     console.error(`Error al obtener catedrático con ID/DPI ${idUsuarioODpi}:`, error);

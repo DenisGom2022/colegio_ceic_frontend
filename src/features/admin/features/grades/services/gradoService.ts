@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { environments } from '../../../../../utils/environments';
+import type { Usuario } from '../../users';
 
 interface NivelAcademico {
   id: number;
@@ -21,9 +22,32 @@ interface Ciclo {
   id: number;
   descripcion: string;
   createdAt: string;
-  fechaFin: string;
+  fechaFin: string | null;
   updatedAt: string;
   deletedAt: string | null;
+}
+
+
+interface Catedratico {
+  dpi: string;
+  idUsuario: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  usuario: Usuario;
+}
+
+export interface Curso {
+  id: number;
+  nombre: string;
+  notaMaxima: number;
+  notaAprobada: number;
+  idGradoCiclo: number;
+  dpiCatedratico: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  catedratico: Catedratico;
 }
 
 interface GradoCiclo {
@@ -37,6 +61,7 @@ interface GradoCiclo {
   updatedAt: string;
   deletedAt: string | null;
   ciclo: Ciclo;
+  cursos?: Curso[];
 }
 
 export interface Grado {
@@ -50,6 +75,8 @@ export interface Grado {
   nivelAcademico: NivelAcademico;
   jornada: Jornada;
   gradosCiclo: GradoCiclo[];
+  ciclosActivos?: GradoCiclo[];
+  ciclosFinalizados?: GradoCiclo[];
 }
 
 export interface GradosResponse {
@@ -160,6 +187,19 @@ export const actualizarGrado = async (gradoData: ActualizarGradoDTO): Promise<Ac
   }
 };
 
+export interface AsignarCicloActualDTO {
+  idGrado: number;
+  precioPago: number;
+  cantidadPagos: number;
+  precioInscripcion: number;
+}
+
+export interface AsignarCicloActualResponse {
+  message: string;
+  grado: Grado;
+  ciclo: Ciclo;
+}
+
 export const gradoService = {
   getGradoById: async (id: string): Promise<Grado> => {
     try {
@@ -170,9 +210,31 @@ export const gradoService = {
         }
       });
       
+      console.log('Debug - Respuesta completa del backend:', response.data);
+      console.log('Debug - Grado recibido:', response.data.grado);
+      
       return response.data.grado;
     } catch (error: any) {
       throw error.response?.data?.message || 'Error al obtener el grado';
+    }
+  },
+  asignarCicloActual: async (data: AsignarCicloActualDTO): Promise<AsignarCicloActualResponse> => {
+    try {
+      const token = localStorage.getItem('ceic_token');
+      const response = await axios.post(
+        `${environments.VITE_API_URL}/grado/asignar-ciclo-actual`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data?.message || 'Error al asignar el grado al ciclo actual';
     }
   },
   fetchGrados,

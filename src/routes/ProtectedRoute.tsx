@@ -1,6 +1,7 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../features/auth/hooks/useAuth";
+import Forbidden from "../pages/Forbidden";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -14,7 +15,8 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
   
   if (!user) {
-    return <Navigate to="/login" />;
+    /* return <Navigate to="/login" />; */
+    return <Forbidden />;
   }
 
   return children;

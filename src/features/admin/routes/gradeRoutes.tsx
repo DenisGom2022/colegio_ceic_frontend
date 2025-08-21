@@ -5,7 +5,8 @@ import GradesPage from '../features/grades/pages/GradesPage';
 import { 
   CreateGradePage, 
   GradeDetailPage, 
-  EditGradePage
+  EditGradePage,
+  AddCoursePage
 } from '../features/grades/pages';
 
 export const gradeRoutes = (
@@ -33,6 +34,15 @@ export const gradeRoutes = (
       <ProtectedRouteAdmin>
         <MainLayout title="Detalle de Grado">
           <GradeDetailPage />
+        </MainLayout>
+      </ProtectedRouteAdmin>
+    } />
+    
+    {/* Agregar curso a grado */}
+    <Route path="grado/:gradeId/agregar-curso" element={
+      <ProtectedRouteAdmin>
+        <MainLayout title="Agregar Curso">
+          <AddCoursePage />
         </MainLayout>
       </ProtectedRouteAdmin>
     } />

@@ -6,7 +6,7 @@
 export * from './ui';
 
 // Componentes de Layout
-// export * from './Layout';
+export * from './Layout';
 
 // Componente Table
 export * from './Table';

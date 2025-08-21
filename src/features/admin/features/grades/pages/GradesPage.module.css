@@ -299,6 +299,356 @@
   min-width: 120px;
 }
 
+.groupHeader {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-top: 2px solid #cbd5e1;
+  border-bottom: 1px solid #e2e8f0;
+  font-weight: 700;
+  color: #1e293b;
+  padding: 16px 20px;
+  font-size: 0.95rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-left: 6px solid #3b82f6;
+}
+
+.groupHeader .groupIcon {
+  margin-right: 8px;
+  color: #3b82f6;
+  font-size: 1.1rem;
+}
+
+.subGroupHeader {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border-bottom: 1px solid #cbd5e1;
+  font-weight: 600;
+  color: #475569;
+  padding: 12px 20px;
+  font-size: 0.875rem;
+  font-style: italic;
+  border-left: 4px solid #6366f1;
+  position: relative;
+}
+
+.subGroupHeader::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, #6366f1, #8b5cf6);
+}
+
+.subGroupHeader .subGroupIcon {
+  margin-right: 6px;
+  color: #6366f1;
+  font-size: 1rem;
+}
+
+.groupedRow {
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.15s ease;
+}
+
+.groupedRow:hover {
+  background-color: #f8fafc !important;
+}
+
+.groupedRow:last-child {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* Nuevos estilos para vista de tarjetas agrupadas */
+.groupedView {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.jornadaGroup {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.jornadaHeader {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  padding: 16px 20px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.jornadaIcon {
+  font-size: 1.2rem;
+}
+
+.nivelGroup {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.nivelGroup:last-child {
+  border-bottom: none;
+}
+
+.nivelHeader {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.nivelIcon {
+  color: #6366f1;
+  font-size: 1rem;
+}
+
+.gradesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .gradesGrid {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .gradesGrid {
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  }
+}
+
+.gradeCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.gradeCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+}
+
+.gradeCard.highlighted {
+  animation: highlightCard 0.9s ease;
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+@keyframes highlightCard {
+  0% { 
+    background-color: rgba(59, 130, 246, 0.1);
+    transform: scale(1.02);
+  }
+  70% { 
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+  100% { 
+    background-color: transparent;
+    transform: scale(1);
+  }
+}
+
+.gradeCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.gradeInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gradeAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e5edff 0%, #c7d2fe 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #3b82f6;
+  font-size: 1rem;
+}
+
+.gradeDetails {
+  flex: 1;
+}
+
+.gradeName {
+  font-weight: 700;
+  color: #111827;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+.gradeId {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.gradeActions {
+  display: flex;
+  gap: 8px;
+}
+
+.gradeCardBody {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.gradeField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fieldLabel {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.fieldValue {
+  font-size: 0.875rem;
+  color: #111827;
+  font-weight: 500;
+}
+
+.gradePrice {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid #bae6fd;
+  border-radius: 6px;
+  padding: 12px;
+  text-align: center;
+}
+
+.priceAmount {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0369a1;
+  margin-bottom: 4px;
+}
+
+.priceCycle {
+  font-size: 0.75rem;
+  color: #0284c7;
+  font-style: italic;
+}
+
+.noPriceInfo {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 12px;
+  text-align: center;
+  color: #dc2626;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.viewToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 640px) {
+  .viewToggle {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .toggleButton {
+    justify-content: center;
+  }
+}
+
+.toggleButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #4b5563;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggleButton:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.toggleButton.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+.emptyGroup {
+  padding: 40px 20px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.emptyGroup .emptyIcon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  color: #9ca3af;
+}
+
+.emptyGroupText {
+  font-size: 0.875rem;
+  margin-bottom: 4px;
+}
+
+.emptyGroupSubtext {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
 .actionButtons {
   display: flex;
   gap: 8px;

@@ -1,29 +1,44 @@
 import React from 'react';
 import styles from './MainLayout.module.css';
-import SideMenu from './SideMenu';
+import ModernSideMenu from './ModernSideMenu';
+import { SideMenuProvider, useSideMenu } from './SideMenuContext';
+import './GlobalStyles.module.css';
 
 type MainLayoutProps = {
     children: React.ReactNode;
     title?: string;
 };
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children, title }) => {
+const MainLayoutContent: React.FC<MainLayoutProps> = ({ children, title }) => {
+    const { collapsed, mobileMenuOpen } = useSideMenu();
+    
     return (
         <div className={styles.layoutContainer}>
-            <div className={styles.sideMenuWrapper}>
-                <SideMenu />
-            </div>
-            <div className={styles.contentWrapper}>
-                {title && (
-                    <div className={styles.contentHeader}>
-                        <h1 className={styles.contentTitle}>{title}</h1>
-                    </div>
-                )}
-                <main className={styles.contentMain}>
-                    {children}
-                </main>
+            <ModernSideMenu />
+            
+            <div 
+                className={`${styles.contentWrapper} ${collapsed ? styles.contentWrapperCollapsed : ''} ${mobileMenuOpen ? styles.contentWrapperMobile : ''}`}
+            >
+                <div className={styles.contentContainer}>
+                    {title && (
+                        <header className={styles.contentHeader}>
+                            <h1 className={styles.contentTitle}>{title}</h1>
+                        </header>
+                    )}
+                    <main className={styles.contentMain}>
+                        {children}
+                    </main>
+                </div>
             </div>
         </div>
+    );
+};
+
+const MainLayout: React.FC<MainLayoutProps> = (props) => {
+    return (
+        <SideMenuProvider>
+            <MainLayoutContent {...props} />
+        </SideMenuProvider>
     );
 };
 

@@ -1,13 +1,14 @@
 import { Outlet } from "react-router-dom";
-import SideMenu from "../components/Layout/SideMenu";
+import TopMenu from "../components/Layout/TopMenu";
 import { ProtectedRoute } from "../components/ProtectedRoute";
+import styles from "./MainLayout.module.css";
 
 const MainLayout = () => {
     return (
         <ProtectedRoute>
-            <div style={{ minHeight: "100vh", display: "flex" }}>
-                <SideMenu />
-                <main style={{ flex: 1, padding: 20, minHeight: "100vh", backgroundColor: "#f3f4f6" }}>
+            <div className={styles.layoutContainer}>
+                <TopMenu />
+                <main className={styles.mainContent}>
                     <Outlet />
                 </main>
             </div>

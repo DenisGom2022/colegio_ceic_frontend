@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaPencilAlt, FaTrash, FaUser, FaIdCard, FaCalendarAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaPencilAlt, FaTrash, FaUser, FaIdCard, FaCalendarAlt, FaBook, FaGraduationCap, FaCheckCircle, FaClock, FaSchool } from 'react-icons/fa';
 import { useTeacher } from '../hooks/useTeacher';
 import { useDeleteTeacher } from '../hooks/useDeleteTeacher';
+import type { Curso } from '../models/Teacher';
 import DeleteConfirmModal from '../../../../../components/DeleteConfirmModal';
 import FloatingNotification from '../../../../../components/FloatingNotification';
 import styles from './TeacherDetailPage.module.css';
@@ -42,6 +43,54 @@ export const TeacherDetailPage: React.FC = () => {
     const { primerNombre, segundoNombre, tercerNombre, primerApellido, segundoApellido } = teacher.usuario;
     
     return `${primerNombre || ''} ${segundoNombre || ''} ${tercerNombre || ''} ${primerApellido || ''} ${segundoApellido || ''}`.trim();
+  };
+
+  // Agrupar cursos por grado
+  const groupCoursesByGrade = (cursos: Curso[]) => {
+    return cursos.reduce((groups: { [key: string]: Curso[] }, curso) => {
+      const grado = curso.gradoCiclo?.grado;
+      if (!grado) {
+        const fallbackKey = 'Sin información de grado';
+        if (!groups[fallbackKey]) {
+          groups[fallbackKey] = [];
+        }
+        groups[fallbackKey].push(curso);
+        return groups;
+      }
+
+      const gradeKey = `${grado.nombre} - ${grado.nivelAcademico?.descripcion || 'N/A'} - ${grado.jornada?.descripcion || 'N/A'}`;
+      
+      if (!groups[gradeKey]) {
+        groups[gradeKey] = [];
+      }
+      
+      groups[gradeKey].push(curso);
+      return groups;
+    }, {});
+  };
+
+  // Agrupar cursos por ciclo
+  const groupCoursesByCycle = (cursos: Curso[]) => {
+    return cursos.reduce((groups: { [key: string]: Curso[] }, curso) => {
+      const ciclo = curso.gradoCiclo?.ciclo;
+      if (!ciclo) {
+        const fallbackKey = 'Sin información de ciclo';
+        if (!groups[fallbackKey]) {
+          groups[fallbackKey] = [];
+        }
+        groups[fallbackKey].push(curso);
+        return groups;
+      }
+
+      const cycleKey = ciclo.descripcion || 'Ciclo sin descripción';
+      
+      if (!groups[cycleKey]) {
+        groups[cycleKey] = [];
+      }
+      
+      groups[cycleKey].push(curso);
+      return groups;
+    }, {});
   };
 
   // Manejar la eliminación del catedrático
@@ -272,6 +321,216 @@ export const TeacherDetailPage: React.FC = () => {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Sección: Cursos Activos */}
+        <div className={styles.detailSection}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionIcon}>
+              <FaClock />
+            </div>
+            <h3 className={styles.sectionTitle}>
+              Cursos Activos 
+              <span className={styles.courseCount}>
+                ({teacher?.cursosActivos?.length || 0})
+              </span>
+            </h3>
+          </div>
+          
+          {teacher?.cursosActivos && teacher.cursosActivos.length > 0 ? (
+            <div className={styles.gradeGroupsContainer}>
+              {Object.entries(groupCoursesByGrade(teacher.cursosActivos)).map(([gradeName, cursos]) => (
+                <div key={gradeName} className={styles.gradeGroup}>
+                  <div className={styles.gradeHeader}>
+                    <FaSchool className={styles.gradeIcon} />
+                    <span className={styles.gradeTitle}>
+                      {gradeName} ({cursos.length} curso{cursos.length !== 1 ? 's' : ''})
+                    </span>
+                  </div>
+                  
+                  <div className={styles.coursesGrid}>
+                    {cursos.map((curso: Curso) => (
+                      <div key={curso.id} className={styles.courseCard}>
+                        <div className={styles.courseHeader}>
+                          <div className={styles.courseIcon}>
+                            <FaBook />
+                          </div>
+                          <div className={styles.courseInfo}>
+                            <h4 className={styles.courseName}>{curso.nombre}</h4>
+                            <p className={styles.courseCycle}>
+                              {curso.gradoCiclo?.ciclo?.descripcion || 'N/A'}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className={styles.courseDetails}>
+                          <div className={styles.courseDetailItem}>
+                            <span className={styles.courseDetailLabel}>Grado:</span>
+                            <span className={styles.courseDetailValue}>
+                              {curso.gradoCiclo?.grado?.nombre || 'N/A'}
+                            </span>
+                          </div>
+                          
+                          <div className={styles.courseDetailItem}>
+                            <span className={styles.courseDetailLabel}>Nivel académico:</span>
+                            <span className={styles.courseDetailValue}>
+                              {curso.gradoCiclo?.grado?.nivelAcademico?.descripcion || 'N/A'}
+                            </span>
+                          </div>
+                          
+                          <div className={styles.courseDetailItem}>
+                            <span className={styles.courseDetailLabel}>Jornada:</span>
+                            <span className={styles.courseDetailValue}>
+                              {curso.gradoCiclo?.grado?.jornada?.descripcion || 'N/A'}
+                            </span>
+                          </div>
+                          
+                          <div className={styles.courseDetailItem}>
+                            <span className={styles.courseDetailLabel}>Nota máxima:</span>
+                            <span className={styles.courseDetailValue}>{curso.notaMaxima} pts</span>
+                          </div>
+                          
+                          <div className={styles.courseDetailItem}>
+                            <span className={styles.courseDetailLabel}>Nota aprobada:</span>
+                            <span className={styles.courseDetailValue}>{curso.notaAprobada} pts</span>
+                          </div>
+                          
+                          <div className={styles.courseDetailItem}>
+                            <span className={styles.courseDetailLabel}>Costo del grado:</span>
+                            <span className={styles.courseDetailValue}>
+                              Q{curso.gradoCiclo?.precioPago || '0'} ({curso.gradoCiclo?.cantidadPagos || 0} cuotas)
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className={styles.courseFooter}>
+                          <span className={styles.courseDate}>
+                            Creado: {formatDate(curso.createdAt)}
+                          </span>
+                          <span className={styles.courseStatus}>
+                            <div className={styles.statusDotActive}></div>
+                            Activo
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.emptyCourses}>
+              <div className={styles.emptyIcon}>
+                <FaBook />
+              </div>
+              <p className={styles.emptyText}>No tiene cursos activos asignados</p>
+            </div>
+          )}
+        </div>
+
+        {/* Sección: Cursos Finalizados */}
+        <div className={styles.detailSection}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionIcon}>
+              <FaCheckCircle />
+            </div>
+            <h3 className={styles.sectionTitle}>
+              Cursos Finalizados 
+              <span className={styles.courseCount}>
+                ({teacher?.cursosFinalizados?.length || 0})
+              </span>
+            </h3>
+          </div>
+          
+          {teacher?.cursosFinalizados && teacher.cursosFinalizados.length > 0 ? (
+            <div className={styles.gradeGroupsContainer}>
+              {Object.entries(groupCoursesByCycle(teacher.cursosFinalizados)).map(([cycleName, cursos]) => (
+                <div key={cycleName} className={`${styles.gradeGroup} ${styles.gradeGroupFinished}`}>
+                  <div className={styles.gradeHeader}>
+                    <FaCalendarAlt className={styles.gradeIcon} />
+                    <span className={styles.gradeTitle}>
+                      {cycleName} ({cursos.length} curso{cursos.length !== 1 ? 's' : ''})
+                    </span>
+                  </div>
+                  
+                  <div className={styles.coursesGrid}>
+                    {cursos.map((curso: Curso) => (
+                      <div key={curso.id} className={`${styles.courseCard} ${styles.courseCardFinished}`}>
+                        <div className={styles.courseHeader}>
+                          <div className={styles.courseIcon}>
+                            <FaGraduationCap />
+                          </div>
+                          <div className={styles.courseInfo}>
+                            <h4 className={styles.courseName}>{curso.nombre}</h4>
+                            <p className={styles.courseCycle}>
+                              {curso.gradoCiclo?.ciclo?.descripcion || 'N/A'}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className={styles.courseDetails}>
+                          <div className={styles.courseDetailItem}>
+                            <span className={styles.courseDetailLabel}>Grado:</span>
+                            <span className={styles.courseDetailValue}>
+                              {curso.gradoCiclo?.grado?.nombre || 'N/A'}
+                            </span>
+                          </div>
+                          
+                          <div className={styles.courseDetailItem}>
+                            <span className={styles.courseDetailLabel}>Nivel académico:</span>
+                            <span className={styles.courseDetailValue}>
+                              {curso.gradoCiclo?.grado?.nivelAcademico?.descripcion || 'N/A'}
+                            </span>
+                          </div>
+                          
+                          <div className={styles.courseDetailItem}>
+                            <span className={styles.courseDetailLabel}>Jornada:</span>
+                            <span className={styles.courseDetailValue}>
+                              {curso.gradoCiclo?.grado?.jornada?.descripcion || 'N/A'}
+                            </span>
+                          </div>
+                          
+                          <div className={styles.courseDetailItem}>
+                            <span className={styles.courseDetailLabel}>Nota máxima:</span>
+                            <span className={styles.courseDetailValue}>{curso.notaMaxima} pts</span>
+                          </div>
+                          
+                          <div className={styles.courseDetailItem}>
+                            <span className={styles.courseDetailLabel}>Nota aprobada:</span>
+                            <span className={styles.courseDetailValue}>{curso.notaAprobada} pts</span>
+                          </div>
+                          
+                          <div className={styles.courseDetailItem}>
+                            <span className={styles.courseDetailLabel}>Costo del grado:</span>
+                            <span className={styles.courseDetailValue}>
+                              Q{curso.gradoCiclo?.precioPago || '0'} ({curso.gradoCiclo?.cantidadPagos || 0} cuotas)
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className={styles.courseFooter}>
+                          <span className={styles.courseDate}>
+                            Finalizado: {formatDate(curso.updatedAt)}
+                          </span>
+                          <span className={styles.courseStatus}>
+                            <div className={styles.statusDotFinished}></div>
+                            Finalizado
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.emptyCourses}>
+              <div className={styles.emptyIcon}>
+                <FaGraduationCap />
+              </div>
+              <p className={styles.emptyText}>No tiene cursos finalizados</p>
+            </div>
+          )}
         </div>
       </div>
 

@@ -1,0 +1,569 @@
+.sideMenu {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 260px;
+    background-color: #1e1534;
+    box-shadow: 3px 0 15px rgba(0, 0, 0, 0.15);
+    border-right: 1px solid rgba(30, 21, 52, 0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    z-index: 1000;
+    overflow-x: hidden;
+    background-image: linear-gradient(to bottom, #1e1534 0%, #271b45 100%);
+}
+
+.expandToggle {
+    width: 22px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(167, 139, 250, 0.15);
+    color: #c4b5fd;
+    border: 1px solid rgba(167, 139, 250, 0.3);
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    font-size: 0.9rem;
+    cursor: pointer;
+    position: fixed;
+    left: 80px; /* Justo al lado del menú colapsado */
+    top: 100px;
+    transition: all 0.2s ease;
+    box-shadow: 1px 0 5px rgba(0, 0, 0, 0.05);
+    z-index: 1500;
+    opacity: 0.7;
+}
+
+.collapsed {
+    width: 80px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+    background-image: linear-gradient(to bottom, #1e1534 0%, #271b45 100%);
+}
+
+/* Logo container */
+.logoContainer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 20px;
+    height: 70px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(120, 85, 247, 0.05) 100%);
+    overflow: hidden;
+}
+
+.logoWrapper {
+    display: flex;
+    align-items: center;
+    max-width: calc(100% - 50px);
+    flex: 1;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.logo {
+    font-weight: 700;
+    background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+    color: #ffffff;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    margin-right: 14px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(139, 92, 246, 0.3);
+    letter-spacing: -0.03em;
+}
+
+.schoolName {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.01em;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    width: 100%;
+}
+
+.collapseToggle {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(167, 139, 250, 0.15);
+    border: 1px solid rgba(167, 139, 250, 0.3);
+    border-radius: 6px;
+    font-size: 0.75rem;
+    color: #c4b5fd;
+    cursor: pointer;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    opacity: 0.7;
+}
+
+.collapseToggle:hover {
+    background: rgba(167, 139, 250, 0.35);
+    color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    opacity: 1;
+    transform: translateX(-2px);
+}
+
+.collapsed .logoWrapper {
+    justify-content: center;
+    max-width: 100%;
+}
+
+.collapsed .schoolName {
+    opacity: 0;
+    transform: translateX(-20px);
+    width: 0;
+}
+
+.collapsed .collapseToggle {
+    display: none; /* Ocultamos el botón interno cuando el menú está colapsado */
+}
+
+.collapsed .logoContainer {
+    justify-content: center;
+    padding: 0 15px;
+}
+
+.collapsed .logo {
+    margin-right: 0;
+}
+
+/* Navigation */
+.navigation {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px 0;
+}
+
+.menuWrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.menuList {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+.menuItem {
+    margin: 2px 0;
+    position: relative;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.activeItem {
+    background: rgba(167, 139, 250, 0.15);
+}
+
+.activeItem::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 70%;
+    width: 4px;
+    background: #a78bfa;
+    transform: translateY(-50%);
+    border-radius: 0 4px 4px 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px rgba(167, 139, 250, 0.4);
+}
+
+.menuLink {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    color: #c4b5fd;
+    text-decoration: none;
+    border-radius: 8px;
+    border-radius: 6px;
+    margin: 0 8px;
+    transition: all 0.2s;
+}
+
+.menuLinkContent {
+    display: flex;
+    align-items: center;
+}
+
+.menuLink:hover {
+    background-color: rgba(167, 139, 250, 0.2);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.menuLink.active {
+    background: rgba(167, 139, 250, 0.25);
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.menuIcon {
+    font-size: 1.125rem;
+    margin-right: 12px;
+    color: #a78bfa;
+    flex-shrink: 0;
+}
+
+.menuLabel {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.menuArrow {
+    font-size: 0.6rem;
+    transition: transform 0.2s;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.menuArrow.expanded {
+    transform: rotate(180deg);
+}
+
+/* Submenu */
+.submenu {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0 12px;
+}
+
+.submenuItem {
+    margin: 2px 0;
+}
+
+.submenuLink {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    color: #d1d5db;
+    text-decoration: none;
+    border-radius: 6px;
+    margin: 0 8px;
+    transition: all 0.2s;
+    font-size: 0.875rem;
+}
+
+.submenuLink:hover {
+    background-color: rgba(167, 139, 250, 0.2);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.submenuLink.active {
+    background-color: rgba(167, 139, 250, 0.25);
+    color: #ffffff;
+}
+
+/* Admin mode */
+.adminMode {
+    background-color: #1e1534;
+    background-image: linear-gradient(to bottom, #1e1534 0%, #271b45 100%);
+}
+
+.adminMode .menuLink.active {
+    background: rgba(167, 139, 250, 0.25);
+    color: #ffffff;
+}
+
+.adminMode .activeItem::before {
+    background-color: #a78bfa;
+}
+
+.adminModeHeader {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.adminModeTitle {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 8px;
+}
+
+.backToMainLink {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    color: #c4b5fd;
+    background-color: rgba(167, 139, 250, 0.1);
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.backToMainLink:hover {
+    background-color: rgba(167, 139, 250, 0.3);
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Section titles */
+.sectionContainer {
+    padding: 0 16px;
+    margin-top: auto;
+    margin-bottom: 16px;
+}
+
+.sectionTitle {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 20px 8px 8px;
+    letter-spacing: 0.05em;
+}
+
+/* User section */
+.userSection {
+    padding: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(30, 21, 52, 0.9) 0%, rgba(39, 27, 69, 0.95) 100%);
+    margin-top: auto;
+}
+
+.userInfo {
+    display: flex;
+    align-items: center;
+}
+
+.userAvatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.userAvatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.userDetails {
+    overflow: hidden;
+}
+
+.userName {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.userEmail {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.logoutButton {
+    background: none;
+    border: none;
+    color: #a78bfa;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    border-radius: 4px;
+}
+
+.logoutButton:hover {
+    color: #ffffff;
+    background-color: rgba(167, 139, 250, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Collapsed user section */
+.userSectionCollapsed {
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid #f0f0f0;
+}
+
+.userAvatarCollapsed {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.userAvatarCollapsed img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Notification badge */
+.notificationBadge {
+    background-color: #a78bfa;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Admin link */
+.adminLink {
+    color: #4b5563;
+    font-weight: 500;
+}
+
+/* Mobile menu toggle */
+.mobileMenuToggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #4b5563;
+    font-size: 1.25rem;
+    padding: 8px;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 101;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.menuBackdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+}
+
+/* Contenedor principal - ajustes adicionales */
+.menuContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(203, 213, 224, 0.4) transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding-bottom: 20px;
+}
+
+.menuContainer::-webkit-scrollbar {
+    width: 5px;
+}
+
+.menuContainer::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.menuContainer::-webkit-scrollbar-thumb {
+    background-color: rgba(203, 213, 224, 0.4);
+    border-radius: 20px;
+}
+
+/* Hover effect en los elementos del menú */
+.menuItem:hover {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+    .sideMenu {
+        transform: translateX(-100%);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .mobileOpen {
+        transform: translateX(0);
+    }
+    
+    .mobileMenuToggle {
+        display: block;
+    }
+    
+    .menuBackdrop {
+        display: block;
+    }
+    
+    .collapsed {
+        width: 260px;
+        transform: translateX(-100%);
+    }
+    
+    .mobileOpen.collapsed {
+        transform: translateX(0);
+    }
+    
+    .collapseToggle {
+        display: none;
+    }
+}
+
+/* Eliminamos la animación pulsante para hacer el botón más discreto */
+
+.expandToggle:hover {
+    background: rgba(167, 139, 250, 0.35);
+    color: #ffffff;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+    transform: translateX(2px);
+    opacity: 1;
+    opacity: 1;
+}
+
+/* Solo se muestra cuando el menú está colapsado y no está en modo móvil */
+@media (max-width: 768px) {
+    .expandToggle {
+        display: none;
+    }
+}
