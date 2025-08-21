@@ -3,3 +3,4 @@ export { teacherRoutes } from './teacherRoutes';
 export { studentRoutes } from './studentRoutes';
 export { cycleRoutes } from './cycleRoutes';
 export { gradeRoutes } from './gradeRoutes';
+export { courseRoutes } from './courseRoutes';

@@ -10,10 +10,44 @@
 .mainContent {
     flex: 1;
     padding: 24px;
-    margin-top: 0;
     width: 100%;
     max-width: 1440px;
     margin: 0 auto;
+}
+
+.footer {
+    background-color: #1f2937;
+    color: #f9fafb;
+    padding: 24px;
+    width: 100%;
+    margin-top: auto;
+    flex-shrink: 0;
+}
+
+.footerContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+.footerSection {
+    display: flex;
+    align-items: center;
+}
+
+.footerText {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #d1d5db;
+}
+
+.footerVersion {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    font-weight: 500;
 }
 
 /* Responsive adjustments */
@@ -21,10 +55,24 @@
     .mainContent {
         padding: 16px;
     }
+
+    .footer {
+        padding: 16px;
+    }
+
+    .footerContent {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
 }
 
 @media (max-width: 480px) {
     .mainContent {
+        padding: 12px;
+    }
+
+    .footer {
         padding: 12px;
     }
 }

@@ -121,6 +121,11 @@ const ModernSideMenu: React.FC = () => {
             icon: <FaLayerGroup className={styles.menuIcon} />
         },
         {
+            label: "Cursos",
+            path: "/admin/cursos",
+            icon: <FaBook className={styles.menuIcon} />
+        },
+        {
             label: "Ciclos",
             path: "/admin/ciclos",
             icon: <FaCalendarAlt className={styles.menuIcon} />

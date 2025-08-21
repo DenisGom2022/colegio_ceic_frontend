@@ -39,8 +39,6 @@ export const UsersPage = () => {
     const [pageSize, setPageSize] = useState(savedFilters?.pageSize || PAGE_SIZE_OPTIONS[0]);
     const [searchQuery, setSearchQuery] = useState(savedFilters?.searchQuery || "");
     const [activeSearchQuery, setActiveSearchQuery] = useState(savedFilters?.activeSearchQuery || "");
-    const [sortField, setSortField] = useState(savedFilters?.sortField || "usuario");
-    const [sortDirection, setSortDirection] = useState(savedFilters?.sortDirection || "asc");
     const [lastViewedUser, setLastViewedUser] = useState(localStorage.getItem('lastViewedUser') || "");
     const [highlightedRow, setHighlightedRow] = useState("");
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -70,11 +68,9 @@ export const UsersPage = () => {
             page,
             pageSize,
             searchQuery,
-            activeSearchQuery,
-            sortField,
-            sortDirection
+            activeSearchQuery
         });
-    }, [page, pageSize, searchQuery, activeSearchQuery, sortField, sortDirection]);
+    }, [page, pageSize, searchQuery, activeSearchQuery]);
     
     useEffect(() => {
         // Reset a página 1 cuando cambia la búsqueda activa o el tamaño de página
@@ -97,22 +93,9 @@ export const UsersPage = () => {
         setActiveSearchQuery(searchQuery);
     };
 
-    const handlePageChange = (newPage: number) => {
-        setPage(newPage);
-    };
-
     const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setPageSize(Number(e.target.value));
-    };
-
-    const handleSort = (field: string) => {
-        // Si se hace clic en el mismo campo, invertir la dirección
-        if (field === sortField) {
-            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-        } else {
-            setSortField(field);
-            setSortDirection('asc');
-        }
+        setPage(1);
     };
 
     // Funciones para manejar el modal de eliminación
@@ -141,98 +124,6 @@ export const UsersPage = () => {
     };
 
     // Pagination 
-    const renderPagination = () => {
-        const paginationItems = [];
-        const maxPagesToShow = 5;
-        
-        let startPage = Math.max(1, page - Math.floor(maxPagesToShow / 2));
-        let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-        
-        if (endPage - startPage + 1 < maxPagesToShow) {
-            startPage = Math.max(1, endPage - maxPagesToShow + 1);
-        }
-        
-        // Botón anterior
-        paginationItems.push(
-            <button
-                key="prev"
-                className={`${styles.paginationButton} ${page === 1 ? styles.disabled : ''}`}
-                onClick={() => page > 1 && handlePageChange(page - 1)}
-                disabled={page === 1}
-            >
-                &lt;
-            </button>
-        );
-        
-        // Primera página y ellipsis si es necesario
-        if (startPage > 1) {
-            paginationItems.push(
-                <button
-                    key={1}
-                    className={`${styles.paginationButton} ${page === 1 ? styles.active : ''}`}
-                    onClick={() => handlePageChange(1)}
-                >
-                    1
-                </button>
-            );
-            if (startPage > 2) {
-                paginationItems.push(
-                    <span key="ellipsis1" className={styles.ellipsis}>...</span>
-                );
-            }
-        }
-        
-        // Páginas numeradas
-        for (let i = startPage; i <= endPage; i++) {
-            paginationItems.push(
-                <button
-                    key={i}
-                    className={`${styles.paginationButton} ${page === i ? styles.active : ''}`}
-                    onClick={() => handlePageChange(i)}
-                >
-                    {i}
-                </button>
-            );
-        }
-        
-        // Última página y ellipsis si es necesario
-        if (endPage < totalPages) {
-            if (endPage < totalPages - 1) {
-                paginationItems.push(
-                    <span key="ellipsis2" className={styles.ellipsis}>...</span>
-                );
-            }
-            paginationItems.push(
-                <button
-                    key={totalPages}
-                    className={`${styles.paginationButton} ${page === totalPages ? styles.active : ''}`}
-                    onClick={() => handlePageChange(totalPages)}
-                >
-                    {totalPages}
-                </button>
-            );
-        }
-        
-        // Botón siguiente
-        paginationItems.push(
-            <button
-                key="next"
-                className={`${styles.paginationButton} ${page === totalPages ? styles.disabled : ''}`}
-                onClick={() => page < totalPages && handlePageChange(page + 1)}
-                disabled={page === totalPages}
-            >
-                &gt;
-            </button>
-        );
-        
-        return (
-            <div className={styles.paginationContainer}>
-                {paginationItems}
-            </div>
-        );
-    };
-
-    // Formatear fecha a un formato legible
     const formatDate = (dateString: string | undefined) => {
         if (!dateString) return "";
         const date = new Date(dateString);
@@ -330,8 +221,13 @@ export const UsersPage = () => {
             return (
                 <tr>
                     <td colSpan={6} className={styles.emptyState}>
-                        <div className={styles.emptyIcon}>🔍</div>
-                        <div className={styles.emptyMessage}>No se encontraron usuarios que coincidan con tu búsqueda</div>
+                        <div className={styles.emptyIcon}>�</div>
+                        <div className={styles.emptyMessage}>
+                            {activeSearchQuery 
+                                ? `No se encontraron usuarios que coincidan con "${activeSearchQuery}"`
+                                : "No hay usuarios registrados en el sistema"
+                            }
+                        </div>
                     </td>
                 </tr>
             );
@@ -339,27 +235,25 @@ export const UsersPage = () => {
         
         return usuarios.map(renderUserRow);
     };
-
-    // Determinar dirección de ordenamiento para el encabezado
-    const getSortIcon = (field: string) => {
-        if (sortField !== field) return null;
-        return sortDirection === 'asc' ? '↑' : '↓';
-    };
     
     return (
-        <div className={styles.usuariosPage}>
+        <div className={styles.pageContainer}>
+            
+            {/* Encabezado con botón de crear usuario */}
             <div className={styles.pageHeader}>
                 <div className={styles.pageTitle}>
-                    <FaUsersCog size={24} />
-                    Listado de Usuarios
+                    <FaUsersCog size={28} />
+                    Gestión de Usuarios
                     <span className={styles.badgeCount}>{total}</span>
                 </div>
+
                 <Link to="/admin/usuarios/crear" className={styles.createButton}>
-                    <FaPlus size={14} />
-                    Crear Usuario
+                    <FaPlus size={16} />
+                    Nuevo Usuario
                 </Link>
             </div>
-            
+
+            {/* Barra de herramientas y búsqueda */}
             <div className={styles.toolbarSection}>
                 <div className={styles.searchTools}>
                     <form 
@@ -373,27 +267,37 @@ export const UsersPage = () => {
                                 className={styles.input}
                                 placeholder="Buscar por nombre o usuario"
                                 value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    if (e.target.value === "" && activeSearchQuery !== "") {
+                                        setActiveSearchQuery("");
+                                        setPage(1);
+                                    }
+                                }}
                             />
                         </div>
-                        <button type="submit" className={styles.filterButton}>
-                            <FaSearch size={14} />
+
+                        <button 
+                            type="submit"
+                            className={styles.filterButton}
+                        >
+                            <FaSearch size={16} />
                             Buscar
                         </button>
                     </form>
                 </div>
             </div>
-            
+
             {/* Indicador de búsqueda activa */}
             {activeSearchQuery && (
                 <div className={styles.activeSearchIndicator}>
                     <span className={styles.searchLabel}>Búsqueda actual:</span>
                     <span className={styles.searchTerm}>{activeSearchQuery}</span>
                     <button 
-                        className={styles.clearSearchButton} 
+                        className={styles.clearSearchButton}
                         onClick={() => {
-                            setSearchQuery("");
                             setActiveSearchQuery("");
+                            setSearchQuery("");
                             setPage(1);
                         }}
                         title="Limpiar búsqueda"
@@ -402,59 +306,100 @@ export const UsersPage = () => {
                     </button>
                 </div>
             )}
-            
+
+            {/* Tabla de usuarios */}
             <div className={styles.tableCard}>
+                <div className={styles.tableWrapper}>
                 <table className={styles.table}>
-                    <thead className={styles.tableHeader}>
-                        <tr>
-                            <th onClick={() => handleSort('usuario')}>
-                                Usuario {getSortIcon('usuario')}
-                            </th>
-                            <th onClick={() => handleSort('primerNombre')}>
-                                Nombre {getSortIcon('primerNombre')}
-                            </th>
-                            <th onClick={() => handleSort('telefono')}>
-                                Teléfono {getSortIcon('telefono')}
-                            </th>
-                            <th onClick={() => handleSort('idTipoUsuario')}>
-                                Tipo {getSortIcon('idTipoUsuario')}
-                            </th>
-                            <th onClick={() => handleSort('createdAt')}>
-                                Fecha Creación {getSortIcon('createdAt')}
-                            </th>
-                            <th>Acciones</th>
+                    <thead>
+                        <tr className={styles.tableHeader}>
+                            <th>Usuario</th>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Tipo</th>
+                            <th>Fecha Creación</th>
+                            <th className={styles.actionCell}>Acciones</th>
                         </tr>
                     </thead>
+
                     <tbody className={styles.tableBody}>
                         {renderTableBody()}
                     </tbody>
                 </table>
-            </div>
-            
-            <div className={styles.footerSection}>
-                <div className={styles.pageSizeSelector}>
-                    <span>Mostrar</span>
-                    <select
-                        className={styles.selectPageSize}
-                        value={pageSize}
-                        onChange={handlePageSizeChange}
-                    >
-                        {PAGE_SIZE_OPTIONS.map(size => (
-                            <option key={size} value={size}>{size}</option>
-                        ))}
-                    </select>
-                    <span>registros por página</span>
-                </div>
 
-                <div className={styles.paginationInfo}>
-                    Mostrando {usuarios.length} de {total} registros
-                </div>
-
-                {totalPages > 1 && (
-                    <div className={styles.pagination}>
-                        {renderPagination()}
+                {/* Footer con paginación */}
+                <div className={styles.footerSection}>
+                    <div className={styles.rowsPerPage}>
+                        <span>Mostrar</span>
+                        <select
+                            className={styles.selectPageSize}
+                            value={pageSize}
+                            onChange={handlePageSizeChange}
+                        >
+                            {PAGE_SIZE_OPTIONS.map(size => (
+                                <option key={size} value={size}>{size}</option>
+                            ))}
+                        </select>
+                        <span>registros</span>
                     </div>
-                )}
+
+                    <div className={styles.paginationInfo}>
+                        Mostrando {usuarios.length} de {total} registros
+                    </div>
+
+                    <div className={styles.pagination}>
+                        <button
+                            className={styles.pageButton}
+                            onClick={() => setPage(Math.max(1, page - 1))}
+                            disabled={page === 1}
+                            aria-label="Anterior"
+                        >
+                            &lt;
+                        </button>
+
+                        {/* Primera página */}
+                        {page > 2 && (
+                            <button className={styles.pageButton} onClick={() => setPage(1)}>1</button>
+                        )}
+
+                        {/* Elipsis si hay muchas páginas */}
+                        {page > 3 && <span>...</span>}
+
+                        {/* Páginas cercanas a la actual */}
+                        {Array.from({ length: totalPages }, (_, i) => i + 1)
+                            .filter(num => num === page || num === page - 1 || num === page + 1)
+                            .map(num => (
+                                <button
+                                    key={num}
+                                    className={`${styles.pageButton} ${num === page ? styles.active : ''}`}
+                                    onClick={() => setPage(num)}
+                                >
+                                    {num}
+                                </button>
+                            ))
+                        }
+
+                        {/* Elipsis si hay muchas páginas */}
+                        {page < totalPages - 2 && <span>...</span>}
+
+                        {/* Última página */}
+                        {page < totalPages - 1 && totalPages > 1 && (
+                            <button className={styles.pageButton} onClick={() => setPage(totalPages)}>
+                                {totalPages}
+                            </button>
+                        )}
+
+                        <button
+                            className={styles.pageButton}
+                            onClick={() => setPage(Math.min(totalPages, page + 1))}
+                            disabled={page >= totalPages}
+                            aria-label="Siguiente"
+                        >
+                            &gt;
+                        </button>
+                    </div>
+                </div>
+                </div>
             </div>
 
             {/* Modal de confirmación para eliminar usuario */}
@@ -473,6 +418,13 @@ export const UsersPage = () => {
                 <div className={styles.notification}>
                     <div className={styles.successNotification}>
                         <strong>¡Éxito!</strong> Usuario eliminado correctamente.
+                        <button 
+                            onClick={() => setDeleteSuccess(false)} 
+                            className={styles.closeNotification}
+                            aria-label="Cerrar notificación"
+                        >
+                            ×
+                        </button>
                     </div>
                 </div>
             )}

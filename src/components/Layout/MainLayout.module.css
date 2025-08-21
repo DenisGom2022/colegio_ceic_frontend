@@ -76,7 +76,39 @@
     padding: 20px 28px;
     overflow-y: auto; /* Content area can scroll */
     background-color: #ffffff;
-    min-height: calc(100vh - 80px); /* Ensure it takes full height minus header */
+}
+
+.footer {
+    background-color: #1f2937;
+    color: #f9fafb;
+    padding: 20px 28px;
+    margin-top: auto;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.footerContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footerSection {
+    display: flex;
+    align-items: center;
+}
+
+.footerText {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #d1d5db;
+}
+
+.footerVersion {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    font-weight: 500;
 }
 
 /* Responsive adjustments */
@@ -101,6 +133,16 @@
         padding: 16px 20px;
     }
     
+    .footer {
+        padding: 16px 20px;
+    }
+    
+    .footerContent {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+    
     .contentTitle {
         font-size: 1.5rem;
     }
@@ -118,5 +160,9 @@
     
     .contentMain {
         padding: 24px;
+    }
+    
+    .footer {
+        padding: 20px 24px;
     }
 }
