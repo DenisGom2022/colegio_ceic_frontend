@@ -10,15 +10,12 @@ import {
     FaGraduationCap,
     FaChartLine,
     FaExclamationTriangle,
-    FaRedo,
-    FaSort,
-    FaSortUp,
-    FaSortDown
+    FaRedo
 } from "react-icons/fa";
 import { useCourses } from "../hooks";
 import type { Course } from "../models";
 import DeleteConfirmModal from "../../../../../components/DeleteConfirmModal";
-import styles from "./CoursesPage.module.css";
+import styles from "../../users/pages/UsersPage.module.css";
 
 // Opciones para el número de registros por página
 const PAGE_SIZE_OPTIONS = [5, 10, 15, 25, 50, 100];
@@ -47,8 +44,6 @@ const CoursesPage = () => {
     const [pageSize, setPageSize] = useState(savedFilters?.pageSize || PAGE_SIZE_OPTIONS[1]); // 10 por defecto
     const [searchQuery, setSearchQuery] = useState(savedFilters?.searchQuery || "");
     const [activeSearchQuery, setActiveSearchQuery] = useState(savedFilters?.activeSearchQuery || "");
-    const [sortField, setSortField] = useState<keyof Course>(savedFilters?.sortField || "id");
-    const [sortDirection, setSortDirection] = useState<"asc" | "desc">(savedFilters?.sortDirection || "asc");
     const [lastViewedCourse, setLastViewedCourse] = useState(localStorage.getItem('lastViewedCourse') || "");
     const [highlightedRow, setHighlightedRow] = useState("");
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -63,12 +58,10 @@ const CoursesPage = () => {
             page,
             pageSize,
             searchQuery,
-            activeSearchQuery,
-            sortField,
-            sortDirection
+            activeSearchQuery
         };
         saveFiltersToStorage(filters);
-    }, [page, pageSize, searchQuery, activeSearchQuery, sortField, sortDirection]);
+    }, [page, pageSize, searchQuery, activeSearchQuery]);
     
     // Efecto para resaltar la fila del curso recién consultado
     useEffect(() => {
@@ -107,8 +100,8 @@ const CoursesPage = () => {
         return course.gradoCiclo.ciclo.fechaFin === null;
     };
 
-    // Filtrar y ordenar cursos
-    const filteredAndSortedCourses = useMemo(() => {
+    // Filtrar cursos
+    const filteredCourses = useMemo(() => {
         let filtered = courses;
 
         // Aplicar filtro de búsqueda
@@ -129,56 +122,15 @@ const CoursesPage = () => {
             });
         }
 
-        // Aplicar ordenamiento
-        filtered.sort((a, b) => {
-            let aValue: any;
-            let bValue: any;
-
-            switch (sortField) {
-                case 'nombre':
-                    aValue = a.nombre;
-                    bValue = b.nombre;
-                    break;
-                case 'notaMaxima':
-                    aValue = a.notaMaxima;
-                    bValue = b.notaMaxima;
-                    break;
-                case 'notaAprobada':
-                    aValue = a.notaAprobada;
-                    bValue = b.notaAprobada;
-                    break;
-                case 'dpiCatedratico':
-                    aValue = getFullName(a.catedratico.usuario);
-                    bValue = getFullName(b.catedratico.usuario);
-                    break;
-                case 'createdAt':
-                    aValue = new Date(a.createdAt);
-                    bValue = new Date(b.createdAt);
-                    break;
-                default:
-                    aValue = a.id;
-                    bValue = b.id;
-            }
-
-            if (typeof aValue === 'string') {
-                aValue = aValue.toLowerCase();
-                bValue = bValue.toLowerCase();
-            }
-
-            if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
-            if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
-            return 0;
-        });
-
         return filtered;
-    }, [courses, activeSearchQuery, sortField, sortDirection]);
+    }, [courses, activeSearchQuery]);
 
     // Paginación
-    const totalItems = filteredAndSortedCourses.length;
+    const totalItems = filteredCourses.length;
     const totalPages = Math.ceil(totalItems / pageSize);
     const startIndex = (page - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    const paginatedCourses = filteredAndSortedCourses.slice(startIndex, endIndex);
+    const paginatedCourses = filteredCourses.slice(startIndex, endIndex);
 
     // Funciones de manejo
     const handleSearch = (e: React.FormEvent) => {
@@ -190,16 +142,6 @@ const CoursesPage = () => {
     const handleClearSearch = () => {
         setSearchQuery("");
         setActiveSearchQuery("");
-        setPage(1);
-    };
-
-    const handleSort = (field: keyof Course) => {
-        if (sortField === field) {
-            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-        } else {
-            setSortField(field);
-            setSortDirection('asc');
-        }
         setPage(1);
     };
 
@@ -247,13 +189,6 @@ const CoursesPage = () => {
             month: "short",
             year: "numeric"
         });
-    };
-
-    const getSortIcon = (field: keyof Course) => {
-        if (sortField !== field) return <FaSort className={styles.sortIcon} />;
-        return sortDirection === 'asc' ? 
-            <FaSortUp className={styles.sortIcon} /> : 
-            <FaSortDown className={styles.sortIcon} />;
     };
 
     if (loading) {
@@ -357,41 +292,26 @@ const CoursesPage = () => {
                         <table className={styles.table}>
                             <thead>
                                 <tr className={styles.tableHeader}>
-                                    <th 
-                                        className={styles.tableHeaderCell}
-                                        onClick={() => handleSort('id')}
-                                    >
-                                        ID {getSortIcon('id')}
+                                    <th>
+                                        ID
                                     </th>
-                                    <th 
-                                        className={styles.tableHeaderCell}
-                                        onClick={() => handleSort('nombre')}
-                                    >
-                                        Nombre del curso {getSortIcon('nombre')}
+                                    <th>
+                                        Nombre del curso
                                     </th>
-                                    <th className={styles.tableHeaderCell}>
+                                    <th>
                                         Grado y ciclo
                                     </th>
-                                    <th 
-                                        className={styles.tableHeaderCell}
-                                        onClick={() => handleSort('dpiCatedratico')}
-                                    >
-                                        Catedrático {getSortIcon('dpiCatedratico')}
+                                    <th>
+                                        Catedrático
                                     </th>
-                                    <th 
-                                        className={styles.tableHeaderCell}
-                                        onClick={() => handleSort('notaMaxima')}
-                                    >
-                                        Calificaciones {getSortIcon('notaMaxima')}
+                                    <th>
+                                        Calificaciones
                                     </th>
-                                    <th className={styles.tableHeaderCell}>
+                                    <th>
                                         Estado
                                     </th>
-                                    <th 
-                                        className={styles.tableHeaderCell}
-                                        onClick={() => handleSort('createdAt')}
-                                    >
-                                        Fecha creación {getSortIcon('createdAt')}
+                                    <th>
+                                        Fecha creación
                                     </th>
                                     <th className={styles.actionCell}>
                                         Acciones

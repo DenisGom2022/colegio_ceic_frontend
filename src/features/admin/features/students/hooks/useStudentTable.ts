@@ -19,9 +19,7 @@ interface UseStudentTableResult {
 export const useStudentTable = (
   initialPage: number = 1,
   initialPageSize: number = 10,
-  initialSearchQuery: string = "",
-  initialSortField: string = "primerNombre",
-  initialSortDirection: string = "asc"
+  initialSearchQuery: string = ""
 ): UseStudentTableResult => {
   const [students, setStudents] = useState<StudentsResponse>({
     items: [],
@@ -36,7 +34,7 @@ export const useStudentTable = (
     setError(null);
     
     try {
-      const response = await getStudents(initialPage, initialPageSize, initialSearchQuery, initialSortField, initialSortDirection);
+      const response = await getStudents(initialPage, initialPageSize, initialSearchQuery);
       
       setStudents({
         items: response.students,
@@ -48,7 +46,7 @@ export const useStudentTable = (
     } finally {
       setLoading(false);
     }
-  }, [initialPage, initialPageSize, initialSearchQuery, initialSortField, initialSortDirection]);
+  }, [initialPage, initialPageSize, initialSearchQuery]);
 
   // Cargar datos cuando cambian los parámetros
   useEffect(() => {

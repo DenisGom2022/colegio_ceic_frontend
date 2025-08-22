@@ -20,7 +20,7 @@ export default function Login() {
         if (!isLoading && user) {
             navigate("/dashboard");
         }
-    }, [user, isLoading, navigate]);
+    }, [user, isLoading]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -29,7 +29,7 @@ export default function Login() {
         
         if (respuesta === RESPUESTA_USER.CAMBIA_PASSWORD) {
             return navigate({
-                pathname: "/cambiaContrasena",
+                pathname: "/cambiar-contrasena",
                 search: `?username=${username}`
             });
         } else if (respuesta === RESPUESTA_USER.ERROR) {
@@ -44,85 +44,87 @@ export default function Login() {
                 <h2>BIENVENIDO</h2>
                 <h4 className={styles.subtitle}>COLEGIO CEIC</h4>
                 <p>Accede al portal del Colegio CEIC para consultar tus calificaciones, tareas, avisos y mucho más. ¡Forma parte de nuestra comunidad educativa!</p>
+                
+                <div className={styles.leftPanelFooter}>
+                    <p>Sistema de Gestión Académica</p>
+                    <p>© 2025 Colegio CEIC</p>
+                </div>
             </div>
             <section className={styles.container}>
-                <div className={styles.logoContainer}>
-                    <div className={styles.logoWrapper}>
-                        <img src="/logo.png" alt="CEIC Logo" className={styles.logo} />
-                        <h3 className={styles.logoText}>Colegio CEIC</h3>
-                    </div>
-                </div>
-                
-                <header className={styles.formHeader}>
-                    <h1 className={styles.title}>Iniciar sesión</h1>
-                    <p className={styles.subtitle}>Ingresa tus credenciales para acceder al sistema</p>
-                </header>
-                
-                <form onSubmit={handleSubmit} className={styles.loginForm}>
-                    <div className={styles.formGroup}>
-                        <label htmlFor="username">Usuario</label>
-                        <div className={styles.inputWithIcon}>
-                            <UserIcon />
-                            <input
-                                id="username"
-                                type="text"
-                                value={username}
-                                onChange={e => setUsername(e.target.value)}
-                                required
-                                autoComplete="username"
-                                placeholder="Ingresa tu usuario"
-                                className={styles.formInput}
-                            />
+                <div className={styles.formWrapper}>
+                    <div className={styles.logoContainer}>
+                        <div className={styles.logoWrapper}>
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNKfqTQ-aA9XBPjvCUb00UbnoDSCm3RzJQ1g&s" alt="CEIC Logo" className={styles.logo} />
+                            <h3 className={styles.logoText}>Colegio CEIC</h3>
                         </div>
                     </div>
                     
-                    <div className={styles.formGroup}>
-                        <label htmlFor="password">Contraseña</label>
-                        <div className={styles.passwordContainer}>
+                    <header className={styles.formHeader}>
+                        <h1 className={styles.title}>Iniciar sesión</h1>
+                        <p className={styles.subtitle}>Ingresa tus credenciales para acceder al sistema</p>
+                    </header>
+                    
+                    <form onSubmit={handleSubmit} className={styles.loginForm}>
+                        <div className={styles.formGroup}>
+                            <label htmlFor="username">Usuario</label>
                             <div className={styles.inputWithIcon}>
-                                <LockIcon />
+                                <UserIcon />
                                 <input
-                                    id="password"
-                                    type={showPassword ? "text" : "password"}
-                                    value={password}
-                                    onChange={e => setPassword(e.target.value)}
+                                    id="username"
+                                    type="text"
+                                    value={username}
+                                    onChange={e => setUsername(e.target.value)}
                                     required
-                                    autoComplete="current-password"
-                                    placeholder="Ingresa tu contraseña"
+                                    autoComplete="username"
+                                    placeholder="Ingresa tu usuario"
                                     className={styles.formInput}
                                 />
                             </div>
-                            <button 
-                                type="button"
-                                className={styles.togglePassword}
-                                onClick={() => setShowPassword(v => !v)}
-                            >
-                                {showPassword ? "OCULTAR" : "MOSTRAR"}
-                            </button>
                         </div>
-                    </div>
-                    
-                    <div className={styles.formOptions}>
-                        <label className={styles.rememberMe}>
-                            <input type="checkbox" /> Recuérdame
-                        </label>
-                        <a href="/reiniciar-contrasena" className={styles.forgotPassword}>¿Olvidaste tu contraseña?</a>
-                    </div>
-                    
-                    {error && <div className={styles.error}>{error}</div>}
-                    
-                    <button 
-                        type="submit"
-                        className={styles.loginButton}
-                        disabled={loading}
-                    >
-                        {loading ? 'Cargando...' : 'Iniciar sesión'}
-                    </button>
-                </form>
-                
-                <div className={styles.footerInfo}>
-                    <p>Sistema de Gestión Académica</p>
-                    <p className={styles.footerCredit}>© 2025 Colegio CEIC</p>
+                        
+                        <div className={styles.formGroup}>
+                            <label htmlFor="password">Contraseña</label>
+                            <div className={styles.passwordContainer}>
+                                <div className={styles.inputWithIcon}>
+                                    <LockIcon />
+                                    <input
+                                        id="password"
+                                        type={showPassword ? "text" : "password"}
+                                        value={password}
+                                        onChange={e => setPassword(e.target.value)}
+                                        required
+                                        autoComplete="current-password"
+                                        placeholder="Ingresa tu contraseña"
+                                        className={styles.formInput}
+                                    />
+                                </div>
+                                <button 
+                                    type="button"
+                                    className={styles.togglePassword}
+                                    onClick={() => setShowPassword(v => !v)}
+                                >
+                                    {showPassword ? "OCULTAR" : "MOSTRAR"}
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div className={styles.formOptions}>
+                            <label className={styles.rememberMe}>
+                                <input type="checkbox" /> Recuérdame
+                            </label>
+                            <a href="/reiniciar-contrasena" className={styles.forgotPassword}>¿Olvidaste tu contraseña?</a>
+                        </div>
+                        
+                        {error && <div className={styles.error}>{error}</div>}
+                        
+                        <button 
+                            type="submit"
+                            className={styles.loginButton}
+                            disabled={loading}
+                        >
+                            {loading ? 'Cargando...' : 'Iniciar sesión'}
+                        </button>
+                    </form>
                 </div>
             </section>
         </div>

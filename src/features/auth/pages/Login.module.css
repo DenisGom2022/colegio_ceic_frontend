@@ -29,7 +29,7 @@
   color: #fff;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   padding: 5rem;
   width: 50%;
   position: relative;
@@ -60,22 +60,35 @@
   max-width: 530px;
 }
 
+.leftPanelFooter {
+  margin-top: auto;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
 /* Container for the login form */
 .container {
   width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   padding: 2rem;
   background: white;
+}
+
+.formWrapper {
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Logo */
 .logoContainer {
   display: flex;
-  justify-content: flex-start;
-  margin-bottom: 3rem;
-  padding-left: 4rem;
+  justify-content: center;
+  margin-bottom: 2.5rem;
 }
 
 .logoWrapper {
@@ -84,12 +97,12 @@
 }
 
 .logo {
-  height: 60px;
+  height: 70px;
   width: auto;
 }
 
 .logoText {
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   margin-left: 1rem;
   font-weight: 600;
   color: #1E1D4A;
@@ -97,9 +110,8 @@
 
 /* Form header */
 .formHeader {
-  text-align: left;
+  text-align: center;
   margin-bottom: 2rem;
-  padding: 0 4rem;
 }
 
 .title {
@@ -120,10 +132,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  margin: 0 auto;
   width: 100%;
-  max-width: 500px;
-  padding: 0 4rem;
 }
 
 .formGroup {
@@ -141,20 +150,27 @@
   display: flex;
   align-items: center;
   border: 1px solid #ddd;
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
   padding: 0 0.75rem;
   background: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.inputWithIcon:focus-within {
+  border-color: #1E1D4A;
+  box-shadow: 0 0 0 2px rgba(30, 29, 74, 0.1);
 }
 
 .inputWithIcon svg {
   width: 20px;
   height: 20px;
   color: #777;
+  margin-right: 0.5rem;
 }
 
 .formInput {
   flex: 1;
-  padding: 0.75rem;
+  padding: 0.85rem 0.5rem;
   border: none;
   background: transparent;
   outline: none;
@@ -178,6 +194,7 @@
   font-weight: 600;
   font-size: 0.75rem;
   cursor: pointer;
+  z-index: 1;
 }
 
 /* Form options */
@@ -198,23 +215,66 @@
   color: #1E1D4A;
   text-decoration: none;
   font-weight: 500;
+  transition: color 0.2s;
 }
 
 .forgotPassword:hover {
+  color: #3534A0;
+  text-decoration: underline;
+}
+
+/* Button styles */
+.loginButton {
+  background-color: #1E1D4A;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 0.5rem;
+}
+
+.loginButton:hover {
+  background-color: #2a2968;
+}
+
+.loginButton:disabled {
+  background-color: #8a8aaa;
+  cursor: not-allowed;
+}
+
+/* Error message */
+.error {
+  color: #e63946;
+  background-color: rgba(230, 57, 70, 0.1);
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 0.5rem 0;
+}
+
+.forgotPassword:hover {
+  color: #3534A0;
   text-decoration: underline;
 }
 
 /* Login button */
 .loginButton {
-  margin-top: 1rem;
-  padding: 0.75rem;
+  margin-top: 1.5rem;
+  padding: 0.85rem 1rem;
   background: #1E1D4A;
   color: white;
   border: none;
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s;
+  width: 100%;
 }
 
 .loginButton:hover {
@@ -233,27 +293,30 @@
   margin-top: 0.5rem;
 }
 
-/* Footer info */
-.footerInfo {
-  margin-top: 3rem;
-  text-align: center;
-  color: #777;
-  font-size: 0.875rem;
-}
-
-.footerCredit {
-  margin-top: 0.5rem;
-  font-size: 0.75rem;
+/* Left panel footer */
+.leftPanelFooter {
+  margin-top: auto;
+  font-size: 0.9rem;
+  opacity: 0.7;
 }
 
 /* Media queries for responsive design */
 @media (max-width: 1024px) {
+  .loginBg::before {
+    width: 45%;
+  }
+  
   .leftPanel {
+    width: 45%;
     padding: 3rem;
   }
   
-  .loginForm {
-    padding: 0 3rem;
+  .container {
+    width: 55%;
+  }
+  
+  .formWrapper {
+    max-width: 400px;
   }
   
   .leftPanel h2 {
@@ -268,32 +331,31 @@
   
   .loginBg::before {
     width: 100%;
-    height: 40%;
+    height: 35%;
   }
   
   .leftPanel {
     width: 100%;
-    height: 40%;
+    height: 35%;
     padding: 2rem;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
   }
   
   .container {
     width: 100%;
-    height: 60%;
+    height: 65%;
     padding: 2rem 1rem;
   }
   
+  .formWrapper {
+    max-width: 400px;
+  }
+  
   .logoContainer {
-    padding-left: 2rem;
+    justify-content: center;
     margin-bottom: 1.5rem;
-  }
-  
-  .formHeader {
-    padding: 0 2rem;
-  }
-  
-  .loginForm {
-    padding: 0 2rem;
   }
   
   .leftPanel h2 {
@@ -302,5 +364,11 @@
   
   .leftPanel p {
     font-size: 1rem;
+    max-width: 100%;
+    text-align: center;
+  }
+  
+  .leftPanelFooter {
+    display: none;
   }
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useCycleTable, useDeleteCycle, useFinalizeCycle } from '../hooks';
 import { Link } from "react-router-dom";
-import styles from "./CycleListPage.module.css";
+import styles from "../../users/pages/UsersPage.module.css";
 import type { Ciclo } from "../models/Ciclo";
 import DeleteConfirmModal from "../../../../../components/DeleteConfirmModal";
 import {
@@ -62,32 +62,60 @@ const CycleListPage: React.FC = () => {
             // Calcular la posición del tooltip basado en el evento
             const rect = event.currentTarget.getBoundingClientRect();
             
-            // Posicionamiento dinámico
-            const spaceBelow = window.innerHeight - rect.bottom;
+            // Obtener dimensiones de la ventana y viewport
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            // Dimensiones del tooltip (más conservadoras para evitar scroll)
+            const tooltipWidth = 320;
+            const tooltipHeight = 200; // Reducido para más seguridad
+            
+            // Margen de seguridad más grande
+            const margin = 30;
+            
+            // Calcular posición inicial (debajo del elemento)
+            let left = rect.left;
+            let top = rect.bottom + 10;
+            
+            // Verificar si hay suficiente espacio debajo (más estricto)
+            const spaceBelow = windowHeight - rect.bottom;
             const spaceAbove = rect.top;
-            const spaceRight = window.innerWidth - rect.right;
-            const spaceLeft = rect.left;
             
-            // Decidir si mostrar arriba o abajo
-            if (spaceBelow < 350 && spaceAbove > spaceBelow) {
-                // Mostrar arriba si no hay suficiente espacio abajo
-                tooltip.style.top = `${rect.top - 10}px`;
-                tooltip.style.transform = 'translateY(-100%)';
-            } else {
-                // Mostrar abajo (comportamiento predeterminado)
-                tooltip.style.top = `${rect.bottom + 10}px`;
-                tooltip.style.transform = 'translateY(0)';
+            // Si no hay suficiente espacio debajo, mostrar arriba
+            if (spaceBelow < tooltipHeight + margin) {
+                top = rect.top - tooltipHeight - 10;
             }
             
-            // Decidir si alinear a la izquierda o derecha
-            if (spaceRight < 300 && spaceLeft > spaceRight) {
-                // Alinear a la derecha si no hay suficiente espacio a la izquierda
-                tooltip.style.left = `${rect.right - 280}px`;
-            } else {
-                // Alinear a la izquierda (comportamiento predeterminado)
-                tooltip.style.left = `${rect.left}px`;
+            // Ajustar posición horizontal con mayor margen
+            if (left + tooltipWidth > windowWidth - margin) {
+                left = windowWidth - tooltipWidth - margin;
             }
-
+            if (left < margin) {
+                left = margin;
+            }
+            
+            // Asegurar límites verticales estrictos
+            if (top < margin) {
+                top = margin;
+            }
+            if (top + tooltipHeight > windowHeight - margin) {
+                top = windowHeight - tooltipHeight - margin;
+            }
+            
+            // Verificación final para evitar cualquier desbordamiento
+            if (top < 0) top = 10;
+            if (left < 0) left = 10;
+            if (top + tooltipHeight > windowHeight) {
+                top = windowHeight - tooltipHeight - 10;
+            }
+            if (left + tooltipWidth > windowWidth) {
+                left = windowWidth - tooltipWidth - 10;
+            }
+            
+            // Aplicar posicionamiento
+            tooltip.style.left = `${left}px`;
+            tooltip.style.top = `${top}px`;
+            tooltip.style.transform = 'none';
             tooltip.style.visibility = 'visible';
             tooltip.style.opacity = '1';
         }

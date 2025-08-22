@@ -23,13 +23,13 @@ export default function Login() {
     }, [user, isLoading, navigate]);
 
     const handleSubmit = async (e: React.FormEvent) => {
+        debugger
         e.preventDefault();
         
         const respuesta = await login(username, password);
-        
         if (respuesta === RESPUESTA_USER.CAMBIA_PASSWORD) {
             return navigate({
-                pathname: "/cambiaContrasena",
+                pathname: "/cambiar-contrasena",
                 search: `?username=${username}`
             });
         } else if (respuesta === RESPUESTA_USER.ERROR) {

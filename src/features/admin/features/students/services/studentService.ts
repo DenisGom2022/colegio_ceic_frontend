@@ -20,23 +20,13 @@ const getAuthHeaders = () => {
 export const getStudents = async (
   page: number = 1, 
   pageSize: number = 10, 
-  searchQuery: string = "",
-  sortField: string = "primerNombre",
-  sortDirection: string = "asc"
+  searchQuery: string = ""
 ): Promise<{students: Student[], total: number, totalPages: number}> => {
   try {
     let url = `${API_URL}/alumno?page=${page}&limit=${pageSize}`;
     
     if (searchQuery.trim()) {
       url += `&search=${encodeURIComponent(searchQuery.trim())}`;
-    }
-    
-    if (sortField) {
-      url += `&sortBy=${encodeURIComponent(sortField)}`;
-    }
-    
-    if (sortDirection) {
-      url += `&sortDir=${encodeURIComponent(sortDirection)}`;
     }
     
     const response = await axios.get<{message: string, alumnos: Student[], total?: number, totalPages?: number}>(url, {
@@ -90,24 +80,14 @@ export const getStudentByCui = async (cui: string): Promise<Student> => {
 
 // Obtener todos los estudiantes (sin paginación) para el PDF
 export const getAllStudentsForPDF = async (
-  searchQuery: string = "",
-  sortField: string = "primerNombre",
-  sortDirection: string = "asc"
+  searchQuery: string = ""
 ): Promise<Student[]> => {
   try {
     let url = `${API_URL}/alumno`;
     
-    // Sólo añadimos los parámetros de búsqueda y ordenamiento, no los de paginación
+    // Sólo añadimos los parámetros de búsqueda
     if (searchQuery.trim()) {
       url += `?search=${encodeURIComponent(searchQuery.trim())}`;
-    }
-    
-    if (sortField) {
-      url += `${searchQuery.trim() ? '&' : '?'}sortBy=${encodeURIComponent(sortField)}`;
-    }
-    
-    if (sortDirection) {
-      url += `${searchQuery.trim() || sortField ? '&' : '?'}sortDir=${encodeURIComponent(sortDirection)}`;
     }
     
     const response = await axios.get<{message: string, alumnos: Student[]}>(url, {

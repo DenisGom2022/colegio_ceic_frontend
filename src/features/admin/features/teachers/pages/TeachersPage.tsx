@@ -189,7 +189,7 @@ export const TeachersPage = () => {
                 </td>
                 <td className={styles.actionCell}>
                     <Link
-                        to={`/admin/catedraticos/${teacher.dpi}`}
+                        to={`/admin/catedratico/${teacher.dpi}`}
                         className={`${styles.actionButton} ${styles.view}`}
                         title="Ver detalles"
                         onClick={() => localStorage.setItem('lastViewedTeacher', teacher.idUsuario)}
@@ -197,7 +197,7 @@ export const TeachersPage = () => {
                         <FaEye size={16} />
                     </Link>
                     <Link
-                        to={`/admin/catedraticos/editar/${teacher.dpi}`}
+                        to={`/admin/editar-catedratico/${teacher.dpi}`}
                         className={`${styles.actionButton} ${styles.edit}`}
                         title="Editar catedrático"
                     >
@@ -273,7 +273,7 @@ export const TeachersPage = () => {
                     <span className={styles.badgeCount}>{total}</span>
                 </div>
 
-                <Link to="/admin/catedraticos/crear" className={styles.createButton}>
+                <Link to="/admin/crear-catedratico" className={styles.createButton}>
                     <FaPlus size={16} />
                     Nuevo Catedrático
                 </Link>
