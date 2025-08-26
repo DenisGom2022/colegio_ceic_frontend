@@ -753,7 +753,7 @@ export const GradeDetailPage = () => {
                                         </div>
 
                                         {cicloFinalizado.cursos && cicloFinalizado.cursos.length > 0 && (
-                                            <CoursesTable cursos={cicloFinalizado.cursos} />
+                                            <CoursesTable cursos={cicloFinalizado.cursos} gradeId={grado.id} />
                                         )}
 
                                         {(!cicloFinalizado.cursos || cicloFinalizado.cursos.length === 0) && (

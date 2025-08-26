@@ -1,0 +1,466 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.titleIcon {
+  color: #6366f1;
+  font-size: 1rem;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.searchContainer {
+  position: relative;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.contentBody {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 200px;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid #f3f4f6;
+  border-top: 2px solid #6366f1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.gradesList {
+  padding: 1rem;
+}
+
+.gradeItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #ffffff;
+}
+
+.gradeItem:hover {
+  border-color: #6366f1;
+  background: #f8faff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.gradeIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 8px;
+  color: #0284c7;
+  font-size: 1.25rem;
+}
+
+.gradeInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.gradeName {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 1rem;
+}
+
+.gradeDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.gradeDetailRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.detailIcon {
+  font-size: 0.75rem;
+}
+
+.gradeDate {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.selectIndicator {
+  color: #6366f1;
+  font-size: 1.25rem;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.gradeItem:hover .selectIndicator {
+  opacity: 1;
+}
+
+.noResults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  gap: 1rem;
+  color: #6b7280;
+}
+
+.noResultsIcon {
+  font-size: 3rem;
+  color: #d1d5db;
+}
+
+.noResults p {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.noResults small {
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+/* Paginación */
+.pagination {
+  display: flex !important;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+  flex-shrink: 0;
+  min-height: 80px;
+}
+
+.paginationInfo {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.paginationButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.paginationButton:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.paginationButton:disabled {
+  background: #f9fafb;
+  color: #d1d5db;
+  cursor: not-allowed;
+}
+
+.paginationNumbers {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.paginationNumber {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.paginationNumber:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.paginationNumberActive {
+  background: #6366f1 !important;
+  border-color: #6366f1 !important;
+  color: white !important;
+}
+
+.paginationNumberActive:hover {
+  background: #4f46e5 !important;
+  border-color: #4f46e5 !important;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .modal {
+    margin: 1rem;
+    max-height: 90vh;
+  }
+  
+  .header,
+  .searchContainer {
+    padding: 1rem;
+  }
+  
+  .gradeItem {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+  
+  .selectIndicator {
+    align-self: flex-end;
+  }
+
+  .paginationControls {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .paginationButton {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .paginationNumbers {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+/* Estilos para grados inactivos */
+.gradeItemInactive {
+  opacity: 0.7;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  border: 1px dashed #d1d5db !important;
+  position: relative;
+}
+
+.gradeItemInactive:hover {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border-color: #9ca3af !important;
+}
+
+.gradeIconInactive {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%) !important;
+  color: #9ca3af !important;
+  position: relative;
+}
+
+.inactiveOverlay {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ef4444;
+  color: white;
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-size: 8px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.inactiveText {
+  font-size: 6px;
+}
+
+.gradeNameInactive {
+  color: #6b7280 !important;
+}
+
+.inactiveBadge {
+  display: inline-block;
+  background: #fef3c7;
+  color: #d97706;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.inactiveDetails {
+  color: #9ca3af !important;
+  font-style: italic;
+}
+
+.selectIndicatorInactive {
+  color: #d1d5db !important;
+}
+
+/* Banner de información */
+.infoBanner {
+  background: #f0f9ff;
+  border: 1px solid #e0f2fe;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 0 1.5rem 1rem 1.5rem;
+}
+
+.infoBannerContent {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  align-items: center;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.activeIndicator {
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 2px solid #0284c7;
+  border-radius: 4px;
+}
+
+.inactiveIndicator {
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border: 1px dashed #9ca3af;
+  border-radius: 4px;
+}

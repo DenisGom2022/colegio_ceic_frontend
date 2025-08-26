@@ -1,0 +1,55 @@
+.courseButton {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 250px;
+}
+
+.courseButton:hover {
+  border-color: #4a6da7;
+  background-color: #f8f9fa;
+}
+
+.courseButton.active {
+  border-color: #4a6da7;
+  background-color: #f0f4f8;
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-color: #4a6da7;
+  flex-shrink: 0;
+}
+
+.icon {
+  color: white;
+  font-size: 1.5rem;
+}
+
+.content {
+  flex: 1;
+}
+
+.label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 0.25rem 0;
+}
+
+.description {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0;
+}

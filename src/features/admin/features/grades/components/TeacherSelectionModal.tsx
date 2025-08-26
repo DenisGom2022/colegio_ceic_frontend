@@ -80,6 +80,7 @@ const TeacherSelectionModal: React.FC<TeacherSelectionModalProps> = ({
   const handleConfirmSelection = () => {
     if (selectedTeacher) {
       onSelect(selectedTeacher);
+      handleClose(); // Cerrar el modal después de seleccionar
     }
   };
 

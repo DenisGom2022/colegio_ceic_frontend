@@ -209,6 +209,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
     color: #6b7280;
+    text-decoration: none;
 }
 
 .actionBtn:hover {

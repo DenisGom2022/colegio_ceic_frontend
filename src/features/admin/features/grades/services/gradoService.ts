@@ -218,6 +218,56 @@ export const gradoService = {
       throw error.response?.data?.message || 'Error al obtener el grado';
     }
   },
+  
+  // Nueva función para obtener grados con ciclos activos
+  getGradosWithActiveCycles: async (): Promise<Grado[]> => {
+    try {
+      const token = localStorage.getItem('ceic_token');
+      // Obtener todos los grados sin paginación
+      const response = await axios.get(`${environments.VITE_API_URL}/grado?limit=1000`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      if (!response.data || !response.data.grados) {
+        return [];
+      }
+      
+      // Obtener detalles completos de cada grado
+      const gradosWithDetails = await Promise.all(
+        response.data.grados.map(async (grado: Grado) => {
+          try {
+            return await gradoService.getGradoById(grado.id.toString());
+          } catch (error) {
+            console.error(`Error al obtener detalles del grado ${grado.id}:`, error);
+            return null;
+          }
+        })
+      );
+      
+      // Filtrar grados nulos y que tengan ciclos activos
+      return gradosWithDetails
+        .filter((grado): grado is Grado => grado !== null)
+        .filter((grado) => {
+          // Revisar si tiene ciclosActivos definidos
+          if (grado.ciclosActivos && grado.ciclosActivos.length > 0) {
+            return true;
+          }
+          
+          // Si no tiene ciclosActivos, revisar en gradosCiclo si hay algún ciclo sin fechaFin
+          if (grado.gradosCiclo && grado.gradosCiclo.length > 0) {
+            return grado.gradosCiclo.some(gc => gc.ciclo.fechaFin === null);
+          }
+          
+          return false;
+        });
+    } catch (error: any) {
+      console.error('Error al obtener grados con ciclos activos:', error);
+      throw error.response?.data?.message || 'Error al obtener grados con ciclos activos';
+    }
+  },
+
   asignarCicloActual: async (data: AsignarCicloActualDTO): Promise<AsignarCicloActualResponse> => {
     try {
       const token = localStorage.getItem('ceic_token');

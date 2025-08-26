@@ -155,12 +155,13 @@ const CoursesTable: FC<CoursesTableProps> = ({ cursos, gradeId, showAddButton = 
                                 </td>
                                 <td className={styles.tableCell}>
                                     <div className={styles.actionsCell}>
-                                        <button 
+                                        <Link
+                                            to={`/admin/cursos/${curso.id}?return=grade&gradeId=${gradeId}`}
                                             className={`${styles.actionBtn} ${styles.viewBtn}`} 
                                             title="Ver detalles del curso"
                                         >
                                             <FaEye size={14} />
-                                        </button>
+                                        </Link>
                                         <button 
                                             className={`${styles.actionBtn} ${styles.editBtn}`} 
                                             title="Editar curso"

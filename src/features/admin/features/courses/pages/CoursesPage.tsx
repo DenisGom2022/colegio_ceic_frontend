@@ -381,7 +381,7 @@ const CoursesPage = () => {
                                         </td>
                                         <td className={styles.actionCell}>
                                             <Link
-                                                to={`/admin/curso/${course.id}`}
+                                                to={`/admin/cursos/${course.id}?return=courses`}
                                                 className={`${styles.actionButton} ${styles.view}`}
                                                 title="Ver detalles"
                                                 onClick={() => localStorage.setItem('lastViewedCourse', course.id.toString())}

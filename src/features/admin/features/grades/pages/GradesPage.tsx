@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
     FaSearch,
@@ -7,867 +7,599 @@ import {
     FaTrash,
     FaPlus,
     FaGraduationCap,
-    FaTh,
     FaFilter,
-    FaSort,
-    FaChartBar
+    FaLayerGroup,
+    FaCheck,
+    FaExclamationTriangle,
+    FaUserGraduate,
+    FaMoneyBillAlt
 } from "react-icons/fa";
 import { useGradeTable } from "../hooks/useGradeTable";
-import type { Grado } from "../services/gradoService";
 import DeleteConfirmModal from "../../../../../components/DeleteConfirmModal";
 import { deleteGrado } from "../services/gradoService";
 import styles from "./GradesPage.module.css";
 
-// Tipos para mejor tipado
-interface GradeFilters {
-    page: number;
-    pageSize: number;
-    searchQuery: string;
-    activeSearchQuery: string;
-    sortField: string;
-    sortDirection: 'asc' | 'desc';
-    levelFilter: string;
-    statusFilter: string;
+// Interfaces para los datos del backend
+interface Ciclo {
+    id: number;
+    descripcion: string;
+    createdAt: string;
+    fechaFin: string | null;
+    updatedAt: string;
+    deletedAt: null;
 }
 
+interface GradoCiclo {
+    id: number;
+    idGrado: number;
+    idCiclo: number;
+    precioPago: string;
+    cantidadPagos: number;
+    precioInscripcion: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: null;
+    ciclo: Ciclo;
+}
+
+interface NivelAcademico {
+    id: number;
+    descripcion: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: null;
+}
+
+interface Jornada {
+    id: number;
+    descripcion: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: null;
+}
+
+interface Grado {
+    id: number;
+    nombre: string;
+    idNivel: number;
+    idJornada: number;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: null;
+    nivelAcademico: NivelAcademico;
+    jornada: Jornada;
+    gradosCiclo: GradoCiclo[];
+}
+
+// Interface para estadísticas de grados
 interface GradeStatistics {
     total: number;
-    active: number;
-    inactive: number;
     byLevel: Record<string, number>;
+    byJornada: Record<string, number>;
+    withCiclos: number;
+    withoutCiclos: number;
 }
 
-// Opciones para el número de registros por página
-const PAGE_SIZE_OPTIONS = [6, 12, 24, 48] as const;
-
-// Opciones de filtrado
-const LEVEL_FILTER_OPTIONS = [
-    { value: '', label: 'Todos los niveles' },
-    { value: 'primaria', label: 'Primaria' },
-    { value: 'secundaria', label: 'Secundaria' },
-    { value: 'bachillerato', label: 'Bachillerato' }
-] as const;
-
-const STATUS_FILTER_OPTIONS = [
-    { value: '', label: 'Todos los estados' },
-    { value: 'active', label: 'Activos' },
-    { value: 'inactive', label: 'Inactivos' }
-] as const;
-
-// Opciones de ordenamiento
-const SORT_OPTIONS = [
-    { value: 'id', label: 'ID' },
-    { value: 'nombre', label: 'Nombre' },
-    { value: 'createdAt', label: 'Fecha de creación' },
-    { value: 'nivelAcademico', label: 'Nivel académico' }
-] as const;
-
-// Funciones para persistir y recuperar los filtros en localStorage
-const saveFiltersToStorage = (filters: any) => {
-    localStorage.setItem('gradesFilters', JSON.stringify(filters));
-};
-
-const getFiltersFromStorage = () => {
-    const savedFilters = localStorage.getItem('gradesFilters');
-    if (savedFilters) {
-        return JSON.parse(savedFilters);
-    }
-    return null;
-};
-
 const GradesPage: React.FC = () => {
-    // === ESTADO Y CONFIGURACIÓN ===
-    const savedFilters = getFiltersFromStorage();
-    
-    // Estados de filtros y paginación
-    const [page, setPage] = useState(savedFilters?.page || 1);
-    const [pageSize, setPageSize] = useState(savedFilters?.pageSize || PAGE_SIZE_OPTIONS[1]);
-    const [searchQuery, setSearchQuery] = useState(savedFilters?.searchQuery || "");
-    const [activeSearchQuery, setActiveSearchQuery] = useState(savedFilters?.activeSearchQuery || "");
-    const [sortField, setSortField] = useState(savedFilters?.sortField || "id");
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(savedFilters?.sortDirection || "asc");
-    const [levelFilter, setLevelFilter] = useState(savedFilters?.levelFilter || "");
-    const [statusFilter, setStatusFilter] = useState(savedFilters?.statusFilter || "");
-    const [showFilters, setShowFilters] = useState(false);
-    
-    // Estados de UI
-    const [lastViewedGrade, setLastViewedGrade] = useState(localStorage.getItem('lastViewedGrade') || "");
-    const [highlightedRow, setHighlightedRow] = useState("");
-    
-    // Estados del modal de eliminación
+    // Estados
+    const [page, setPage] = useState(1);
+    const pageSize = 10;
+    const [searchQuery, setSearchQuery] = useState("");
+    const [activeSearchTerm, setActiveSearchTerm] = useState("");
+    const [sortField, setSortField] = useState("");
+    const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [gradeToDelete, setGradeToDelete] = useState<number | null>(null);
-    const [deleteSuccess, setDeleteSuccess] = useState(false);
-    const [deleteError, setDeleteError] = useState<string | null>(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
-    
-    // === HOOK DE DATOS ===
+    const [showFilters, setShowFilters] = useState(false);
+    const [stats, setStats] = useState<GradeStatistics>({
+        total: 0,
+        byLevel: {},
+        byJornada: {},
+        withCiclos: 0,
+        withoutCiclos: 0
+    });
+
+    // Obtener datos con el hook useGradeTable
     const {
         grades,
         loading,
         error,
-        refetch: recargarDatos
+        refetch
     } = useGradeTable({
         page,
         limit: pageSize,
-        searchTerm: activeSearchQuery,
-        sortField,
-        sortDirection
+        searchTerm: activeSearchTerm,
+        sortField: sortField || undefined,
+        sortDirection: sortDirection || undefined
     });
-    
-    // === EFECTOS ===
-    
-    // Persistir filtros en localStorage
+
+    // Calcular estadísticas cuando se cargan los grados
     useEffect(() => {
-        const filters: GradeFilters = {
-            page,
-            pageSize,
-            searchQuery,
-            activeSearchQuery,
-            sortField,
-            sortDirection,
-            levelFilter,
-            statusFilter
-        };
-        saveFiltersToStorage(filters);
-    }, [page, pageSize, searchQuery, activeSearchQuery, sortField, sortDirection, levelFilter, statusFilter]);
-
-    // Calcular estadísticas de grados
-    const gradeStatistics = useMemo((): GradeStatistics => {
-        if (!grades?.grados) {
-            return { total: 0, active: 0, inactive: 0, byLevel: {} };
-        }
-
-        const stats = grades.grados.reduce((acc, grade) => {
-            const hasActiveCycle = grade.gradosCiclo?.some((gc: any) => 
-                gc.ciclo && gc.ciclo.fechaFin === null
-            );
+        if (!loading && !error && grades && grades.grados && grades.grados.length > 0) {
+            const items = grades.grados;
             
-            if (hasActiveCycle) acc.active++;
-            else acc.inactive++;
-
-            const level = grade.nivelAcademico?.descripcion || 'Sin nivel';
-            acc.byLevel[level] = (acc.byLevel[level] || 0) + 1;
-
-            return acc;
-        }, { active: 0, inactive: 0, byLevel: {} as Record<string, number> });
-
-        return {
-            total: grades.total || grades.grados.length,
-            ...stats
-        };
-    }, [grades]);
-
-    // Filtrar grados aplicando filtros adicionales
-    const filteredGrades = useMemo(() => {
-        if (!grades?.grados) return [];
-
-        return grades.grados.filter(grade => {
-            // Filtro por nivel académico
-            if (levelFilter) {
-                const gradeLevel = grade.nivelAcademico?.descripcion?.toLowerCase() || '';
-                if (!gradeLevel.includes(levelFilter.toLowerCase())) {
-                    return false;
-                }
-            }
-
-            // Filtro por estado
-            if (statusFilter) {
-                const hasActiveCycle = grade.gradosCiclo?.some((gc: any) => 
-                    gc.ciclo && gc.ciclo.fechaFin === null
-                );
+            const byLevel: Record<string, number> = {};
+            const byJornada: Record<string, number> = {};
+            let withCiclos = 0;
+            let withoutCiclos = 0;
+            
+            // Calcular estadísticas
+            items.forEach((grade: any) => {
+                // Contar por nivel académico
+                const nivelDesc = grade.nivelAcademico?.descripcion || 'Sin nivel';
+                byLevel[nivelDesc] = (byLevel[nivelDesc] || 0) + 1;
                 
-                if (statusFilter === 'active' && !hasActiveCycle) return false;
-                if (statusFilter === 'inactive' && hasActiveCycle) return false;
-            }
-
-            return true;
-        });
-    }, [grades?.grados, levelFilter, statusFilter]);
-    
-    // Resaltar grado recién consultado
-    useEffect(() => {
-        if (lastViewedGrade && grades?.grados && grades.grados.length > 0 && 
-            grades.grados.some(g => g?.id.toString() === lastViewedGrade)) {
-            setHighlightedRow(lastViewedGrade);
+                // Contar por jornada
+                const jornadaDesc = grade.jornada?.descripcion || 'Sin jornada';
+                byJornada[jornadaDesc] = (byJornada[jornadaDesc] || 0) + 1;
+                
+                // Contar grados con o sin ciclos
+                if (grade.gradosCiclo && grade.gradosCiclo.length > 0) {
+                    withCiclos++;
+                } else {
+                    withoutCiclos++;
+                }
+            });
             
-            const timer = setTimeout(() => {
-                setHighlightedRow("");
-                localStorage.removeItem('lastViewedGrade');
-                setLastViewedGrade("");
-            }, 900);
+            const statsData: GradeStatistics = {
+                total: grades.total || 0,
+                byLevel,
+                byJornada,
+                withCiclos,
+                withoutCiclos
+            };
             
-            return () => clearTimeout(timer);
+            setStats(statsData);
         }
-    }, [lastViewedGrade, grades]);
-    
-    // === FUNCIONES UTILITARIAS ===
-    
-    /**
-     * Obtiene las iniciales para el avatar del grado
-     */
-    const getInitials = useCallback((grade: Grado): string => {
-        if (!grade.nombre) return "NA";
-        
-        const words = grade.nombre.split(' ');
-        if (words.length >= 2) {
-            return `${words[0].charAt(0)}${words[1].charAt(0)}`.toUpperCase();
-        }
-        return grade.nombre.charAt(0).toUpperCase();
-    }, []);
-    
-    /**
-     * Formatea una fecha a formato legible en español
-     */
-    const formatDate = useCallback((dateString: string | undefined): string => {
-        if (!dateString) return "";
-        
-        const date = new Date(dateString);
-        return date.toLocaleDateString("es-ES", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-        });
-    }, []);
+    }, [grades, loading, error]);
 
-    /**
-     * Obtiene el color del avatar basado en el nivel académico
-     */
-    const getAvatarColor = useCallback((grade: Grado): string => {
-        const nivel = grade.nivelAcademico?.descripcion?.toLowerCase();
-        if (nivel?.includes('primaria')) return 'primary';
-        if (nivel?.includes('secundaria')) return 'secondary';
-        if (nivel?.includes('bachillerato')) return 'tertiary';
-        return 'default';
-    }, []);
-
-    /**
-     * Obtiene el estado de un grado (activo/inactivo)
-     */
-    const getGradeStatus = useCallback((grade: Grado): 'active' | 'inactive' => {
-        const hasActiveCycle = grade.gradosCiclo?.some((gc: any) => 
-            gc.ciclo && gc.ciclo.fechaFin === null
-        );
-        return hasActiveCycle ? 'active' : 'inactive';
-    }, []);
-
-    /**
-     * Limpia todos los filtros aplicados
-     */
-    const clearAllFilters = useCallback((): void => {
-        setActiveSearchQuery("");
-        setSearchQuery("");
-        setLevelFilter("");
-        setStatusFilter("");
-        setSortField("id");
-        setSortDirection("asc");
+    // Manejar búsqueda
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        setActiveSearchTerm(searchQuery);
         setPage(1);
-    }, []);
+    };
 
-    /**
-     * Aplica ordenamiento a los grados
-     */
-    const handleSort = useCallback((field: string): void => {
+    const clearSearch = () => {
+        setSearchQuery("");
+        setActiveSearchTerm("");
+        setPage(1);
+    };
+
+    // Manejar cambios en ordenación
+    const handleSort = (field: string) => {
         if (sortField === field) {
-            setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+            setSortDirection(sortDirection === "asc" ? "desc" : "asc");
         } else {
             setSortField(field);
-            setSortDirection('asc');
+            setSortDirection("asc");
         }
         setPage(1);
-    }, [sortField]);
-    
-    // === MANEJADORES DE EVENTOS ===
-    
-    /**
-     * Maneja la búsqueda de grados
-     */
-    const handleSearch = (e: React.FormEvent): void => {
-        e.preventDefault();
-        setActiveSearchQuery(searchQuery);
-        setPage(1);
     };
-    
-    /**
-     * Limpia la búsqueda activa
-     */
-    const clearSearch = (): void => {
-        setActiveSearchQuery("");
-        setSearchQuery("");
-        setPage(1);
-    };
-    
-    /**
-     * Maneja el cambio en el input de búsqueda
-     */
-    const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        setSearchQuery(e.target.value);
-        if (e.target.value === "" && activeSearchQuery !== "") {
-            setActiveSearchQuery("");
-            setPage(1);
-        }
-    };
-    
-    // === MANEJADORES DEL MODAL DE ELIMINACIÓN ===
-    
-    /**
-     * Abre el modal de confirmación de eliminación
-     */
-    const handleOpenDeleteModal = (grade: Grado): void => {
-        setGradeToDelete(grade.id);
+
+    // Mostrar modal de confirmación para eliminar
+    const handleDeleteClick = (id: number) => {
+        setGradeToDelete(id);
         setDeleteModalOpen(true);
     };
-    
-    /**
-     * Cierra el modal de confirmación de eliminación
-     */
-    const handleCloseDeleteModal = (): void => {
+
+    // Cerrar modal de confirmación
+    const handleCloseDeleteModal = () => {
         setDeleteModalOpen(false);
         setGradeToDelete(null);
     };
-    
-    /**
-     * Confirma y ejecuta la eliminación del grado
-     */
-    const handleConfirmDelete = async (id: string): Promise<void> => {
+
+    // Confirmar eliminación de grado
+    const handleConfirmDelete = async () => {
+        if (gradeToDelete === null) return;
+        
         setDeleteLoading(true);
         try {
-            await deleteGrado(parseInt(id));
-            setDeleteSuccess(true);
-            setDeleteModalOpen(false);
-            
-            // Limpiar notificación después de 3 segundos
-            setTimeout(() => {
-                setDeleteSuccess(false);
-            }, 3000);
-            
-            // Recargar datos
-            recargarDatos();
-        } catch (error: any) {
-            setDeleteError(error.message || "Error al eliminar el grado");
+            await deleteGrado(gradeToDelete);
+            refetch();
+        } catch (err) {
+            console.error("Error al eliminar grado:", err);
         } finally {
             setDeleteLoading(false);
+            setDeleteModalOpen(false);
+            setGradeToDelete(null);
         }
     };
 
-    // === RENDERIZADO DE TARJETAS ===
-    
-    /**
-     * Renderiza una tarjeta individual de grado con diseño profesional
-     */
-    const renderGradeCard = useCallback((grade: Grado): React.ReactElement => {
-        const activeCycle = grade.gradosCiclo?.find((gc: any) => 
-            gc.ciclo && gc.ciclo.fechaFin === null
-        );
-        const status = getGradeStatus(grade);
-        const initials = getInitials(grade);
+    // Función para recargar datos
+    const recargarDatos = () => {
+        refetch();
+    };
 
-        return (
-            <div 
-                key={grade.id} 
-                className={`${styles.gradeCard} ${styles[status]} ${
-                    highlightedRow === grade.id.toString() ? styles.highlighted : ''
-                }`}
-            >
-                {/* Avatar con iniciales profesional */}
-                <div className={styles.cardAvatar}>
-                    <div className={`${styles.avatarCircle} ${styles[getAvatarColor(grade)]}`}>
-                        <span className={styles.avatarInitials}>{initials}</span>
-                    </div>
-                    <div className={styles.avatarIcon}>
-                        <FaGraduationCap />
-                    </div>
-                </div>
-
-                {/* Badge de estado profesional */}
-                <div className={styles.cardBadge}>
-                    <span className={`${styles.statusBadge} ${styles[status]}`}>
-                        {status === 'active' ? 'ACTIVO' : 'INACTIVO'}
-                    </span>
-                </div>
-
-                {/* Contenido principal mejorado */}
-                <div className={styles.cardContent}>
-                    <div className={styles.cardMeta}>
-                        <span className={styles.cardId}>#{grade.id}</span>
-                        <span className={styles.cardLevel}>
-                            {grade.nivelAcademico?.descripcion || 'Nivel no definido'}
-                        </span>
-                    </div>
-                    
-                    <h3 className={styles.cardTitle}>
-                        {grade.nombre || 'Grado sin nombre'}
-                    </h3>
-                    
-                    <div className={styles.cardDetails}>
-                        {activeCycle ? (
-                            <>
-                                <div className={styles.cardDetailItem}>
-                                    <span className={styles.detailLabel}>Ciclo:</span>
-                                    <span className={styles.detailValue}>
-                                        {activeCycle.ciclo?.descripcion || `Ciclo ${activeCycle.idCiclo}`}
-                                    </span>
-                                </div>
-                                <div className={styles.cardDetailItem}>
-                                    <span className={styles.detailLabel}>Precio:</span>
-                                    <span className={styles.detailValue}>
-                                        Q{activeCycle.precioPago} ({activeCycle.cantidadPagos} pagos)
-                                    </span>
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <div className={styles.cardDetailItem}>
-                                    <span className={styles.detailLabel}>Jornada:</span>
-                                    <span className={styles.detailValue}>
-                                        {grade.jornada?.descripcion || 'No definida'}
-                                    </span>
-                                </div>
-                                <div className={styles.cardDetailItem}>
-                                    <span className={styles.detailLabel}>Creado:</span>
-                                    <span className={styles.detailValue}>
-                                        {formatDate(grade.createdAt)}
-                                    </span>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                </div>
-
-                {/* Acciones profesionales */}
-                <div className={styles.cardActions}>
-                    <div className={styles.actionGroup}>
-                        <Link
-                            to={`/admin/grado/${grade.id}`}
-                            className={`${styles.actionButton} ${styles.view}`}
-                            title="Ver detalles completos"
-                            onClick={() => localStorage.setItem('lastViewedGrade', grade.id.toString())}
-                        >
-                            <FaEye />
-                            <span>Ver</span>
-                        </Link>
-                        <Link
-                            to={`/admin/editar-grado/${grade.id}`}
-                            className={`${styles.actionButton} ${styles.edit}`}
-                            title="Editar información del grado"
-                        >
-                            <FaPencilAlt />
-                            <span>Editar</span>
-                        </Link>
-                        <button 
-                            className={`${styles.actionButton} ${styles.delete}`} 
-                            title="Eliminar grado permanentemente"
-                            onClick={() => handleOpenDeleteModal(grade)}
-                        >
-                            <FaTrash />
-                            <span>Eliminar</span>
-                        </button>
-                    </div>
-                </div>
-
-                {/* Indicador de última visualización */}
-                {highlightedRow === grade.id.toString() && (
-                    <div className={styles.recentlyViewed}>
-                        <span>Recientemente consultado</span>
-                    </div>
-                )}
-            </div>
-        );
-    }, [highlightedRow, getGradeStatus, getInitials, getAvatarColor, formatDate, handleOpenDeleteModal]);
-    
-    // === COMPONENTES DE RENDERIZADO ===
-    
-    /**
-     * Renderiza el estado de carga
-     */
-    const renderLoadingState = (): React.ReactElement => (
-        <div className={styles.loadingContainer}>
-            <div className={styles.loadingSpinner}></div>
-            <div className={styles.loadingText}>Cargando grados...</div>
-        </div>
-    );
-
-    /**
-     * Renderiza el estado de error
-     */
-    const renderErrorState = (): React.ReactElement => (
-        <div className={styles.errorContainer}>
-            <div className={styles.errorIcon}>⚠️</div>
-            <div className={styles.errorMessage}>Error: {error}</div>
-            <button 
-                className={styles.reloadButton} 
-                onClick={() => window.location.reload()}
-            >
-                Reintentar
-            </button>
-        </div>
-    );
-
-    /**
-     * Renderiza el encabezado principal de la página con estadísticas
-     */
-    const renderPageHeader = (): React.ReactElement => (
-        <div className={styles.pageHeader}>
-            <div className={styles.headerContent}>
-                <div className={styles.titleSection}>
-                    <h1 className={styles.pageTitle}>
-                        <FaGraduationCap className={styles.titleIcon} />
-                        Gestión de Grados Académicos
-                    </h1>
-                    <p className={styles.pageSubtitle}>
-                        Sistema integral para la administración y organización de grados académicos
-                    </p>
-                </div>
-                <div className={styles.statsSection}>
-                    <div className={styles.statCard}>
-                        <div className={styles.statNumber}>{gradeStatistics.total}</div>
-                        <div className={styles.statLabel}>Total</div>
-                        <div className={styles.statIcon}>
-                            <FaChartBar />
-                        </div>
-                    </div>
-                    <div className={styles.statCard}>
-                        <div className={styles.statNumber}>{gradeStatistics.active}</div>
-                        <div className={styles.statLabel}>Activos</div>
-                        <div className={styles.statIcon}>
-                            <FaGraduationCap />
-                        </div>
-                    </div>
-                    <div className={styles.statCard}>
-                        <div className={styles.statNumber}>{gradeStatistics.inactive}</div>
-                        <div className={styles.statLabel}>Inactivos</div>
-                        <div className={styles.statIcon}>
-                            <FaTh />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className={styles.headerActions}>
-                <button 
-                    className={styles.filterToggle}
-                    onClick={() => setShowFilters(!showFilters)}
-                    title="Mostrar/Ocultar filtros avanzados"
-                >
-                    <FaFilter />
-                    Filtros
-                </button>
-                <Link to="/admin/crear-grado" className={styles.createButton}>
-                    <FaPlus className={styles.buttonIcon} />
-                    Nuevo Grado
-                </Link>
-            </div>
-        </div>
-    );
-
-    /**
-     * Renderiza la barra de herramientas y filtros
-     */
-    const renderToolbar = (): React.ReactElement => (
-        <div className={styles.toolbarSection}>
-            <div className={styles.searchSection}>
-                <form className={styles.searchForm} onSubmit={handleSearch}>
-                    <div className={styles.searchInputGroup}>
-                        <FaSearch className={styles.searchIcon} />
-                        <input
-                            type="text"
-                            className={styles.searchInput}
-                            placeholder="Buscar por nombre, nivel académico o jornada..."
-                            value={searchQuery}
-                            onChange={handleSearchInputChange}
-                        />
-                        {searchQuery && (
-                            <button
-                                type="button"
-                                className={styles.clearButton}
-                                onClick={clearSearch}
-                                title="Limpiar búsqueda"
-                            >
-                                ×
-                            </button>
-                        )}
-                    </div>
-                    <button 
-                        type="submit" 
-                        className={styles.searchButton}
-                        disabled={!searchQuery.trim()}
-                    >
-                        Buscar
-                    </button>
-                </form>
-            </div>
-            
-            {showFilters && (
-                <div className={styles.filtersSection}>
-                    <div className={styles.filterGroup}>
-                        <label className={styles.filterLabel}>Nivel Académico</label>
-                        <select
-                            className={styles.filterSelect}
-                            value={levelFilter}
-                            onChange={(e) => {
-                                setLevelFilter(e.target.value);
-                                setPage(1);
-                            }}
-                        >
-                            {LEVEL_FILTER_OPTIONS.map(option => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className={styles.filterGroup}>
-                        <label className={styles.filterLabel}>Estado</label>
-                        <select
-                            className={styles.filterSelect}
-                            value={statusFilter}
-                            onChange={(e) => {
-                                setStatusFilter(e.target.value);
-                                setPage(1);
-                            }}
-                        >
-                            {STATUS_FILTER_OPTIONS.map(option => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className={styles.filterGroup}>
-                        <label className={styles.filterLabel}>Ordenar por</label>
-                        <div className={styles.sortControls}>
-                            <select
-                                className={styles.filterSelect}
-                                value={sortField}
-                                onChange={(e) => setSortField(e.target.value)}
-                            >
-                                {SORT_OPTIONS.map(option => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </select>
-                            <button
-                                className={styles.sortDirection}
-                                onClick={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
-                                title={`Ordenar ${sortDirection === 'asc' ? 'descendente' : 'ascendente'}`}
-                            >
-                                <FaSort />
-                                {sortDirection === 'asc' ? '↑' : '↓'}
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className={styles.filterActions}>
-                        <button 
-                            className={styles.clearFiltersButton}
-                            onClick={clearAllFilters}
-                            title="Limpiar todos los filtros"
-                        >
-                            Limpiar Filtros
-                        </button>
-                    </div>
-                </div>
-            )}
-            
-            <div className={styles.controlsSection}>
-                <div className={styles.resultInfo}>
-                    <span className={styles.resultCount}>
-                        {filteredGrades.length} de {gradeStatistics.total} grados
-                    </span>
-                    {(levelFilter || statusFilter || activeSearchQuery) && (
-                        <span className={styles.filterIndicator}>
-                            (Filtros aplicados)
-                        </span>
-                    )}
-                </div>
-                <div className={styles.viewOptions}>
-                    <FaTh className={styles.viewIcon} />
-                    <span>Vista de tarjetas</span>
-                </div>
-            </div>
-        </div>
-    );
-
-    /**
-     * Renderiza la paginación
-     */
-    const renderPagination = (): React.ReactElement => {
-        const totalPages = grades?.totalPages || 0;
+    // Retrasar búsqueda mientras se escribe
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (searchQuery === "") {
+                setActiveSearchTerm("");
+            }
+        }, 300);
         
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    // Preparar datos filtrados para visualización
+    const filteredGrades = grades?.grados || [];
+
+    // Vista de carga
+    if (loading && !filteredGrades.length) {
         return (
-            <div className={styles.paginationSection}>
-                <div className={styles.paginationInfo}>
-                    <span>Mostrar</span>
-                    <select
-                        className={styles.pageSizeSelect}
-                        value={pageSize}
-                        onChange={(e) => {
-                            setPageSize(Number(e.target.value));
-                            setPage(1);
-                        }}
-                    >
-                        {PAGE_SIZE_OPTIONS.map(size => (
-                            <option key={size} value={size}>{size}</option>
-                        ))}
-                    </select>
-                    <span>por página</span>
+            <div className={styles.loadingContainer}>
+                <div className={styles.loadingContent}>
+                    <div className={styles.loadingSpinner}></div>
+                    <p>Cargando grados académicos...</p>
                 </div>
-
-                {totalPages > 1 && (
-                    <div className={styles.paginationControls}>
-                        <button
-                            className={`${styles.pageButton} ${page === 1 ? styles.disabled : ''}`}
-                            onClick={() => setPage(Math.max(1, page - 1))}
-                            disabled={page === 1}
-                        >
-                            Anterior
-                        </button>
-                        
-                        <div className={styles.pageNumbers}>
-                            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                                let pageNum;
-                                if (totalPages <= 5) {
-                                    pageNum = i + 1;
-                                } else if (page <= 3) {
-                                    pageNum = i + 1;
-                                } else if (page >= totalPages - 2) {
-                                    pageNum = totalPages - 4 + i;
-                                } else {
-                                    pageNum = page - 2 + i;
-                                }
-                                
-                                return (
-                                    <button
-                                        key={pageNum}
-                                        className={`${styles.pageNumber} ${page === pageNum ? styles.active : ''}`}
-                                        onClick={() => setPage(pageNum)}
-                                    >
-                                        {pageNum}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                        
-                        <button
-                            className={`${styles.pageButton} ${page >= totalPages ? styles.disabled : ''}`}
-                            onClick={() => setPage(Math.min(totalPages, page + 1))}
-                            disabled={page >= totalPages}
-                        >
-                            Siguiente
-                        </button>
-                    </div>
-                )}
             </div>
         );
-    };
+    }
 
-    /**
-     * Renderiza las notificaciones del sistema
-     */
-    const renderNotifications = (): React.ReactElement | null => {
-        if (!deleteSuccess && !deleteError) return null;
-
+    // Vista de error
+    if (error) {
         return (
-            <div className={styles.notificationContainer}>
-                {deleteSuccess && (
-                    <div className={styles.successNotification}>
-                        <div className={styles.notificationIcon}>✓</div>
-                        <div className={styles.notificationContent}>
-                            <strong>¡Éxito!</strong>
-                            <span>Grado eliminado correctamente.</span>
-                        </div>
+            <div className={styles.errorContainer}>
+                <div className={styles.errorContent}>
+                    <FaExclamationTriangle className={styles.errorIcon} />
+                    <h2>Error al cargar los grados</h2>
+                    <p>{typeof error === "string" ? error : "Ha ocurrido un error inesperado"}</p>
+                    <div className={styles.emptyStateActions}>
+                        <button 
+                            onClick={() => recargarDatos()} 
+                            className={styles.emptyStateAction}
+                        >
+                            <FaSearch />
+                            Reintentar
+                        </button>
                     </div>
-                )}
-                
-                {deleteError && (
-                    <div className={styles.errorNotification}>
-                        <div className={styles.notificationIcon}>⚠</div>
-                        <div className={styles.notificationContent}>
-                            <strong>Error:</strong>
-                            <span>{deleteError}</span>
-                        </div>
-                    </div>
-                )}
+                </div>
             </div>
         );
-    };
-
-    // === ESTADOS CONDICIONALES ===
-    
-    if (loading) return renderLoadingState();
-    if (error) return renderErrorState();
+    }
 
     // === RENDERIZADO PRINCIPAL ===
     
     return (
         <div className={styles.pageContainer}>
-            {renderPageHeader()}
-            {renderToolbar()}
-
-            {activeSearchQuery && (
-                <div className={styles.activeSearchBanner}>
-                    <span>Resultados para: "{activeSearchQuery}"</span>
-                    <button onClick={clearSearch} className={styles.clearSearchBtn}>
-                        Limpiar búsqueda
-                    </button>
-                </div>
-            )}
-
-            <main className={styles.mainContent}>
-                {!filteredGrades || filteredGrades.length === 0 ? (
-                    <div className={styles.emptyState}>
-                        <div className={styles.emptyIcon}>
-                            {activeSearchQuery || levelFilter || statusFilter ? '🔍' : '📚'}
+            {/* Encabezado principal con dashboard */}
+            <header className={styles.dashboardHeader}>
+                <div className={styles.headerContent}>
+                    <div className={styles.headerMain}>
+                        <div className={styles.titleWrapper}>
+                            <h1 className={styles.pageTitle}>
+                                <FaGraduationCap className={styles.pageTitleIcon} />
+                                Grados Académicos
+                            </h1>
+                            <p className={styles.pageDescription}>
+                                Administración de grados académicos del sistema
+                            </p>
                         </div>
-                        <h3 className={styles.emptyTitle}>
-                            {activeSearchQuery || levelFilter || statusFilter 
-                                ? 'No se encontraron grados' 
-                                : 'No hay grados registrados'
-                            }
-                        </h3>
-                        <p className={styles.emptySubtitle}>
-                            {activeSearchQuery || levelFilter || statusFilter
-                                ? "Intenta ajustar los filtros o criterios de búsqueda" 
-                                : "Comienza creando tu primer grado académico"
-                            }
-                        </p>
-                        {!activeSearchQuery && !levelFilter && !statusFilter ? (
-                            <Link to="/admin/crear-grado" className={styles.emptyAction}>
-                                <FaPlus />
-                                Crear primer grado
+                        
+                        <div className={styles.headerActions}>
+                            <Link to="/admin/grados/crear" className={styles.createButton}>
+                                <FaPlus className={styles.buttonIcon} />
+                                <span>Nuevo Grado</span>
                             </Link>
-                        ) : (
-                            <button onClick={clearAllFilters} className={styles.emptyAction}>
-                                <FaFilter />
-                                Limpiar filtros
+                        </div>
+                    </div>
+                    
+                    {/* Barra de estadísticas */}
+                    <div className={styles.statsBar}>
+                        <div className={styles.statCard}>
+                            <div className={`${styles.statIcon} ${styles.totalIcon}`}>
+                                <FaGraduationCap />
+                            </div>
+                            <div className={styles.statInfo}>
+                                <span className={styles.statLabel}>Total Grados</span>
+                                <span className={styles.statValue}>{stats.total}</span>
+                            </div>
+                        </div>
+                        
+                        <div className={styles.statCard}>
+                            <div className={`${styles.statIcon} ${styles.activeIcon}`}>
+                                <FaCheck />
+                            </div>
+                            <div className={styles.statInfo}>
+                                <span className={styles.statLabel}>Con Ciclos Asignados</span>
+                                <span className={styles.statValue}>{stats.withCiclos}</span>
+                            </div>
+                        </div>
+                        
+                        <div className={styles.statCard}>
+                            <div className={`${styles.statIcon} ${styles.levelIcon}`}>
+                                <FaLayerGroup />
+                            </div>
+                            <div className={styles.statInfo}>
+                                <span className={styles.statLabel}>Niveles Académicos</span>
+                                <span className={styles.statValue}>{Object.keys(stats.byLevel).length}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            {/* Contenido principal */}
+            <div className={styles.pageContent}>
+                {/* Barra de herramientas y búsqueda */}
+                <div className={styles.toolbarSection}>
+                    <div className={styles.searchContainer}>
+                        <form className={styles.searchForm} onSubmit={handleSearch}>
+                            <FaSearch className={styles.searchIcon} />
+                            <input
+                                type="text"
+                                placeholder="Buscar grados académicos..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className={styles.searchInput}
+                            />
+                            {searchQuery && (
+                                <button
+                                    type="button"
+                                    onClick={clearSearch}
+                                    className={styles.clearButton}
+                                    title="Limpiar búsqueda"
+                                >
+                                    ×
+                                </button>
+                            )}
+                            <button type="submit" className={styles.searchButton}>
+                                Buscar
                             </button>
-                        )}
+                        </form>
+                    </div>
+                    
+                    <div className={styles.filterContainer}>
+                        <button 
+                            className={`${styles.filterButton} ${showFilters ? styles.active : ''}`}
+                            onClick={() => setShowFilters(!showFilters)}
+                        >
+                            <FaFilter className={styles.buttonIcon} /> Filtrar
+                        </button>
+                        
+                        <div className={styles.sortButtons}>
+                            <button
+                                className={`${styles.sortButton} ${sortField === "nombre" ? styles.active : ""}`}
+                                onClick={() => handleSort("nombre")}
+                            >
+                                Nombre {sortField === "nombre" && (
+                                    sortDirection === "asc" ? "↑" : "↓"
+                                )}
+                            </button>
+                            
+                            <button
+                                className={`${styles.sortButton} ${sortField === "nivelAcademico.descripcion" ? styles.active : ""}`}
+                                onClick={() => handleSort("nivelAcademico.descripcion")}
+                            >
+                                Nivel Académico {sortField === "nivelAcademico.descripcion" && (
+                                    sortDirection === "asc" ? "↑" : "↓"
+                                )}
+                            </button>
+                            
+                            <button
+                                className={`${styles.sortButton} ${sortField === "jornada.descripcion" ? styles.active : ""}`}
+                                onClick={() => handleSort("jornada.descripcion")}
+                            >
+                                Jornada {sortField === "jornada.descripcion" && (
+                                    sortDirection === "asc" ? "↑" : "↓"
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                    
+                    {showFilters && (
+                        <div className={styles.filtersPanel}>
+                            <div className={styles.filterControls}>
+                                <div className={styles.filterGroup}>
+                                    <label>Nivel Académico</label>
+                                    <select
+                                        onChange={(e) => {
+                                            setSearchQuery(e.target.value);
+                                            setActiveSearchTerm(e.target.value);
+                                        }}
+                                        className={styles.filterSelect}
+                                    >
+                                        <option value="">Todos los niveles</option>
+                                        {Object.keys(stats.byLevel).map(nivel => (
+                                            <option key={nivel} value={nivel}>
+                                                {nivel} ({stats.byLevel[nivel]})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                
+                                <div className={styles.filterGroup}>
+                                    <label>Jornada</label>
+                                    <select
+                                        onChange={(e) => {
+                                            setSearchQuery(e.target.value);
+                                            setActiveSearchTerm(e.target.value);
+                                        }}
+                                        className={styles.filterSelect}
+                                    >
+                                        <option value="">Todas las jornadas</option>
+                                        {Object.keys(stats.byJornada).map(jornada => (
+                                            <option key={jornada} value={jornada}>
+                                                {jornada} ({stats.byJornada[jornada]})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                
+                                <div className={styles.filterGroup}>
+                                    <label>Estado</label>
+                                    <select
+                                        onChange={(e) => {
+                                            setSearchQuery(e.target.value);
+                                            setActiveSearchTerm(e.target.value);
+                                        }}
+                                        className={styles.filterSelect}
+                                    >
+                                        <option value="">Todos los estados</option>
+                                        <option value="con ciclos">Con ciclos ({stats.withCiclos})</option>
+                                        <option value="sin ciclos">Sin ciclos ({stats.withoutCiclos})</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div className={styles.filterActions}>
+                                <button
+                                    onClick={clearSearch}
+                                    className={styles.clearFiltersButton}
+                                    disabled={!activeSearchTerm}
+                                >
+                                    Limpiar filtros
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+                
+                {/* Vista vacía cuando no hay resultados para una búsqueda */}
+                {activeSearchTerm && filteredGrades.length === 0 ? (
+                    <div className={styles.noResults}>
+                        <FaSearch className={styles.noResultsIcon} />
+                        <h3>No se encontraron resultados</h3>
+                        <p>No hay grados que coincidan con "<strong>{activeSearchTerm}</strong>"</p>
+                        <button
+                            onClick={clearSearch}
+                            className={styles.clearSearchButton}
+                        >
+                            Limpiar búsqueda
+                        </button>
                     </div>
                 ) : (
                     <>
+                        {/* Lista de grados */}
                         <div className={styles.gradesGrid}>
-                            {filteredGrades.map((grade: Grado) => renderGradeCard(grade))}
+                            {filteredGrades.map((grade: any) => (
+                                <div
+                                    key={grade.id}
+                                    className={`${styles.gradeCard} ${grade.gradosCiclo?.length === 0 ? styles.inactiveCard : ""}`}
+                                >
+                                    <div className={styles.cardHeader}>
+                                        <h3 className={styles.gradeName}>{grade.nombre}</h3>
+                                        {grade.gradosCiclo?.length > 0 ? (
+                                            <span className={styles.statusBadge}>Con ciclos</span>
+                                        ) : (
+                                            <span className={`${styles.statusBadge} ${styles.inactiveBadge}`}>Sin ciclos</span>
+                                        )}
+                                    </div>
+                                    
+                                    <div className={styles.cardContent}>
+                                        <div className={styles.cardInfo}>
+                                            <p><strong>Nivel académico:</strong> {grade.nivelAcademico?.descripcion || "No definido"}</p>
+                                            <p><strong>Jornada:</strong> {grade.jornada?.descripcion || "No definida"}</p>
+                                            
+                                            <div className={styles.cardStats}>
+                                                <div className={styles.cardStat}>
+                                                    <FaUserGraduate className={styles.statIcon} />
+                                                    <span>{grade.gradosCiclo?.length || 0} ciclos asignados</span>
+                                                </div>
+                                            </div>
+                                            
+                                            {grade.gradosCiclo && grade.gradosCiclo.length > 0 && (
+                                                <div className={styles.cicloInfo}>
+                                                    <h4 className={styles.cicloTitle}>
+                                                        <FaMoneyBillAlt className={styles.cicloIcon} />
+                                                        Último ciclo: {grade.gradosCiclo[grade.gradosCiclo.length-1].ciclo.descripcion}
+                                                    </h4>
+                                                    <div className={styles.precioDetails}>
+                                                        <div className={styles.precioItem}>
+                                                            <span className={styles.precioLabel}>Inscripción:</span>
+                                                            <span className={styles.precioValue}>Q{grade.gradosCiclo[grade.gradosCiclo.length-1].precioInscripcion}</span>
+                                                        </div>
+                                                        <div className={styles.precioItem}>
+                                                            <span className={styles.precioLabel}>Mensualidad:</span>
+                                                            <span className={styles.precioValue}>Q{grade.gradosCiclo[grade.gradosCiclo.length-1].precioPago}</span>
+                                                        </div>
+                                                        <div className={styles.precioItem}>
+                                                            <span className={styles.precioLabel}>Pagos:</span>
+                                                            <span className={styles.precioValue}>{grade.gradosCiclo[grade.gradosCiclo.length-1].cantidadPagos}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className={styles.cardActions}>
+                                        <Link
+                                            to={`/admin/grados/${grade.id}`}
+                                            className={`${styles.cardAction} ${styles.viewAction}`}
+                                            title="Ver detalles"
+                                        >
+                                            <FaEye />
+                                        </Link>
+                                        <Link
+                                            to={`/admin/grados/editar/${grade.id}`}
+                                            className={`${styles.cardAction} ${styles.editAction}`}
+                                            title="Editar grado"
+                                        >
+                                            <FaPencilAlt />
+                                        </Link>
+                                        <button
+                                            className={`${styles.cardAction} ${styles.deleteAction}`}
+                                            onClick={() => handleDeleteClick(grade.id)}
+                                            title="Eliminar grado"
+                                        >
+                                            <FaTrash />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                        {renderPagination()}
+                        
+                        {/* Paginación */}
+                        <div className={styles.pagination}>
+                            <div className={styles.pageInfo}>
+                                Mostrando {filteredGrades.length} de {grades?.total || 0} resultados
+                            </div>
+                            
+                            <div className={styles.pageControls}>
+                                <button
+                                    className={styles.pageButton}
+                                    onClick={() => setPage(page > 1 ? page - 1 : 1)}
+                                    disabled={page === 1}
+                                >
+                                    &lt;
+                                </button>
+                                
+                                {[...Array(Math.ceil((grades?.total || 0) / pageSize))].map((_, i) => (
+                                    <button
+                                        key={i}
+                                        className={`${styles.pageButton} ${page === i + 1 ? styles.active : ''}`}
+                                        onClick={() => setPage(i + 1)}
+                                    >
+                                        {i + 1}
+                                    </button>
+                                ))}
+                                
+                                <button
+                                    className={styles.pageButton}
+                                    onClick={() => setPage(page < Math.ceil((grades?.total || 0) / pageSize) ? page + 1 : page)}
+                                    disabled={page >= Math.ceil((grades?.total || 0) / pageSize)}
+                                >
+                                    &gt;
+                                </button>
+                            </div>
+                        </div>
                     </>
                 )}
-            </main>
-
+            </div>
+            
             {/* Modal de confirmación para eliminar grado */}
             <DeleteConfirmModal 
                 isOpen={deleteModalOpen}
                 title="Eliminar Grado"
-                message={`¿Estás seguro que deseas eliminar el grado "${gradeToDelete}"? Esta acción no se puede deshacer.`}
+                message={`¿Está seguro que desea eliminar el grado con ID "${gradeToDelete}"? Esta acción no se puede deshacer.`}
                 itemId={gradeToDelete?.toString() || ""}
                 onConfirm={handleConfirmDelete}
                 onCancel={handleCloseDeleteModal}
                 isLoading={deleteLoading}
             />
-            
-            {/* Sistema de notificaciones */}
-            {renderNotifications()}
         </div>
     );
 };
