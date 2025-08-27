@@ -1,0 +1,76 @@
+:root {
+  /* Paleta de colores principal */
+  --primary-color: #4a90e2;
+  --primary-light: #5cb3ff;
+  --primary-dark: #3a7bc8;
+  --primary-gradient: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  --primary-hover-gradient: linear-gradient(135deg, var(--primary-dark) 0%, #2c5c99 100%);
+  
+  /* Colores de texto */
+  --text-primary: #2c3e50;
+  --text-secondary: #4a5568;
+  --text-light: #718096;
+  --text-white: #ffffff;
+  
+  /* Colores de fondo */
+  --bg-page: #f9fafc;
+  --bg-card: #ffffff;
+  --bg-input: #f8fafc;
+  --bg-light: #f0f7ff;
+  
+  /* Colores de borde */
+  --border-light: #e2e8f0;
+  --border-medium: rgba(226, 232, 240, 0.8);
+  --border-primary: rgba(74, 144, 226, 0.3);
+  --border-primary-hover: rgba(74, 144, 226, 0.5);
+  
+  /* Colores de estado */
+  --success-color: #48bb78;
+  --success-bg: #f0fff4;
+  --error-color: #e53935;
+  --error-bg: #fff5f5;
+  --warning-color: #f59e0b;
+  --warning-bg: #fffbeb;
+  --info-color: #4299e1;
+  --info-bg: #ebf8ff;
+  
+  /* Espaciado */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 2.5rem;
+  
+  /* Tipografía */
+  --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-xxl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  
+  /* Bordes */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-radius-full: 9999px;
+  
+  /* Sombras */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.05), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.05), 0 10px 10px rgba(0, 0, 0, 0.04);
+  
+  /* Transiciones */
+  --transition-fast: all 0.2s ease;
+  --transition-normal: all 0.3s ease;
+  --transition-slow: all 0.5s ease;
+  
+  /* Animaciones */
+  --animation-duration: 0.5s;
+}

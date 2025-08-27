@@ -1,0 +1,7 @@
+/* Estilos para texto enriquecido */
+.textarea {
+    min-height: 100px;
+    padding: 12px;
+    line-height: 1.6;
+    font-family: inherit;
+}

@@ -243,6 +243,11 @@
   background-color: rgba(6, 214, 160, 0.15);
 }
 
+.statIcon.currentIcon {
+  color: #8338ec;
+  background-color: rgba(131, 56, 236, 0.15);
+}
+
 .statIcon.levelIcon {
   color: #ffbc42;
   background-color: rgba(255, 188, 66, 0.15);
@@ -786,44 +791,27 @@
 
 /* Tarjeta de Grado */
 .gradeCard {
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--border-radius-md);
   border: 1px solid var(--gray-200);
   background-color: white;
   overflow: hidden;
-  box-shadow: var(--shadow-md);
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   position: relative;
 }
 
 .gradeCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.15);
-  border-color: var(--blue-300);
-}
-
-.gradeCard.highlighted {
-  box-shadow: 0 0 0 3px var(--blue-400), var(--shadow-lg);
-  animation: highlight 2s ease infinite;
+  box-shadow: var(--shadow-md);
 }
 
 .gradeCard.inactiveCard {
-  border-color: var(--gray-300);
-  opacity: 0.85;
+  border-color: var(--gray-200);
+  background-color: white;
 }
 
-.gradeCard.inactiveCard:hover {
-  opacity: 1;
-}
-
-@keyframes highlight {
-  0%, 100% {
-    box-shadow: 0 0 0 3px var(--blue-300), var(--shadow-lg);
-  }
-  50% {
-    box-shadow: 0 0 0 3px var(--blue-500), var(--shadow-lg);
-  }
+.gradeCard.activeCycleCard {
+  border-left: 3px solid var(--success);
 }
 
 /* Encabezado de la tarjeta */
@@ -831,46 +819,49 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.5rem;
+  padding: 1rem;
   border-bottom: 1px solid var(--gray-100);
-  background: linear-gradient(to right, var(--blue-50), #f8faff);
+  background-color: white;
   gap: 1rem;
-  position: relative;
-}
-
-.cardHeader::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 5px;
-  height: 100%;
-  background: linear-gradient(to bottom, var(--blue-400), var(--blue-600));
-  opacity: 0.7;
 }
 
 .gradeName {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: var(--gray-900);
-  line-height: 1.3;
+  color: var(--gray-800);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  letter-spacing: 0.01em;
+}
+
+.badgeContainer {
+  display: flex;
 }
 
 .statusBadge {
-  padding: 0.35rem 0.75rem;
-  border-radius: 30px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  background-color: var(--success-light);
-  color: var(--success-dark);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  background-color: var(--blue-100);
+  color: var(--blue-700);
+  white-space: nowrap;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
 }
 
 .inactiveBadge {
-  background-color: var(--warning-light);
-  color: var(--warning-dark);
+  background-color: var(--gray-200);
+  color: var(--gray-600);
+}
+
+.currentBadge {
+  background-color: var(--success-light);
+  color: var(--success-dark);
+  border: 1px solid var(--success);
+  font-weight: 600;
 }
 
 .cardMeta {
@@ -935,25 +926,94 @@
 
 /* Contenido de la tarjeta */
 .cardContent {
-  padding: 1.5rem;
+  padding: 1rem;
   flex: 1;
-}
-
-.cardInfo {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-.cardInfo p {
+.cardContent p {
   margin: 0;
   font-size: 0.95rem;
   color: var(--gray-700);
 }
 
-.cardInfo strong {
-  color: var(--gray-900);
+.cardContent strong {
+  color: var(--gray-800);
   margin-right: 0.3rem;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.infoIcon {
+  color: var(--blue-600);
+  font-size: 0.9rem;
+  min-width: 16px;
+}
+
+.cicloInfo {
+  margin-top: 0.5rem;
+}
+
+.activeCycleDetails {
+  padding: 0.75rem;
+  border-left: 2px solid var(--success);
+  margin-top: 0.5rem;
+  background-color: var(--success-light);
+  border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+}
+
+.cycleTitle {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.95rem;
+  color: var(--success-dark);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.cycleIcon {
+  color: var(--success);
+  font-size: 0.85rem;
+}
+
+.priceItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.3rem 0;
+  font-size: 0.9rem;
+}
+
+.priceLabel {
+  color: var(--gray-700);
+  font-weight: 500;
+}
+
+.priceValue {
+  font-weight: 600;
+  color: var(--gray-900);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.cicloInfo {
+  margin-top: 0.5rem;
+}
+
+.activeCycleDetails {
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--gray-100);
 }
 
 .cardStats {
@@ -988,6 +1048,14 @@
   border-top: 1px dashed var(--gray-200);
 }
 
+.activeCicloInfo {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: var(--border-radius-md);
+  background: linear-gradient(to bottom right, rgba(131, 56, 236, 0.08), rgba(131, 56, 236, 0.03));
+  border: 1px solid rgba(131, 56, 236, 0.2);
+}
+
 .cicloTitle {
   margin: 0 0 0.75rem;
   font-size: 0.95rem;
@@ -1003,6 +1071,29 @@
   font-size: 1rem;
 }
 
+.activeCicloIcon {
+  color: #8338ec;
+  animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(5deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(-5deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
 .precioDetails {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1011,6 +1102,14 @@
   border-radius: var(--border-radius-md);
   padding: 0.75rem;
   border: 1px solid var(--gray-200);
+  transition: all 0.3s ease;
+}
+
+.activePrecioDetails {
+  background-color: white;
+  box-shadow: var(--shadow-md);
+  border: none;
+  padding: 1rem;
 }
 
 .precioItem {
@@ -1019,15 +1118,33 @@
   gap: 0.25rem;
 }
 
+.activePrecioDetails .precioItem {
+  background-color: rgba(131, 56, 236, 0.03);
+  padding: 0.75rem;
+  border-radius: var(--border-radius-md);
+  border-left: 3px solid rgba(131, 56, 236, 0.5);
+}
+
 .precioLabel {
   font-size: 0.75rem;
   color: var(--gray-600);
+}
+
+.activePrecioDetails .precioLabel {
+  color: #5e17eb;
+  font-weight: 500;
 }
 
 .precioValue {
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--gray-900);
+}
+
+.activePrecioDetails .precioValue {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #5e17eb;
 }
 
 /* Estilos para el panel de filtros */
@@ -1112,51 +1229,37 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  background-color: var(--gray-50);
+  gap: 1rem;
 }
 
 .cardAction {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--border-radius-md);
-  transition: all 0.2s ease;
   color: var(--gray-600);
   cursor: pointer;
-  border: 1px solid transparent;
+  font-size: 0.9rem;
 }
 
-.cardAction:hover {
-  transform: translateY(-2px);
-}
+
 
 .viewAction {
-  background-color: var(--blue-50);
   color: var(--blue-600);
-  border-color: var(--blue-200);
 }
 
 .viewAction:hover {
-  background-color: var(--blue-100);
   color: var(--blue-700);
-  border-color: var(--blue-300);
-  box-shadow: 0 4px 8px rgba(10, 79, 173, 0.1);
 }
 
 .editAction {
-  background-color: var(--gray-100);
   color: var(--gray-700);
-  border-color: var(--gray-200);
 }
 
 .editAction:hover {
-  background-color: var(--gray-200);
   color: var(--gray-900);
-  border-color: var(--gray-300);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 .deleteAction {

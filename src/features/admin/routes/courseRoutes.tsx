@@ -3,6 +3,8 @@ import { ProtectedRouteAdmin } from "../../../components/ProtectedRouteAdmin";
 import MainLayout from "../../../components/Layout/MainLayout";
 import { CoursesPage, CourseDetailPage, CreateCoursePage } from '../features/courses/pages';
 
+import EditCoursePage from '../features/courses/pages/EditCoursePage';
+
 export const courseRoutes = (
   <>
     {/* Lista de cursos */}
@@ -28,6 +30,15 @@ export const courseRoutes = (
       <ProtectedRouteAdmin>
         <MainLayout title="Detalle de Curso">
           <CourseDetailPage />
+        </MainLayout>
+      </ProtectedRouteAdmin>
+    } />
+
+    {/* Editar curso */}
+    <Route path="editar-curso/:id" element={
+      <ProtectedRouteAdmin>
+        <MainLayout title="Editar Curso">
+          <EditCoursePage />
         </MainLayout>
       </ProtectedRouteAdmin>
     } />

@@ -1,1 +1,9 @@
-export { getCourses, getCourseById, createCourse, type CreateCourseRequest, type CreateCourseResponse } from './courseService';
+export { 
+    getCourses, 
+    getCourseById, 
+    createCourse, 
+    deleteCourse,
+    type CreateCourseRequest, 
+    type CreateCourseResponse,
+    type DeleteCourseResponse
+} from './courseService';

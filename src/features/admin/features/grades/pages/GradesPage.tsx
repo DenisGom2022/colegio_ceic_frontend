@@ -11,8 +11,7 @@ import {
     FaLayerGroup,
     FaCheck,
     FaExclamationTriangle,
-    FaUserGraduate,
-    FaMoneyBillAlt
+    FaUserGraduate
 } from "react-icons/fa";
 import { useGradeTable } from "../hooks/useGradeTable";
 import DeleteConfirmModal from "../../../../../components/DeleteConfirmModal";
@@ -78,6 +77,7 @@ interface GradeStatistics {
     byJornada: Record<string, number>;
     withCiclos: number;
     withoutCiclos: number;
+    withActiveCycle: number;
 }
 
 const GradesPage: React.FC = () => {
@@ -97,7 +97,8 @@ const GradesPage: React.FC = () => {
         byLevel: {},
         byJornada: {},
         withCiclos: 0,
-        withoutCiclos: 0
+        withoutCiclos: 0,
+        withActiveCycle: 0
     });
 
     // Obtener datos con el hook useGradeTable
@@ -114,6 +115,26 @@ const GradesPage: React.FC = () => {
         sortDirection: sortDirection || undefined
     });
 
+    // Función para verificar si un grado tiene ciclo activo
+    const hasActiveCycle = (grade: any): boolean => {
+        if (!grade.gradosCiclo || grade.gradosCiclo.length === 0) return false;
+        
+        // Buscar un ciclo con fechaFin = null (ciclo activo)
+        return grade.gradosCiclo.some(
+            (gradoCiclo: GradoCiclo) => gradoCiclo.ciclo && gradoCiclo.ciclo.fechaFin === null
+        );
+    };
+    
+    // Obtener el ciclo activo de un grado
+    const getActiveCycle = (grade: any): GradoCiclo | null => {
+        if (!grade.gradosCiclo || grade.gradosCiclo.length === 0) return null;
+        
+        // Encontrar ciclo con fechaFin = null
+        return grade.gradosCiclo.find(
+            (gradoCiclo: GradoCiclo) => gradoCiclo.ciclo && gradoCiclo.ciclo.fechaFin === null
+        ) || null;
+    };
+    
     // Calcular estadísticas cuando se cargan los grados
     useEffect(() => {
         if (!loading && !error && grades && grades.grados && grades.grados.length > 0) {
@@ -123,6 +144,7 @@ const GradesPage: React.FC = () => {
             const byJornada: Record<string, number> = {};
             let withCiclos = 0;
             let withoutCiclos = 0;
+            let withActiveCycle = 0;
             
             // Calcular estadísticas
             items.forEach((grade: any) => {
@@ -137,6 +159,11 @@ const GradesPage: React.FC = () => {
                 // Contar grados con o sin ciclos
                 if (grade.gradosCiclo && grade.gradosCiclo.length > 0) {
                     withCiclos++;
+                    
+                    // Verificar si tiene ciclo activo
+                    if (hasActiveCycle(grade)) {
+                        withActiveCycle++;
+                    }
                 } else {
                     withoutCiclos++;
                 }
@@ -147,7 +174,8 @@ const GradesPage: React.FC = () => {
                 byLevel,
                 byJornada,
                 withCiclos,
-                withoutCiclos
+                withoutCiclos,
+                withActiveCycle
             };
             
             setStats(statsData);
@@ -279,7 +307,7 @@ const GradesPage: React.FC = () => {
                         </div>
                         
                         <div className={styles.headerActions}>
-                            <Link to="/admin/grados/crear" className={styles.createButton}>
+                            <Link to="/admin/crear-grado" className={styles.createButton}>
                                 <FaPlus className={styles.buttonIcon} />
                                 <span>Nuevo Grado</span>
                             </Link>
@@ -305,6 +333,16 @@ const GradesPage: React.FC = () => {
                             <div className={styles.statInfo}>
                                 <span className={styles.statLabel}>Con Ciclos Asignados</span>
                                 <span className={styles.statValue}>{stats.withCiclos}</span>
+                            </div>
+                        </div>
+                        
+                        <div className={styles.statCard}>
+                            <div className={`${styles.statIcon} ${styles.currentIcon}`}>
+                                <FaUserGraduate />
+                            </div>
+                            <div className={styles.statInfo}>
+                                <span className={styles.statLabel}>En Ciclo Actual</span>
+                                <span className={styles.statValue}>{stats.withActiveCycle}</span>
                             </div>
                         </div>
                         
@@ -438,6 +476,7 @@ const GradesPage: React.FC = () => {
                                         className={styles.filterSelect}
                                     >
                                         <option value="">Todos los estados</option>
+                                        <option value="ciclo actual">Con ciclo actual ({stats.withActiveCycle})</option>
                                         <option value="con ciclos">Con ciclos ({stats.withCiclos})</option>
                                         <option value="sin ciclos">Sin ciclos ({stats.withoutCiclos})</option>
                                     </select>
@@ -477,64 +516,69 @@ const GradesPage: React.FC = () => {
                             {filteredGrades.map((grade: any) => (
                                 <div
                                     key={grade.id}
-                                    className={`${styles.gradeCard} ${grade.gradosCiclo?.length === 0 ? styles.inactiveCard : ""}`}
+                                    className={`${styles.gradeCard} ${grade.gradosCiclo?.length === 0 ? styles.inactiveCard : ""} ${hasActiveCycle(grade) ? styles.activeCycleCard : ""}`}
                                 >
                                     <div className={styles.cardHeader}>
                                         <h3 className={styles.gradeName}>{grade.nombre}</h3>
-                                        {grade.gradosCiclo?.length > 0 ? (
-                                            <span className={styles.statusBadge}>Con ciclos</span>
-                                        ) : (
-                                            <span className={`${styles.statusBadge} ${styles.inactiveBadge}`}>Sin ciclos</span>
-                                        )}
-                                    </div>
-                                    
-                                    <div className={styles.cardContent}>
-                                        <div className={styles.cardInfo}>
-                                            <p><strong>Nivel académico:</strong> {grade.nivelAcademico?.descripcion || "No definido"}</p>
-                                            <p><strong>Jornada:</strong> {grade.jornada?.descripcion || "No definida"}</p>
-                                            
-                                            <div className={styles.cardStats}>
-                                                <div className={styles.cardStat}>
-                                                    <FaUserGraduate className={styles.statIcon} />
-                                                    <span>{grade.gradosCiclo?.length || 0} ciclos asignados</span>
-                                                </div>
-                                            </div>
-                                            
-                                            {grade.gradosCiclo && grade.gradosCiclo.length > 0 && (
-                                                <div className={styles.cicloInfo}>
-                                                    <h4 className={styles.cicloTitle}>
-                                                        <FaMoneyBillAlt className={styles.cicloIcon} />
-                                                        Último ciclo: {grade.gradosCiclo[grade.gradosCiclo.length-1].ciclo.descripcion}
-                                                    </h4>
-                                                    <div className={styles.precioDetails}>
-                                                        <div className={styles.precioItem}>
-                                                            <span className={styles.precioLabel}>Inscripción:</span>
-                                                            <span className={styles.precioValue}>Q{grade.gradosCiclo[grade.gradosCiclo.length-1].precioInscripcion}</span>
-                                                        </div>
-                                                        <div className={styles.precioItem}>
-                                                            <span className={styles.precioLabel}>Mensualidad:</span>
-                                                            <span className={styles.precioValue}>Q{grade.gradosCiclo[grade.gradosCiclo.length-1].precioPago}</span>
-                                                        </div>
-                                                        <div className={styles.precioItem}>
-                                                            <span className={styles.precioLabel}>Pagos:</span>
-                                                            <span className={styles.precioValue}>{grade.gradosCiclo[grade.gradosCiclo.length-1].cantidadPagos}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                        <div className={styles.badgeContainer}>
+                                            {hasActiveCycle(grade) ? (
+                                                <span className={`${styles.statusBadge} ${styles.currentBadge}`}>
+                                                    <FaCheck style={{ marginRight: '4px', fontSize: '0.7rem' }} /> Ciclo Actual
+                                                </span>
+                                            ) : grade.gradosCiclo?.length > 0 ? (
+                                                <span className={styles.statusBadge}>Ciclos Anteriores</span>
+                                            ) : (
+                                                <span className={`${styles.statusBadge} ${styles.inactiveBadge}`}>Sin Ciclos</span>
                                             )}
                                         </div>
                                     </div>
                                     
+                                    <div className={styles.cardContent}>
+                                        <p className={styles.infoItem}>
+                                            <FaLayerGroup className={styles.infoIcon} />
+                                            <span><strong>Nivel:</strong> {grade.nivelAcademico?.descripcion || "No definido"}</span>
+                                        </p>
+                                        <p className={styles.infoItem}>
+                                            <FaUserGraduate className={styles.infoIcon} />
+                                            <span><strong>Jornada:</strong> {grade.jornada?.descripcion || "No definida"}</span>
+                                        </p>
+                                        <p className={styles.infoItem}>
+                                            <FaGraduationCap className={styles.infoIcon} />
+                                            <span><strong>Ciclos:</strong> {grade.gradosCiclo?.length || 0}</span>
+                                        </p>
+                                        
+                                        {hasActiveCycle(grade) && (
+                                            <div className={styles.cicloInfo}>
+                                                {grade.gradosCiclo.filter((gc: GradoCiclo) => gc.ciclo.fechaFin === null).map((activeCiclo: GradoCiclo) => (
+                                                    <div key={activeCiclo.id} className={styles.activeCycleDetails}>
+                                                        <h4 className={styles.cycleTitle}>
+                                                            <FaCheck className={styles.cycleIcon} />
+                                                            {activeCiclo.ciclo.descripcion}
+                                                        </h4>
+                                                        <p className={styles.priceItem}>
+                                                            <span className={styles.priceLabel}>Inscripción:</span>
+                                                            <span className={styles.priceValue}>Q{activeCiclo.precioInscripcion}</span>
+                                                        </p>
+                                                        <p className={styles.priceItem}>
+                                                            <span className={styles.priceLabel}>Mensualidad:</span>
+                                                            <span className={styles.priceValue}>Q{activeCiclo.precioPago}</span>
+                                                        </p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                    
                                     <div className={styles.cardActions}>
                                         <Link
-                                            to={`/admin/grados/${grade.id}`}
+                                            to={`/admin/grado/${grade.id}`}
                                             className={`${styles.cardAction} ${styles.viewAction}`}
                                             title="Ver detalles"
                                         >
                                             <FaEye />
                                         </Link>
                                         <Link
-                                            to={`/admin/grados/editar/${grade.id}`}
+                                            to={`/admin/editar-grado/${grade.id}`}
                                             className={`${styles.cardAction} ${styles.editAction}`}
                                             title="Editar grado"
                                         >

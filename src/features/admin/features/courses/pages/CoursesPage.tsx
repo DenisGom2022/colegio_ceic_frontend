@@ -13,6 +13,7 @@ import {
     FaRedo
 } from "react-icons/fa";
 import { useCourses } from "../hooks";
+import { deleteCourse } from "../services";
 import type { Course } from "../models";
 import DeleteConfirmModal from "../../../../../components/DeleteConfirmModal";
 import styles from "../../users/pages/UsersPage.module.css";
@@ -164,8 +165,8 @@ const CoursesPage = () => {
     const handleConfirmDelete = async (id: string) => {
         setDeleteLoading(true);
         try {
-            // TODO: Implementar eliminación de curso
-            console.log('Eliminar curso:', id);
+            // Eliminar curso usando el endpoint /curso
+            await deleteCourse(id);
             setDeleteSuccess(true);
             setDeleteModalOpen(false);
             setTimeout(() => {

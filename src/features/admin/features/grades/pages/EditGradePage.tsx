@@ -67,7 +67,7 @@ const EditGradePage = () => {
       
       // Redirigir después de mostrar el mensaje a la página de detalle
       const timer = setTimeout(() => {
-        navigate(`/admin/grados/detalle/${id}`);
+        navigate(`/admin/grado/${id}`);
       }, 2000);
       
       return () => clearTimeout(timer);

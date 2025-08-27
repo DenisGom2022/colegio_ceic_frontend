@@ -58,3 +58,61 @@ export const createCurso = async (cursoData: CreateCursoRequest): Promise<Create
     }
   }
 };
+
+export interface UpdateCursoRequest {
+  id: number;
+  nombre: string;
+  notaMaxima: number;
+  notaAprobada: number;
+  idGrado: number;
+  dpiCatedratico: string;
+}
+
+export interface UpdateCursoResponse {
+  message: string;
+  curso: {
+    id: number;
+    nombre: string;
+    notaMaxima: number;
+    notaAprobada: number;
+    idGradoCiclo: number;
+    dpiCatedratico: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
+  };
+}
+
+export const updateCurso = async (cursoData: UpdateCursoRequest): Promise<UpdateCursoResponse> => {
+  try {
+    const token = localStorage.getItem("ceic_token");
+    const url = environments.VITE_API_URL + '/curso';
+
+    const response = await axios.put<UpdateCursoResponse>(
+      url,
+      cursoData,
+      {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    return response.data;
+  } catch (error: any) {
+    console.error('Error updating curso:', error);
+    if (error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    } else if (error.response?.status === 401) {
+      throw new Error('No autorizado. Por favor, inicia sesión nuevamente.');
+    } else if (error.response?.status === 403) {
+      throw new Error('No tienes permisos para realizar esta acción.');
+    } else if (error.response?.status === 400) {
+      throw new Error('Datos inválidos. Verifica la información ingresada.');
+    } else {
+      throw new Error('Error al actualizar el curso. Inténtalo de nuevo.');
+    }
+  }
+};

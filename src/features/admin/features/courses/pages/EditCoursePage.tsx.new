@@ -1,0 +1,445 @@
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import styles from './EditCoursePage.module.css';
+import {
+    FaBook,
+    FaChalkboardTeacher,
+    FaHashtag,
+    FaCalendarAlt,
+    FaArrowLeft,
+    FaCheck,
+    FaCog,
+    FaGraduationCap,
+    FaSpinner,
+    FaSave
+} from 'react-icons/fa';
+import { useCurso, useEditarCurso } from '../hooks';
+
+interface FormErrors {
+    [key: string]: string;
+}
+
+const EditCoursePage = () => {
+    const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
+    const { getCursoById, curso: cursoData, loading: loadingCurso, error: errorCurso } = useCurso();
+    const { loading: loadingUpdate, updateCurso } = useEditarCurso();
+
+    // Estados para los campos del formulario
+    const [formData, setFormData] = useState({
+        id: '',
+        nombre: '',
+        descripcion: '',
+        codigo: '',
+        ciclo: '',
+        nivel: '',
+        orden: 0
+    });
+
+    const [errors, setErrors] = useState<FormErrors>({});
+    const [touched, setTouched] = useState<Record<string, boolean>>({});
+    const [showNotification, setShowNotification] = useState<boolean>(false);
+    const [notificationType, setNotificationType] = useState<'success' | 'error'>('success');
+    const [notificationMessage, setNotificationMessage] = useState('');
+
+    // Cargar datos del curso
+    useEffect(() => {
+        let isMounted = true;
+
+        const cargarDatos = async () => {
+            if (!id) {
+                navigate('/admin/cursos');
+                return;
+            }
+
+            try {
+                await getCursoById(id);
+            } catch (err) {
+                if (isMounted) {
+                    console.error("Error al cargar datos:", err);
+                }
+            }
+        };
+
+        cargarDatos();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [id, getCursoById, navigate]);
+
+    // Actualizar formulario cuando se carga el curso
+    useEffect(() => {
+        if (cursoData) {
+            setFormData({
+                id: cursoData.id || '',
+                nombre: cursoData.nombre || '',
+                descripcion: cursoData.descripcion || '',
+                codigo: cursoData.codigo || '',
+                ciclo: cursoData.ciclo || '',
+                nivel: cursoData.nivel || '',
+                orden: cursoData.orden || 0
+            });
+        }
+    }, [cursoData]);
+
+    const validateField = (name: string, value: string | number): string => {
+        switch (name) {
+            case 'nombre':
+                return value.toString().trim() === '' ? 'El nombre del curso es requerido' : '';
+            case 'codigo':
+                return value.toString().trim() === '' ? 'El código del curso es requerido' : '';
+            case 'nivel':
+                return value.toString().trim() === '' ? 'El nivel es requerido' : '';
+            case 'orden':
+                return isNaN(Number(value)) ? 'El orden debe ser un número válido' : '';
+            default:
+                return '';
+        }
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+
+        setFormData(prev => ({
+            ...prev,
+            [name]: name === 'orden' ? (value === '' ? 0 : parseInt(value, 10)) : value
+        }));
+
+        // Validar el campo cuando cambia
+        if (touched[name]) {
+            const errorMessage = validateField(name, value);
+            setErrors(prev => ({
+                ...prev,
+                [name]: errorMessage
+            }));
+        }
+    };
+
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+
+        setTouched(prev => ({
+            ...prev,
+            [name]: true
+        }));
+
+        const errorMessage = validateField(name, value);
+        setErrors(prev => ({
+            ...prev,
+            [name]: errorMessage
+        }));
+    };
+
+    const validateForm = (): boolean => {
+        const newErrors: FormErrors = {};
+        let isValid = true;
+
+        // Validar campos requeridos
+        if (!formData.nombre) {
+            newErrors.nombre = 'El nombre del curso es requerido';
+            isValid = false;
+        }
+
+        if (!formData.codigo) {
+            newErrors.codigo = 'El código del curso es requerido';
+            isValid = false;
+        }
+
+        if (!formData.nivel) {
+            newErrors.nivel = 'El nivel es requerido';
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        // Marcar todos los campos como tocados
+        const allTouched: Record<string, boolean> = {};
+        Object.keys(formData).forEach(key => {
+            allTouched[key] = true;
+        });
+        setTouched(allTouched);
+
+        if (validateForm()) {
+            try {
+                const mensaje = await updateCurso({
+                    id: formData.id,
+                    nombre: formData.nombre,
+                    descripcion: formData.descripcion,
+                    codigo: formData.codigo,
+                    ciclo: formData.ciclo,
+                    nivel: formData.nivel,
+                    orden: formData.orden
+                });
+
+                // Mostrar notificación de éxito
+                setNotificationType('success');
+                setNotificationMessage(mensaje || 'Curso actualizado con éxito');
+                setShowNotification(true);
+
+                // Redirigir después de un breve momento
+                setTimeout(() => {
+                    navigate(`/admin/cursos/${formData.id}`);
+                }, 2000);
+
+            } catch (err: any) {
+                setNotificationType('error');
+                setNotificationMessage(err?.response?.data?.message || err.message || 'Error al actualizar el curso');
+                setShowNotification(true);
+            }
+        }
+    };
+
+    return (
+        <div className={styles.formContainer}>
+            {/* Encabezado con migas de pan */}
+            <div className={styles.pageHeader}>
+                <div className={styles.breadcrumb}>
+                    <Link to="/admin/cursos">Cursos</Link>
+                    <span className={styles.breadcrumbSeparator}>/</span>
+                    <Link to={`/admin/cursos/${formData.id}`}>{formData.nombre || 'Detalle de curso'}</Link>
+                    <span className={styles.breadcrumbSeparator}>/</span>
+                    <span className={styles.breadcrumbCurrent}>Editar curso</span>
+                </div>
+
+                <Link to={`/admin/cursos/${formData.id}`} className={styles.buttonCancel}>
+                    <FaArrowLeft size={14} style={{ marginRight: '6px' }} />
+                    Volver a detalles
+                </Link>
+            </div>
+
+            {loadingCurso ? (
+                <div className={styles.loadingContainer}>
+                    <div className={styles.loader}></div>
+                    <p>Cargando datos del curso...</p>
+                </div>
+            ) : errorCurso ? (
+                <div className={styles.errorContainer}>
+                    <p className={styles.errorMessage}>{errorCurso}</p>
+                    <Link to="/admin/cursos" className={styles.buttonCancel}>
+                        Volver a la lista
+                    </Link>
+                </div>
+            ) : (
+                /* Formulario */
+                <form onSubmit={handleSubmit}>
+                    <div className={styles.formCard}>
+                        {/* Sección: Información básica */}
+                        <div className={styles.formSection}>
+                            <div className={styles.sectionHeader}>
+                                <div className={styles.sectionIcon}>
+                                    <FaBook />
+                                </div>
+                                <div>
+                                    <h3 className={styles.sectionTitle}>Información básica</h3>
+                                    <p className={styles.sectionDescription}>
+                                        Datos principales del curso
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className={styles.formGrid}>
+                                <div className={styles.inputGroup}>
+                                    <label className={`${styles.inputLabel} ${styles.requiredField}`}>
+                                        Nombre del curso
+                                    </label>
+                                    <div className={styles.inputWrapper}>
+                                        <FaBook className={styles.inputIcon} />
+                                        <input
+                                            type="text"
+                                            name="nombre"
+                                            className={styles.input}
+                                            placeholder="Nombre del curso"
+                                            value={formData.nombre}
+                                            onChange={handleInputChange}
+                                            onBlur={handleBlur}
+                                        />
+                                    </div>
+                                    {touched.nombre && errors.nombre && (
+                                        <p className={styles.errorText}>{errors.nombre}</p>
+                                    )}
+                                </div>
+
+                                <div className={styles.inputGroup}>
+                                    <label className={`${styles.inputLabel} ${styles.requiredField}`}>
+                                        Código
+                                    </label>
+                                    <div className={styles.inputWrapper}>
+                                        <FaHashtag className={styles.inputIcon} />
+                                        <input
+                                            type="text"
+                                            name="codigo"
+                                            className={styles.input}
+                                            placeholder="Código del curso"
+                                            value={formData.codigo}
+                                            onChange={handleInputChange}
+                                            onBlur={handleBlur}
+                                        />
+                                    </div>
+                                    {touched.codigo && errors.codigo && (
+                                        <p className={styles.errorText}>{errors.codigo}</p>
+                                    )}
+                                </div>
+                            </div>
+                            
+                            <div className={styles.inputGroup}>
+                                <label className={styles.inputLabel}>
+                                    Descripción
+                                </label>
+                                <div className={styles.inputWrapper}>
+                                    <textarea
+                                        name="descripcion"
+                                        className={`${styles.input} ${styles.textarea}`}
+                                        placeholder="Descripción del curso"
+                                        value={formData.descripcion}
+                                        onChange={handleInputChange}
+                                        rows={3}
+                                    ></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Sección: Información académica */}
+                        <div className={styles.formSection}>
+                            <div className={styles.sectionHeader}>
+                                <div className={styles.sectionIcon}>
+                                    <FaGraduationCap />
+                                </div>
+                                <div>
+                                    <h3 className={styles.sectionTitle}>Información académica</h3>
+                                    <p className={styles.sectionDescription}>
+                                        Configuración académica del curso
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className={styles.formGrid}>
+                                <div className={styles.inputGroup}>
+                                    <label className={`${styles.inputLabel} ${styles.requiredField}`}>
+                                        Nivel
+                                    </label>
+                                    <div className={styles.inputWrapper}>
+                                        <FaChalkboardTeacher className={styles.inputIcon} />
+                                        <input
+                                            type="text"
+                                            name="nivel"
+                                            className={styles.input}
+                                            placeholder="Nivel académico"
+                                            value={formData.nivel}
+                                            onChange={handleInputChange}
+                                            onBlur={handleBlur}
+                                        />
+                                    </div>
+                                    {touched.nivel && errors.nivel && (
+                                        <p className={styles.errorText}>{errors.nivel}</p>
+                                    )}
+                                </div>
+
+                                <div className={styles.inputGroup}>
+                                    <label className={styles.inputLabel}>
+                                        Ciclo escolar
+                                    </label>
+                                    <div className={styles.inputWrapper}>
+                                        <FaCalendarAlt className={styles.inputIcon} />
+                                        <input
+                                            type="text"
+                                            name="ciclo"
+                                            className={styles.input}
+                                            placeholder="Ciclo escolar"
+                                            value={formData.ciclo}
+                                            onChange={handleInputChange}
+                                            onBlur={handleBlur}
+                                        />
+                                    </div>
+                                </div>
+                                
+                                <div className={styles.inputGroup}>
+                                    <label className={styles.inputLabel}>
+                                        Orden
+                                    </label>
+                                    <div className={styles.inputWrapper}>
+                                        <FaCog className={styles.inputIcon} />
+                                        <input
+                                            type="number"
+                                            name="orden"
+                                            className={styles.input}
+                                            placeholder="Orden de visualización"
+                                            value={formData.orden}
+                                            onChange={handleInputChange}
+                                            onBlur={handleBlur}
+                                        />
+                                    </div>
+                                    {touched.orden && errors.orden && (
+                                        <p className={styles.errorText}>{errors.orden}</p>
+                                    )}
+                                    <p className={styles.helpText}>Define el orden de visualización en listados</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Botones de acción */}
+                        <div className={styles.formActions}>
+                            <Link
+                                to={`/admin/cursos/${formData.id}`}
+                                className={styles.buttonCancel}
+                            >
+                                Cancelar
+                            </Link>
+                            <button
+                                type="submit"
+                                className={`${styles.buttonSubmit} ${loadingUpdate ? styles.buttonLoading : ''}`}
+                                disabled={loadingUpdate}
+                            >
+                                {loadingUpdate ? (
+                                    <>
+                                        <FaSpinner className={styles.spinnerIcon} />
+                                        <span>Actualizando...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <FaSave style={{ marginRight: '6px' }} />
+                                        Guardar Cambios
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            )}
+
+            {/* Notificación flotante */}
+            {showNotification && (
+                <div className={`${styles.notification} ${styles[notificationType]}`}>
+                    <div className={styles.notificationContent}>
+                        <div className={styles.notificationIcon}>
+                            {notificationType === 'success' ? (
+                                <FaCheck />
+                            ) : (
+                                <span className={styles.errorIcon}>!</span>
+                            )}
+                        </div>
+                        <div className={styles.notificationText}>
+                            <h4>
+                                {notificationType === 'success' ? 'Operación exitosa' : 'Error'}
+                            </h4>
+                            <p>{notificationMessage}</p>
+                        </div>
+                    </div>
+                    <button
+                        className={styles.closeNotification}
+                        onClick={() => setShowNotification(false)}
+                    >
+                        ×
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default EditCoursePage;

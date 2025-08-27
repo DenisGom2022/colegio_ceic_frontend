@@ -1,0 +1,112 @@
+.tooltipWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltipText {
+  visibility: hidden;
+  background-color: rgba(44, 62, 80, 0.95);
+  color: #ffffff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 6px 12px;
+  position: absolute;
+  z-index: 100;
+  font-size: 0.85rem;
+  font-weight: 500;
+  width: max-content;
+  max-width: 200px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.tooltipWrapper:hover .tooltipText {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Positions */
+.top {
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+}
+
+.tooltipWrapper:hover .top {
+  transform: translateX(-50%) translateY(0);
+}
+
+.top::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(44, 62, 80, 0.95) transparent transparent transparent;
+}
+
+.right {
+  left: 110%;
+  top: 50%;
+  transform: translateY(-50%) translateX(-10px);
+}
+
+.tooltipWrapper:hover .right {
+  transform: translateY(-50%) translateX(0);
+}
+
+.right::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent rgba(44, 62, 80, 0.95) transparent transparent;
+}
+
+.bottom {
+  top: 125%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+}
+
+.tooltipWrapper:hover .bottom {
+  transform: translateX(-50%) translateY(0);
+}
+
+.bottom::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent rgba(44, 62, 80, 0.95) transparent;
+}
+
+.left {
+  right: 110%;
+  top: 50%;
+  transform: translateY(-50%) translateX(10px);
+}
+
+.tooltipWrapper:hover .left {
+  transform: translateY(-50%) translateX(0);
+}
+
+.left::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent transparent rgba(44, 62, 80, 0.95);
+}

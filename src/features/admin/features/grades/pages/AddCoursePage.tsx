@@ -69,7 +69,7 @@ export const AddCoursePage: React.FC = () => {
       
       // Redirigir después de un breve delay
       setTimeout(() => {
-        navigate(`/admin/grados/${gradeId}`);
+        navigate(`/admin/grado/${gradeId}`);
       }, 2000);
     }
   }, [courseMessage, navigate, gradeId]);
@@ -189,6 +189,7 @@ export const AddCoursePage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    debugger
     
     // Marcar todos los campos como tocados
     const allFields = Object.keys(formData).reduce((acc, key) => {
@@ -227,7 +228,7 @@ export const AddCoursePage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    navigate(`/admin/grados/${gradeId}`);
+    navigate(`/admin/grado/${gradeId}`);
   };
 
   if (gradeLoading) {
@@ -265,7 +266,7 @@ export const AddCoursePage: React.FC = () => {
           <FaExclamationCircle className={styles.errorIcon} />
           <h3>Sin ciclo activo</h3>
           <p>Este grado no tiene un ciclo activo. No se pueden agregar cursos.</p>
-          <Link to={`/admin/grados/${gradeId}`} className={styles.backButton}>
+          <Link to={`/admin/grado/${gradeId}`} className={styles.backButton}>
             <FaArrowLeft size={14} />
             Volver al detalle del grado
           </Link>
@@ -281,7 +282,7 @@ export const AddCoursePage: React.FC = () => {
         <div className={styles.breadcrumb}>
           <Link to="/admin/grados">Grados</Link>
           <span className={styles.breadcrumbSeparator}>/</span>
-          <Link to={`/admin/grados/${gradeId}`}>{grado.nombre}</Link>
+          <Link to={`/admin/grado/${gradeId}`}>{grado.nombre}</Link>
           <span className={styles.breadcrumbSeparator}>/</span>
           <span className={styles.breadcrumbCurrent}>Agregar curso</span>
         </div>

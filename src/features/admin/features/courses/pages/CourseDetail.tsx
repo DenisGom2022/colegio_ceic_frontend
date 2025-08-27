@@ -141,7 +141,7 @@ export const CourseDetailPage = () => {
               Volver a la lista
             </button>
           )}
-          <Link to={`/admin/cursos/editar/${course.id}`} className={styles.buttonEdit}>
+          <Link to={`/admin/editar-curso/${course.id}`} className={styles.buttonEdit}>
             <FaEdit size={14} />
             Editar
           </Link>

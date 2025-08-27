@@ -1,0 +1,98 @@
+# Interfaces repetidas en el proyecto
+
+A continuación se listan las interfaces que tienen nombres repetidos, junto con los archivos y líneas donde aparecen:
+
+---
+
+Usuario
+- src/models/Usuario.ts:1
+- src/hooks/useCatedraticos.ts:5
+- src/hooks/useTablaCatedratico.ts:4
+- src/features/admin/features/users/models/Usuario.ts:1
+- src/features/admin/features/courses/models/Course.ts:7
+
+TipoUsuario
+- src/models/TipoUsuario.ts:1
+- src/features/admin/features/users/models/TipoUsuario.ts:1
+- src/features/admin/features/courses/models/Course.ts:1
+
+Grado
+- src/services/cicloService.ts:20
+- src/features/admin/features/grades/services/gradoService.ts:67
+- src/features/admin/features/teachers/models/Teacher.ts:19
+- src/features/admin/features/cycles/models/Grado.ts:3
+- src/features/admin/features/cycles/models/Ciclo.ts:19
+- src/features/admin/features/courses/models/Course.ts:42
+
+Ciclo
+- src/services/cicloService.ts:45
+- src/features/admin/features/grades/services/gradoService.ts:21
+- src/features/admin/features/teachers/models/Teacher.ts:31
+- src/features/admin/features/grades/models/Grade.ts:17
+- src/features/admin/features/cycles/models/Ciclo.ts:44
+- src/features/admin/features/courses/models/Course.ts:33
+- src/features/admin/features/grades/pages/GradesPage.tsx:22
+
+Jornada
+- src/services/cicloService.ts:4
+- src/features/admin/features/grades/services/gradoService.ts:13
+- src/features/admin/features/grades/models/Grade.ts:9
+- src/features/admin/features/teachers/models/Teacher.ts:3
+- src/features/admin/features/cycles/models/Ciclo.ts:3
+- src/features/admin/features/grades/services/catalogosService.ts:9
+
+NivelAcademico
+- src/services/cicloService.ts:12
+- src/features/admin/features/grades/services/gradoService.ts:5
+- src/features/admin/features/grades/models/Grade.ts:1
+- src/features/admin/features/teachers/models/Teacher.ts:11
+- src/features/admin/features/cycles/models/Ciclo.ts:11
+- src/features/admin/features/grades/services/catalogosService.ts:4
+
+GradoCiclo
+- src/services/cicloService.ts:32
+- src/features/admin/features/grades/services/gradoService.ts:53
+- src/features/admin/features/teachers/models/Teacher.ts:40
+- src/features/admin/features/grades/models/Grade.ts:26
+- src/features/admin/features/cycles/models/Ciclo.ts:31
+- src/features/admin/features/courses/models/Course.ts:42
+- src/features/admin/features/grades/pages/GradesPage.tsx:31
+
+FormErrors
+- src/features/admin/features/users/pages/CreateUser.tsx:35
+- src/features/admin/features/users/pages/CreateUserPage.tsx:35
+- src/features/admin/features/users/pages/EditUser.tsx:20
+- src/features/admin/features/grades/pages/CreateGradePage.tsx:27
+- src/features/admin/features/grades/pages/EditGradePage.tsx:17
+- src/features/admin/features/grades/pages/AddCoursePage.tsx:27
+- src/features/admin/features/teachers/pages/CreateTeacherPage.tsx:19
+- src/features/admin/features/courses/pages/CreateCoursePage.tsx:35
+- src/features/admin/features/courses/pages/EditCoursePage.tsx:33
+- src/features/admin/features/courses/pages/EditCoursePage.tsx.final:27
+- src/features/admin/features/courses/pages/EditCoursePage.tsx.new:18
+
+UserFormData
+- src/features/admin/features/users/pages/CreateUser.tsx:21
+- src/features/admin/features/users/pages/CreateUserPage.tsx:21
+
+ActivityLog
+- src/features/admin/features/users/pages/UserDetail.tsx:13
+- src/features/admin/features/grades/pages/GradeDetailPage.tsx:16
+
+TeacherSelectionModalProps
+- src/features/admin/features/grades/components/TeacherSelectionModal.tsx:27
+- src/features/admin/features/courses/components/TeacherSelectionModal.tsx:6
+- src/features/admin/features/teachers/pages/EditTeacherPage.tsx:11
+
+ButtonProps
+- src/components/Button.tsx:3
+- src/components/ui/Button.tsx:3
+- src/features/admin/features/users/components/ui/UserButton.tsx:4
+
+TooltipProps
+- src/components/ui/Tooltip/Tooltip.tsx:4
+- src/features/admin/features/courses/components/Tooltip.tsx:4
+
+---
+
+Si necesitas el listado completo de todas las coincidencias, puedo generarlo también.
