@@ -1,30 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { environments } from '../utils/environments';
-
-interface Usuario {
-    usuario: string;
-    primerNombre: string;
-    segundoNombre: string | null;
-    tercerNombre: string | null;
-    primerApellido: string;
-    segundoApellido: string | null;
-    idTipoUsuario: number;
-    telefono: string | null;
-    cambiarContrasena: number;
-    createdAt: string;
-    updatedAt: string;
-    deletedAt: string | null;
-}
-
-interface Catedratico {
-    dpi: string;
-    idUsuario: string;
-    createdAt: string;
-    updatedAt: string;
-    deletedAt: string | null;
-    usuario: Usuario;
-}
+import type { Catedratico } from '../interfaces/interfaces';
 
 interface UseCatedraticoReturn {
     catedraticos: Catedratico[];

@@ -1,3 +1,4 @@
+import type { Curso } from '../../../../../interfaces/interfaces';
 import type { Usuario } from '../../../../../models/Usuario';
 
 export interface Jornada {
@@ -51,18 +52,6 @@ export interface GradoCiclo {
   grado: Grado;
 }
 
-export interface Curso {
-  id: number;
-  nombre: string;
-  notaMaxima: number;
-  notaAprobada: number;
-  idGradoCiclo: number;
-  dpiCatedratico: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  gradoCiclo: GradoCiclo;
-}
 
 export interface Teacher {
   dpi: string;

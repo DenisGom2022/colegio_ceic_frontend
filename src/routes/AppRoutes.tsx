@@ -15,6 +15,7 @@ import CambiaContrasena from "../pages/cambiaContrasena/CambiaContrasena";
 import { ProtectedRoute } from "./ProtectedRoute";
 import Forbidden from "../pages/Forbidden";
 import { adminRoutes } from "./adminRoutes";
+import { MisCursosRoutes } from "../features/routes/MisCursosRoutes";
 
 export default function AppRoutes() {
   return (
@@ -33,20 +34,8 @@ export default function AppRoutes() {
           </MainLayout>
         </ProtectedRoute>
       } />
-      <Route path="cursos" element={
-        <ProtectedRoute>
-          <MainLayout title="Cursos">
-            <div>Página de cursos (en desarrollo)</div>
-          </MainLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="tareas" element={
-        <ProtectedRoute>
-          <MainLayout title="Tareas">
-            <div>Página de tareas (en desarrollo)</div>
-          </MainLayout>
-        </ProtectedRoute>
-      } />
+
+      { MisCursosRoutes }
             
       {/* Rutas de administración */}
       <Route path="admin">

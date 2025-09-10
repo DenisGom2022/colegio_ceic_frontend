@@ -275,6 +275,21 @@ export const CourseDetailPage = () => {
 
           <div className={styles.detailGrid}>
             <div className={styles.detailItem}>
+              <div className={styles.detailLabel}>Nombre de grado</div>
+              <div className={styles.detailValue}>{course.gradoCiclo.grado?.nombre || 'No disponible'}</div>
+            </div>
+
+            <div className={styles.detailItem}>
+              <div className={styles.detailLabel}>Nivel académico</div>
+              <div className={styles.detailValue}>{course.gradoCiclo.grado?.nivelAcademico?.descripcion || 'No disponible'}</div>
+            </div>
+
+            <div className={styles.detailItem}>
+              <div className={styles.detailLabel}>Jornada</div>
+              <div className={styles.detailValue}>{course.gradoCiclo.grado?.jornada?.descripcion || 'No disponible'}</div>
+            </div>
+
+            <div className={styles.detailItem}>
               <div className={styles.detailLabel}>ID Grado</div>
               <div className={styles.detailValue}>{course.gradoCiclo.idGrado}</div>
             </div>
@@ -313,6 +328,50 @@ export const CourseDetailPage = () => {
             </div>
           </div>
         </div>
+
+        {/* Sección: Bimestres */}
+        {course.bimestres && course.bimestres.length > 0 && (
+          <div className={styles.detailSection}>
+            <div className={styles.sectionHeader}>
+              <div className={styles.sectionIcon}>
+                <FaCalendarAlt />
+              </div>
+              <h3 className={styles.sectionTitle}>Bimestres</h3>
+            </div>
+
+            <div className={styles.detailGrid}>
+              {course.bimestres.map((bimestre) => (
+                <div key={bimestre.id} className={`${styles.detailItem} ${styles.bimestreCard}`}>
+                  <div className={styles.detailLabel}>
+                    {bimestre.numeroBimestre === 0 
+                      ? 'Bimestre inicial' 
+                      : `Bimestre ${bimestre.numeroBimestre}`}
+                  </div>
+                  <div className={styles.detailValue}>
+                    <div className={styles.bimestreStatus}>
+                      Estado: 
+                      <span className={`${styles.bimestreEstado} ${
+                        bimestre.idEstado === 0 ? styles.estadoEspera : 
+                        bimestre.idEstado === 1 ? styles.estadoEnCurso : 
+                        styles.estadoFinalizado}`}>
+                        {bimestre.estado?.descripcion || 'Desconocido'}
+                      </span>
+                    </div>
+                    {bimestre.fechaInicio && (
+                      <div>Fecha de inicio: {formatDate(bimestre.fechaInicio)}</div>
+                    )}
+                    {bimestre.fechaFin && (
+                      <div>Fecha de finalización: {formatDate(bimestre.fechaFin)}</div>
+                    )}
+                    {!bimestre.fechaInicio && !bimestre.fechaFin && (
+                      <div className={styles.valueEmpty}>Sin fechas registradas</div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Sección: Información técnica */}
         <div className={styles.detailSection}>

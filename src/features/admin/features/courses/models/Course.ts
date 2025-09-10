@@ -1,34 +1,4 @@
-export interface TipoUsuario {
-  id: number;
-  descripcion: string;
-  createdAt: string;
-}
-
-export interface Usuario {
-  usuario: string;
-  contrasena: string;
-  primerNombre: string;
-  segundoNombre: string;
-  tercerNombre: string | null;
-  primerApellido: string;
-  segundoApellido: string | null;
-  idTipoUsuario: number;
-  telefono: string;
-  cambiarContrasena: number;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  tipoUsuario: TipoUsuario;
-}
-
-export interface Catedratico {
-  dpi: string;
-  idUsuario: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  usuario: Usuario;
-}
+import type { Catedratico } from "../../../../../interfaces/interfaces";
 
 export interface Ciclo {
   id: number;
@@ -37,6 +7,34 @@ export interface Ciclo {
   fechaFin: string | null;
   updatedAt: string;
   deletedAt: string | null;
+}
+
+export interface NivelAcademico {
+  id: number;
+  descripcion: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
+export interface Jornada {
+  id: number;
+  descripcion: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
+export interface Grado {
+  id: number;
+  nombre: string;
+  idNivel: number;
+  idJornada: number;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  nivelAcademico: NivelAcademico;
+  jornada: Jornada;
 }
 
 export interface GradoCiclo {
@@ -50,6 +48,28 @@ export interface GradoCiclo {
   updatedAt: string;
   deletedAt: string | null;
   ciclo: Ciclo;
+  grado: Grado;
+}
+
+export interface EstadoBimestre {
+  id: number;
+  descripcion: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
+export interface Bimestre {
+  id: number;
+  numeroBimestre: number;
+  idEstado: number;
+  fechaInicio: string | null;
+  fechaFin: string | null;
+  idCurso: number;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  estado: EstadoBimestre;
 }
 
 export interface Course {
@@ -64,6 +84,7 @@ export interface Course {
   deletedAt: string | null;
   gradoCiclo: GradoCiclo;
   catedratico: Catedratico;
+  bimestres?: Bimestre[];
 }
 
 export interface CoursesResponse {

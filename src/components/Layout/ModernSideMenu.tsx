@@ -53,44 +53,14 @@ const ModernSideMenu: React.FC = () => {
             icon: <FaHome className={styles.menuIcon} />
         },
         {
-            label: "Cursos",
-            path: "/cursos",
+            label: "Mis Cursos",
+            path: "/mis-cursos",
             icon: <FaBook className={styles.menuIcon} />
         },
         {
-            label: "Grados",
-            path: "/grados",
-            icon: <FaLayerGroup className={styles.menuIcon} />
-        },
-        {
-            label: "Calendario",
-            path: "/calendario",
-            icon: <FaCalendarAlt className={styles.menuIcon} />
-        },
-        {
-            label: "Tareas",
-            path: "/tareas",
+            label: "Mis Tareas",
+            path: "/mis-tareas",
             icon: <FaClipboardList className={styles.menuIcon} />
-        },
-        {
-            label: "Profesores",
-            path: "/profesores",
-            icon: <FaChalkboardTeacher className={styles.menuIcon} />
-        },
-        {
-            label: "Reportes",
-            path: "/reportes",
-            icon: <FaChartBar className={styles.menuIcon} />
-        },
-        {
-            label: "Notificaciones",
-            path: "/notificaciones",
-            icon: <FaBell className={styles.menuIcon} />
-        },
-        {
-            label: "Configuración",
-            path: "/configuracion",
-            icon: <FaCog className={styles.menuIcon} />
         }
     ];
     

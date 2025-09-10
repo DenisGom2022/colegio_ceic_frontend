@@ -1,0 +1,37 @@
+.bimestreSelector {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  margin: 0 20px 20px;
+}
+
+.bimestreIcon {
+  color: #64748b;
+  margin-right: 10px;
+  font-size: 1rem;
+}
+
+.bimestreSelect {
+  flex: 1;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 12px;
+  background-color: white;
+  color: #1e293b;
+  font-size: 0.9rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.bimestreSelect:focus {
+  border-color: #818cf8;
+  box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.2);
+}
+
+/* Make the select more obvious that it's clickable */
+.bimestreSelect:hover {
+  border-color: #818cf8;
+}

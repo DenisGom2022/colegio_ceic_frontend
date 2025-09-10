@@ -46,6 +46,7 @@ export interface Ciclo {
   descripcion: string;
   createdAt: string;
   fechaFin: string | null;
+  cantidadBimestres: number;
   updatedAt: string;
   deletedAt: string | null;
   gradosCiclo: GradoCiclo[];
@@ -54,6 +55,7 @@ export interface Ciclo {
 export interface CicloCreateData {
   id?: string;
   descripcion: string;
+  cantidadBimestres: number;
   fechaFin?: string | null;
 }
 

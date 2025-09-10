@@ -9,9 +9,11 @@ import FloatingNotification from '../../../../../components/FloatingNotification
 const CreateCyclePage: React.FC = () => {
   const [id, setId] = useState<string>('');
   const [descripcion, setDescripcion] = useState<string>('');
-  const [touched, setTouched] = useState<{ id: boolean; descripcion: boolean }>({
+  const [cantidadBimestres, setCantidadBimestres] = useState<number>(4);
+  const [touched, setTouched] = useState<{ id: boolean; descripcion: boolean; cantidadBimestres: boolean }>({
     id: false,
-    descripcion: false
+    descripcion: false,
+    cantidadBimestres: false
   });
 
   // Estado para notificaciones
@@ -47,7 +49,7 @@ const CreateCyclePage: React.FC = () => {
     e.preventDefault();
     
     // Marcar todos los campos como tocados para mostrar errores
-    setTouched({ id: true, descripcion: true });
+    setTouched({ id: true, descripcion: true, cantidadBimestres: true });
     
     // Validar campos
     if (!isFormValid()) {
@@ -60,7 +62,7 @@ const CreateCyclePage: React.FC = () => {
     
     try {
       // Intentar crear el ciclo
-      const { success, errorMessage } = await createCycle({ id, descripcion });
+      const { success, errorMessage } = await createCycle({ id, descripcion, cantidadBimestres });
       
       // Si el resultado es exitoso
       if (success) {
@@ -86,7 +88,7 @@ const CreateCyclePage: React.FC = () => {
   };
 
   const isFormValid = () => {
-    return !!id && !!descripcion;
+    return !!id && !!descripcion && cantidadBimestres > 0;
   };
 
   return (
@@ -184,6 +186,30 @@ const CreateCyclePage: React.FC = () => {
                     Describe el ciclo escolar de forma clara y concisa.
                   </div>
                 </div>
+
+                {/* Campo de Cantidad de Bimestres */}
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel} htmlFor="cantidadBimestres">
+                    Cantidad de Bimestres <span className={styles.requiredMark}>*</span>
+                  </label>
+                  <input
+                    id="cantidadBimestres"
+                    type="number"
+                    className={`${styles.formInput} ${touched.cantidadBimestres && cantidadBimestres <= 0 ? styles.formInputError : ''}`}
+                    value={cantidadBimestres}
+                    onChange={(e) => setCantidadBimestres(parseInt(e.target.value) || 0)}
+                    onBlur={() => setTouched({ ...touched, cantidadBimestres: true })}
+                    min="1"
+                    max="6"
+                    disabled={loading}
+                  />
+                  {touched.cantidadBimestres && cantidadBimestres <= 0 && (
+                    <div className={styles.error}>La cantidad de bimestres debe ser mayor a cero</div>
+                  )}
+                  <div className={styles.formHint}>
+                    Indica el número de bimestres para este ciclo escolar.
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -204,7 +230,8 @@ const CreateCyclePage: React.FC = () => {
                 onClick={() => {
                   setId('');
                   setDescripcion('');
-                  setTouched({ id: false, descripcion: false });
+                  setCantidadBimestres(4);
+                  setTouched({ id: false, descripcion: false, cantidadBimestres: false });
                 }}
                 disabled={loading}
               >

@@ -354,6 +354,11 @@ const CycleDetailPage: React.FC = () => {
                             </div>
                             
                             <div className={styles.detailItem}>
+                                <div className={styles.detailLabel}>Cantidad de bimestres</div>
+                                <div className={styles.detailValue}>{ciclo.cantidadBimestres}</div>
+                            </div>
+                            
+                            <div className={styles.detailItem}>
                                 <div className={styles.detailLabel}>Estado</div>
                                 <div className={styles.detailValue}>
                                     {ciclo.fechaFin ? 'Finalizado' : 'Activo'}

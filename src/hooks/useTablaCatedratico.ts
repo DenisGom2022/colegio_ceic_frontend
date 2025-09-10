@@ -1,34 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getCatedraticos } from '../services/catedraticoService';
+import type { Catedratico } from '../interfaces/interfaces';
 
-export interface Usuario {
-  usuario: string;
-  primerNombre: string;
-  segundoNombre: string;
-  tercerNombre: string;
-  primerApellido: string;
-  segundoApellido: string;
-  idTipoUsuario: number;
-  telefono: string;
-  cambiarContrasena: number;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  tipoUsuario: {
-    id: number;
-    descripcion: string;
-    createdAt: string;
-  };
-}
-
-export interface Catedratico {
-  dpi: string;
-  idUsuario: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  usuario: Usuario;
-}
 
 export interface CatedraticoResponse {
   message: string;

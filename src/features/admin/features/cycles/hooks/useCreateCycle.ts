@@ -5,6 +5,7 @@ import { cycleService } from '../services/cycleService';
 interface CreateCycleData {
   id: string;
   descripcion: string;
+  cantidadBimestres: number;
 }
 
 interface CreateCycleResult {

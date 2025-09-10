@@ -247,6 +247,40 @@
   font-weight: 600;
 }
 
+.bimestreStatus {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.bimestreEstado {
+  margin-left: 4px;
+  font-weight: 600;
+}
+
+.estadoEspera {
+  color: #f59e0b; /* Amber/Yellow */
+}
+
+.estadoEnCurso {
+  color: #3b82f6; /* Blue */
+}
+
+.estadoFinalizado {
+  color: #10b981; /* Green */
+}
+
+.bimestreCard {
+  border-radius: 8px;
+  background-color: #f8fafc;
+  padding: 12px;
+  border-left: 4px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.bimestreCard:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
 .statusActive {
   color: #10b981;
   font-weight: 600;

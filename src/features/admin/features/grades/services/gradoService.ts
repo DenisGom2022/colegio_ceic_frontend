@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { environments } from '../../../../../utils/environments';
 import type { Usuario } from '../../users';
+import type { Curso } from '../../../../../interfaces/interfaces';
 
 interface NivelAcademico {
   id: number;
@@ -25,29 +26,6 @@ interface Ciclo {
   fechaFin: string | null;
   updatedAt: string;
   deletedAt: string | null;
-}
-
-
-interface Catedratico {
-  dpi: string;
-  idUsuario: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  usuario: Usuario;
-}
-
-export interface Curso {
-  id: number;
-  nombre: string;
-  notaMaxima: number;
-  notaAprobada: number;
-  idGradoCiclo: number;
-  dpiCatedratico: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  catedratico: Catedratico;
 }
 
 interface GradoCiclo {

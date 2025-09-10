@@ -44,7 +44,7 @@ export const useStudentsTable = (): UseStudentsTableResult => {
       setLoading(true);
       setError(null);
       
-      const response = await getStudents(page, limit, search, sort, direction);
+      const response = await getStudents(page, limit, search);
       
       setStudents(response.students);
       setTotalStudents(response.total);
