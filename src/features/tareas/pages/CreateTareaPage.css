@@ -489,6 +489,42 @@
   transform: translateX(2px);
 }
 
+/* Action Buttons Container */
+.actions-right {
+  display: flex;
+  gap: var(--formal-spacing-md);
+  align-items: center;
+}
+
+/* Professional Cancel Button */
+.btn-cancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--formal-text-secondary);
+  background: var(--formal-background);
+  border: 1px solid var(--formal-border);
+  border-radius: var(--formal-radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 140px;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  color: var(--formal-text-primary);
+  border-color: var(--formal-text-secondary);
+  background: var(--formal-surface);
+}
+
+.btn-cancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Professional Submit Button */
 .btn-submit {
   display: flex;
@@ -717,7 +753,13 @@
     gap: var(--formal-spacing-md);
   }
   
-  .btn-submit {
+  .actions-right {
+    flex-direction: column;
+    gap: var(--formal-spacing-sm);
+  }
+  
+  .btn-submit,
+  .btn-cancel {
     width: 100%;
   }
 }

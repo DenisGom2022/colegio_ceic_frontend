@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useMisCursosActivos } from "../hooks/useMisCursosActivos";
 import { useState, useEffect } from "react";
 import { useCreateTarea } from "../hooks/useCreateTarea";
@@ -22,6 +22,7 @@ function toISO8601(dateString: string) {
 
 export const CreateTareaPage = () => {
   const { search } = useLocation();
+  const navigate = useNavigate();
   const params = new URLSearchParams(search);
   const idCurso = params.get("idCurso") || 0;
   const nroBimestre = params.get("nroBimestre") || 0;
@@ -47,8 +48,12 @@ export const CreateTareaPage = () => {
   useEffect(() => {
     if (success) {
       setShowNotification(true);
+      // Redireccionar al detalle del curso después de mostrar la notificación
+      setTimeout(() => {
+        navigate(`/mis-cursos/${curso}`);
+      }, 2000); // 2 segundos para que el usuario vea la notificación
     }
-  }, [success]);
+  }, [success, navigate, curso]);
 
   const submitForm = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,6 +92,10 @@ export const CreateTareaPage = () => {
   const handleCursoSelect = (cursoSeleccionado: any) => {
     setCurso(cursoSeleccionado.id);
     setShowModal(false);
+  };
+
+  const handleCancel = () => {
+    navigate(`/mis-cursos/${curso}`);
   };
 
   const getCursoSeleccionado = () => {
@@ -385,6 +394,20 @@ export const CreateTareaPage = () => {
                     </div>
                   </div>
                   <div className="actions-right">
+                    <button
+                      type="button"
+                      className="btn-cancel"
+                      onClick={handleCancel}
+                      disabled={loading}
+                    >
+                      <div className="btn-content">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                          <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2"/>
+                          <path d="M6 6l12 12" stroke="currentColor" strokeWidth="2"/>
+                        </svg>
+                        <span>Cancelar</span>
+                      </div>
+                    </button>
                     <button
                       type="submit"
                       className="btn-submit"

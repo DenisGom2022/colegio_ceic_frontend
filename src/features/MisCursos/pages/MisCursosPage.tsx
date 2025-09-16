@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useListMisCursos } from "../hooks/useListMisCursos";
 import styles from "./MisCursosPage.module.css";
-import { FaSearch, FaBook, FaExclamationTriangle, FaUserGraduate, FaPlus, FaTasks } from "react-icons/fa";
+import { FaSearch, FaBook, FaExclamationTriangle, FaUserGraduate, FaTasks } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import type { Curso } from "../../../interfaces/interfaces";
 
 // Opciones para el número de registros por página
 const PAGE_SIZE_OPTIONS = [5, 10, 15, 25, 50];
