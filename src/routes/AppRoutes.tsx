@@ -16,36 +16,38 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import Forbidden from "../pages/Forbidden";
 import { adminRoutes } from "./adminRoutes";
 import { MisCursosRoutes } from "../features/routes/MisCursosRoutes";
+import { TareasRoutes } from "../features/routes/TareasRoutes";
 
 export default function AppRoutes() {
-  return (
-    <Routes>
-      {/* Rutas públicas */}
-      <Route path={PUBLIC_ROUTES.LOGIN} element={<Login />} />
-      <Route path={USER_ROUTES.CHANGE_PASSWORD} element={<CambiaContrasena />} />
-      <Route path={PUBLIC_ROUTES.FORBIDDEN} element={<Forbidden />} />
-      
-      {/* Todas las rutas protegidas con un único layout */}
-      <Route path="/" element={<Navigate to={USER_ROUTES.DASHBOARD} replace />} />
-      <Route path="dashboard" element={
-        <ProtectedRoute>
-          <MainLayout title="Dashboard">
-            <Dashboard />
-          </MainLayout>
-        </ProtectedRoute>
-      } />
+    return (
+        <Routes>
+            {/* Rutas públicas */}
+            <Route path={PUBLIC_ROUTES.LOGIN} element={<Login />} />
+            <Route path={USER_ROUTES.CHANGE_PASSWORD} element={<CambiaContrasena />} />
+            <Route path={PUBLIC_ROUTES.FORBIDDEN} element={<Forbidden />} />
 
-      { MisCursosRoutes }
-            
-      {/* Rutas de administración */}
-      <Route path="admin">
-        {adminRoutes}
-      </Route>
-          
-      {/* Cualquier otra ruta no definida */}
-      <Route path="*" element={<Navigate to="/login" replace />} />
-    </Routes>
-  );
+            {/* Todas las rutas protegidas con un único layout */}
+            <Route path="/" element={<Navigate to={USER_ROUTES.DASHBOARD} replace />} />
+            <Route path="dashboard" element={
+                <ProtectedRoute>
+                    <MainLayout title="Dashboard">
+                        <Dashboard />
+                    </MainLayout>
+                </ProtectedRoute>
+            } />
+
+            {MisCursosRoutes}
+            {TareasRoutes}
+
+            {/* Rutas de administración */}
+            <Route path="admin">
+                {adminRoutes}
+            </Route>
+
+            {/* Cualquier otra ruta no definida */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+    );
 }
 
 // End of AppRoutes component

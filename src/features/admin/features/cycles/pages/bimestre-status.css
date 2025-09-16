@@ -1,0 +1,30 @@
+/* Mejoras a los estilos de bimestre según su estado */
+.bimestreCard[data-estado="0"] {
+  border-left: 3px solid #cbd5e0;
+}
+
+.bimestreCard[data-estado="1"] {
+  border-left: 3px solid #3182ce;
+  background-color: #f7fafc;
+}
+
+.bimestreCard[data-estado="2"] {
+  border-left: 3px solid #38a169;
+  background-color: #f8f9fa;
+  opacity: 0.85;
+}
+
+.statusActive {
+  color: #3182ce;
+  background-color: #ebf8ff;
+}
+
+.statusCompleted {
+  color: #38a169;
+  background-color: #f0fff4;
+}
+
+.statusPending {
+  color: #718096;
+  background-color: #f7fafc;
+}

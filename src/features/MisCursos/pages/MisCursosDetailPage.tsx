@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useMiCurso } from "../hooks/useMiCurso";
 import styles from "./MisCursosDetailPage.module.css";
+import type { Bimestre } from "../../../interfaces/interfaces";
 import {
   FaArrowLeft,
   FaBook,
@@ -36,14 +37,15 @@ const MisCursosDetailPage = () => {
   const [selectedBimestre, setSelectedBimestre] = useState<number | null>(null);
   
   useEffect(() => {
-    if (curso?.bimestres) {
+    if (curso?.gradoCiclo?.ciclo?.bimestres) {
       // Buscar si hay algún bimestre con estado 1 (activo)
-      const activeBimestre = curso.bimestres.find(bim => bim.idEstado === 1);
+      const bimestres = curso.gradoCiclo.ciclo.bimestres;
+      const activeBimestre = bimestres.find((bim: Bimestre) => bim.idEstado === 1);
       if (activeBimestre) {
         setSelectedBimestre(activeBimestre.id);
       } else {
         // Si no hay bimestres activos, seleccionar el primero
-        setSelectedBimestre(curso.bimestres[0]?.id || null);
+        setSelectedBimestre(bimestres[0]?.id || null);
       }
     }
   }, [curso]);
@@ -76,7 +78,6 @@ const MisCursosDetailPage = () => {
   }
   
   // Dejar solo para verificar la estructura
-  // console.log("Datos del curso:", curso);
 
   const {
     nombre,
@@ -84,15 +85,17 @@ const MisCursosDetailPage = () => {
     notaAprobada,
     createdAt,
     gradoCiclo,
-    catedratico,
-    bimestres = []
+    catedratico
   } = curso;
   
-  // Obtener el bimestre seleccionado o el primero si no hay selección
-  const currentBimestre = bimestres.find(b => b.id === selectedBimestre) || bimestres[0];
+  // Los bimestres están dentro de gradoCiclo.ciclo.bimestres, no directamente en curso
+  const bimestres = gradoCiclo?.ciclo?.bimestres || [];
   
-  // Obtener las tareas del bimestre seleccionado
-  const tareasActuales = currentBimestre?.tareas || [];
+  // Obtener el bimestre seleccionado o el primero si no hay selección
+  const bimestreActual = bimestres.find((b: Bimestre) => b.id === selectedBimestre) || bimestres[0];
+  
+  // Mostrar todas las tareas sin filtrar para verificar que existen
+  let tareasActuales = curso.tareas || [];
   
   // Calcular el punteo total de todas las tareas del bimestre actual
   const totalPunteoTareas = tareasActuales.length > 0
@@ -158,18 +161,27 @@ const MisCursosDetailPage = () => {
           
           {(activeTab === "tasks" || activeTab === "notes") && bimestres.length > 0 && (
             <div className={styles.bimestreSelector}>
-              <FaLayerGroup className={styles.bimestreIcon} />
-              <select 
-                value={selectedBimestre || ''} 
-                onChange={(e) => setSelectedBimestre(Number(e.target.value))}
-                className={styles.bimestreSelect}
-              >
-                {bimestres.map((bim) => (
-                  <option key={bim.id} value={bim.id}>
-                    Bimestre {bim.numeroBimestre} - {bim.estado.descripcion}
-                  </option>
-                ))}
-              </select>
+              <div className={styles.bimestreLabel}>
+                <FaLayerGroup className={styles.bimestreIcon} />
+                <span>Bimestre actual:</span>
+              </div>
+              <div className={styles.selectWrapper}>
+                <select 
+                  value={selectedBimestre || ''} 
+                  onChange={(e) => {
+                    const newValue = Number(e.target.value);
+                    setSelectedBimestre(newValue);
+                  }}
+                  className={styles.bimestreSelect}
+                >
+                  {bimestres.map((bim: Bimestre) => (
+                    <option key={bim.id} value={bim.id}>
+                      Bimestre {bim.numeroBimestre} - {bim.estado.descripcion}
+                    </option>
+                  ))}
+                </select>
+                <div className={styles.selectArrow}></div>
+              </div>
             </div>
           )}
 
@@ -224,26 +236,38 @@ const MisCursosDetailPage = () => {
 
             {activeTab === "tasks" && (
               <div className={styles.tasksContainer}>
-                {tareasActuales && tareasActuales.length > 0 ? (
+                {curso.tareas && Array.isArray(curso.tareas) && curso.tareas.length > 0 ? (
                   <>
                     <div className={styles.tasksHeader}>
-                      <h3 className={styles.sectionTitle}>Tareas Asignadas</h3>
-                      <p className={styles.taskCount}>{tareasActuales.length} tareas en total</p>
+                      <h3 className={styles.sectionTitle}>
+                        Tareas del Bimestre {bimestreActual?.numeroBimestre}
+                      </h3>
+                      {selectedBimestre && (
+                        <p className={styles.taskCount}>
+                          {curso.tareas.filter(tarea => tarea.idBimestre === selectedBimestre).length} tareas en este bimestre
+                        </p>
+                      )}
                     </div>
                     <div className={styles.tasksList}>
-                      {tareasActuales.map((tarea) => {
-                        // No necesitamos más el log de depuración
+                      {curso.tareas
+                        .filter(tarea => tarea.idBimestre === selectedBimestre)
+                        .map((tarea) => {
                         return (
                           <div key={tarea.id} className={styles.taskCard}>
                             <div className={styles.taskHeader}>
-                              <h4 className={styles.taskTitle}>{tarea.titulo}</h4>
+                              <h4 className={styles.taskTitle}>
+                                {tarea.titulo || "Sin título"}
+                                <span style={{fontWeight: 'normal', fontSize: '0.8em', color: '#666', marginLeft: '8px'}}>
+                                  (ID Bimestre: {tarea.idBimestre})
+                                </span>
+                              </h4>
                               <div className={styles.taskPoints}>
                                 {tarea.punteo !== undefined && tarea.punteo !== null 
                                   ? `${tarea.punteo} pts`
                                   : "Punteo no asignado"}
                               </div>
                             </div>
-                            <p className={styles.taskDescription}>{tarea.descripcion}</p>
+                            <p className={styles.taskDescription}>{tarea.descripcion || "Sin descripción"}</p>
                             <div className={styles.taskFooter}>
                               <div className={styles.taskDueDate}>
                                 <FaCalendarAlt size={14} />
@@ -258,8 +282,24 @@ const MisCursosDetailPage = () => {
                 ) : (
                   <div style={{ textAlign: "center", padding: "40px 0" }}>
                     <FaTasks style={{ fontSize: "3rem", color: "#cbd5e1", marginBottom: "16px" }} />
-                    <h3 style={{ color: "#64748b", fontWeight: "500" }}>No hay tareas disponibles en este momento</h3>
-                    <p style={{ color: "#94a3b8", marginTop: "8px" }}>Las tareas asignadas aparecerán aquí</p>
+                    {curso.tareas && Array.isArray(curso.tareas) && curso.tareas.length > 0 ? (
+                      // Tiene tareas pero no para este bimestre
+                      <h3 style={{ color: "#64748b", fontWeight: "500" }}>No hay tareas para el Bimestre {bimestreActual?.numeroBimestre}</h3>
+                    ) : (
+                      // No tiene tareas en absoluto
+                      <h3 style={{ color: "#64748b", fontWeight: "500" }}>No hay tareas disponibles en este curso</h3>
+                    )}
+                    <div style={{ color: "#94a3b8", marginTop: "12px" }}>
+                      <p>Estado de la carga de tareas:</p>
+                      <ul style={{ listStyle: "none", padding: "10px 0" }}>
+                        <li>curso.tareas existe: {curso.tareas ? "Sí" : "No"}</li>
+                        <li>curso.tareas es un array: {Array.isArray(curso.tareas) ? "Sí" : "No"}</li>
+                        <li>Cantidad de tareas totales: {Array.isArray(curso.tareas) ? curso.tareas.length : "N/A"}</li>
+                        <li>Bimestre seleccionado: {selectedBimestre} (Bimestre {bimestreActual?.numeroBimestre})</li>
+                        <li>Tareas en este bimestre: {curso.tareas && Array.isArray(curso.tareas) ? 
+                          curso.tareas.filter(t => t.idBimestre === selectedBimestre).length : "N/A"}</li>
+                      </ul>
+                    </div>
                   </div>
                 )}
               </div>
@@ -268,8 +308,17 @@ const MisCursosDetailPage = () => {
             {activeTab === "notes" && (
               <div style={{ textAlign: "center", padding: "40px 0" }}>
                 <FaGraduationCap style={{ fontSize: "3rem", color: "#cbd5e1", marginBottom: "16px" }} />
-                <h3 style={{ color: "#64748b", fontWeight: "500" }}>No hay notas disponibles en este momento</h3>
-                <p style={{ color: "#94a3b8", marginTop: "8px" }}>Las notas calificadas aparecerán aquí</p>
+                <h3 style={{ color: "#64748b", fontWeight: "500" }}>
+                  No hay notas disponibles para el Bimestre {bimestreActual.numeroBimestre}
+                </h3>
+                <p style={{ color: "#94a3b8", marginTop: "8px" }}>
+                  {bimestreActual.idEstado === 0 ? 
+                    "Este bimestre aún no ha iniciado" : 
+                    bimestreActual.idEstado === 2 ? 
+                      "Este bimestre ya ha finalizado" : 
+                      "Las notas calificadas aparecerán aquí"
+                  }
+                </p>
               </div>
             )}
           </div>
@@ -349,7 +398,7 @@ const MisCursosDetailPage = () => {
 
           <div className={styles.sidebarSection}>
             <Link 
-              to={`/mis-cursos/${id}/nueva-tarea${selectedBimestre ? `?bimestre=${selectedBimestre}` : ''}`} 
+              to={`/crear-tarea?idCurso=${curso.id}&curso=${curso.nombre}${selectedBimestre ? `&nroBimestre=${bimestres.find(e => e.id == selectedBimestre)?.numeroBimestre}` : ''}`} 
               className={styles.actionButton}
             >
               <FaTasks size={16} /> Nueva tarea

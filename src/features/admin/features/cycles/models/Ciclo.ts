@@ -41,6 +41,27 @@ export interface GradoCiclo {
   grado: Grado;
 }
 
+export interface EstadoBimestre {
+  id: number;
+  descripcion: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
+export interface Bimestre {
+  id: number;
+  numeroBimestre: number;
+  idEstado: number;
+  fechaInicio: string | null;
+  fechaFin: string | null;
+  idCiclo: number;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  estado: EstadoBimestre;
+}
+
 export interface Ciclo {
   id: number;
   descripcion: string;
@@ -50,6 +71,7 @@ export interface Ciclo {
   updatedAt: string;
   deletedAt: string | null;
   gradosCiclo: GradoCiclo[];
+  bimestres?: Bimestre[];
 }
 
 export interface CicloCreateData {

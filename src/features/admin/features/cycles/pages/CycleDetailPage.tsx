@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCycleDetail } from '../hooks';
 import styles from './CycleDetailPage.module.css';
@@ -12,8 +12,11 @@ import {
     FaClock,
     FaMoneyBillWave,
     FaRegCalendarCheck,
-    FaCalendarCheck
+    FaCalendarCheck,
+    FaListAlt,
+    FaCircle
 } from 'react-icons/fa';
+import { useModificaBimestre } from '../hooks/useModificaBimestre';
 
 // Interfaz para los eventos de log
 interface EventoLog {
@@ -29,7 +32,8 @@ const CycleDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const cycleId = id ? parseInt(id, 10) : 0;
-    const { ciclo, loading, error } = useCycleDetail(cycleId);
+    const { ciclo, loading, error, recargarDatos } = useCycleDetail(cycleId);
+    const bimestresRef = useRef<HTMLDivElement>(null);
     // Mock para eliminarCiclo mientras no exista el hook real
     const loadingEliminar = false;
     const eliminarCiclo = async (id: number) => {
@@ -40,11 +44,15 @@ const CycleDetailPage: React.FC = () => {
     
     // Hook para finalizar ciclo
     const { ejecutarFinalizarCiclo, loading: loadingFinalizar } = useFinalizarCiclo();
+    const { iniciarBimestre, finalizarBimestre, loading: loadingBimestre } = useModificaBimestre();
     
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showFinalizeModal, setShowFinalizeModal] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState('');
     const [notificationType, setNotificationType] = useState<'success' | 'error'>('success');
+    const [selectedBimestre, setSelectedBimestre] = useState<number | null>(null);
+    const [showBimestreModal, setShowBimestreModal] = useState(false);
+    const [bimestreAction, setBimestreAction] = useState<'start' | 'finish'>('start');
     
     // Eventos de log simulados para el ciclo
     const [eventosLog, setEventosLog] = useState<EventoLog[]>([]);
@@ -134,6 +142,43 @@ const CycleDetailPage: React.FC = () => {
         setNotificationMessage(error.message || 'Error al finalizar el ciclo');
       } finally {
         setShowFinalizeModal(false);
+      }
+    };
+    
+    // Función para manejar acciones de bimestres (iniciar o finalizar)
+    const handleBimestreAction = async () => {
+      if (!selectedBimestre) return;
+      
+      try {
+        // Usar el hook real para ejecutar la acción correspondiente
+        const service = bimestreAction === 'start' ? iniciarBimestre : finalizarBimestre;
+        const bimestreInfo = ciclo?.bimestres?.find(b => b.id === selectedBimestre);
+        const {success, error} = await service(selectedBimestre);
+        
+        if (success) {
+          const actionText = bimestreAction === 'start' ? 'iniciado' : 'finalizado';
+          setNotificationType('success');
+          setNotificationMessage(`Bimestre ${bimestreInfo?.numeroBimestre} ${actionText} correctamente`);
+          
+          // Recargar los datos después de una acción exitosa sin refrescar la página
+          setTimeout(() => {
+            recargarDatos();
+            // Después de que se actualicen los datos, hacer scroll a la sección de bimestres
+            setTimeout(() => {
+              if (bimestresRef.current) {
+                bimestresRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }, 300);
+          }, 1000);
+        } else {
+          setNotificationType('error');
+          setNotificationMessage(error || `Error al ${bimestreAction === 'start' ? 'iniciar' : 'finalizar'} el bimestre`);
+        }
+      } catch (error: any) {
+        setNotificationType('error');
+        setNotificationMessage(error.message || `Error al procesar el bimestre`);
+      } finally {
+        setShowBimestreModal(false);
       }
     };
 
@@ -445,6 +490,99 @@ const CycleDetailPage: React.FC = () => {
                         )}
                     </div>
                     
+                    {/* Sección de Bimestres */}
+                    <div id="bimestres" className={styles.detailSection} ref={bimestresRef}>
+                        <div className={styles.sectionHeader}>
+                            <div className={styles.sectionIcon}>
+                                <FaListAlt size={16} />
+                            </div>
+                            <h2 className={styles.sectionTitle}>Bimestres</h2>
+                            <span className={styles.count}>{ciclo.bimestres?.length || 0}</span>
+                        </div>
+                        
+                        {ciclo.bimestres && ciclo.bimestres.length > 0 ? (
+                            <div className={styles.bimestresContainer}>
+                                <div className={styles.bimestresGrid}>
+                                    {ciclo.bimestres.map(bimestre => (
+                                        <div 
+                                            key={bimestre.id} 
+                                            className={styles.bimestreCard}
+                                            data-estado={bimestre.idEstado}
+                                        >
+                                            <div className={styles.bimestreHeader}>
+                                                <h3 className={styles.bimestreTitle}>
+                                                    Bimestre {bimestre.numeroBimestre}
+                                                </h3>
+                                                <div className={`${styles.bimestreStatus} ${
+                                                    bimestre.idEstado === 1 ? styles.statusActive : 
+                                                    bimestre.idEstado === 2 ? styles.statusCompleted : 
+                                                    styles.statusPending
+                                                }`}>
+                                                    <FaCircle size={8} /> {bimestre.estado.descripcion}
+                                                </div>
+                                            </div>
+                                            
+                                            <div className={styles.bimestreDetails}>
+                                                <div className={styles.bimestreDetail}>
+                                                    <div className={styles.detailLabel}>Fecha inicio:</div>
+                                                    <div className={styles.detailValue}>
+                                                        {bimestre.fechaInicio ? formatDate(bimestre.fechaInicio) : "No definido"}
+                                                    </div>
+                                                </div>
+                                                <div className={styles.bimestreDetail}>
+                                                    <div className={styles.detailLabel}>Fecha fin:</div>
+                                                    <div className={styles.detailValue}>
+                                                        {bimestre.fechaFin ? formatDate(bimestre.fechaFin) : "No definido"}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Botones para gestionar bimestre según su estado */}
+                                            <div className={styles.bimestreActions}>
+                                                {bimestre.idEstado === 0 && (
+                                                    <button 
+                                                        className={styles.buttonStartBimestre}
+                                                        onClick={() => {
+                                                            setSelectedBimestre(bimestre.id);
+                                                            setBimestreAction('start');
+                                                            setShowBimestreModal(true);
+                                                        }}
+                                                        disabled={loadingBimestre}
+                                                    >
+                                                        {loadingBimestre && selectedBimestre === bimestre.id && bimestreAction === 'start' 
+                                                          ? 'Iniciando...' 
+                                                          : 'Iniciar Bimestre'
+                                                        }
+                                                    </button>
+                                                )}
+                                                {bimestre.idEstado === 1 && (
+                                                    <button 
+                                                        className={styles.buttonFinishBimestre}
+                                                        onClick={() => {
+                                                            setSelectedBimestre(bimestre.id);
+                                                            setBimestreAction('finish');
+                                                            setShowBimestreModal(true);
+                                                        }}
+                                                        disabled={loadingBimestre}
+                                                    >
+                                                        {loadingBimestre && selectedBimestre === bimestre.id && bimestreAction === 'finish' 
+                                                          ? 'Finalizando...' 
+                                                          : 'Finalizar Bimestre'
+                                                        }
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <div className={styles.emptyState}>
+                                Este ciclo no tiene bimestres configurados
+                            </div>
+                        )}
+                    </div>
+                    
                     {/* Sección de Log de Eventos */}
                     <div id="log-eventos" className={styles.detailSection}>
                         <div className={styles.sectionHeader}>
@@ -520,6 +658,30 @@ const CycleDetailPage: React.FC = () => {
                     confirmButtonClass="finalize"
                     modalClass="finalize"
                     icon={<FaCalendarCheck size={24} />}
+                />
+            )}
+            
+            {/* Modal para acciones de bimestre */}
+            {showBimestreModal && selectedBimestre !== null && (
+                <DeleteConfirmModal
+                    isOpen={showBimestreModal}
+                    onCancel={() => setShowBimestreModal(false)}
+                    onConfirm={() => handleBimestreAction()}
+                    title={bimestreAction === 'start' ? 'Iniciar Bimestre' : 'Finalizar Bimestre'}
+                    message={
+                      bimestreAction === 'start'
+                        ? `¿Está seguro que desea iniciar el bimestre ${ciclo?.bimestres?.find(b => b.id === selectedBimestre)?.numeroBimestre}?`
+                        : `¿Está seguro que desea finalizar el bimestre ${ciclo?.bimestres?.find(b => b.id === selectedBimestre)?.numeroBimestre}? Esta acción cerrará el bimestre y pasará al siguiente.`
+                    }
+                    itemId={selectedBimestre.toString()}
+                    confirmButtonText={bimestreAction === 'start' ? 'Iniciar' : 'Finalizar'}
+                    confirmButtonClass={bimestreAction === 'start' ? 'start' : 'finalize'}
+                    modalClass={bimestreAction === 'start' ? 'start' : 'finalize'}
+                    isLoading={loadingBimestre}
+                    icon={bimestreAction === 'start' 
+                      ? <FaRegCalendarCheck size={24} />
+                      : <FaCalendarCheck size={24} />
+                    }
                 />
             )}
         </div>

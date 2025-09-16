@@ -477,38 +477,72 @@
 }
 .bimestreSelector {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  padding: 10px 20px;
-  background-color: #f8fafc;
-  border-radius: 8px;
-  margin: 0 20px 20px;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background-color: #f7f9fc;
+  border-radius: 4px;
+  margin: 0 24px 24px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.bimestreSelector:hover {
+  border-color: #667eea;
+}
+
+.bimestreLabel {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: #1e293b;
+  margin-right: 16px;
 }
 
 .bimestreIcon {
-  color: #64748b;
+  color: #667eea;
   margin-right: 10px;
   font-size: 1rem;
 }
 
+.selectWrapper {
+  position: relative;
+  width: 280px;
+}
+
 .bimestreSelect {
-  flex: 1;
+  width: 100%;
   border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  padding: 8px 12px;
-  background-color: white;
-  color: #1e293b;
+  border-radius: 4px;
+  padding: 8px 32px 8px 12px;
+  background-color: #ffffff;
+  color: #334155;
   font-size: 0.9rem;
+  font-weight: 500;
   outline: none;
   cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+  transition: border-color 0.2s ease;
 }
 
 .bimestreSelect:focus {
-  border-color: #818cf8;
-  box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.2);
+  border-color: #667eea;
 }
 
-/* Make the select more obvious that it's clickable */
 .bimestreSelect:hover {
-  border-color: #818cf8;
+  border-color: #667eea;
+}
+
+.selectArrow {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #667eea;
 }

@@ -20,11 +20,10 @@ export interface Bimestre {
   idEstado: number;
   fechaInicio: string | null;
   fechaFin: string | null;
-  idCurso: number;
+  idCiclo: number;    // Según el JSON, es idCiclo, no idCurso
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
-  tareas: Tarea[];
   estado: EstadoBimestre;
 }
 
@@ -42,7 +41,8 @@ export interface Tarea {
   descripcion: string;
   fechaEntrega: string;
   punteo: number;
-  idBimestre?: number;  // Changed from idCurso
+  idBimestre: number;  // Es obligatorio, ya que cada tarea pertenece a un bimestre
+  idCurso: number;     // Campo adicional que aparece en el JSON
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
@@ -69,6 +69,7 @@ export interface Ciclo {
   fechaFin: string | null;
   updatedAt: string;
   deletedAt: string | null;
+  bimestres?: Bimestre[]; // Agregamos la propiedad bimestres
 }
 
 export interface Grado {

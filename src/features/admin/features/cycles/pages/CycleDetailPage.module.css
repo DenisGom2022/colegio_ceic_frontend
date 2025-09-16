@@ -604,3 +604,177 @@
   font-weight: 500;
   color: #4b5563;
 }
+/* Estilos para la sección de bimestres */
+.bimestresContainer {
+  margin-top: 16px;
+}
+
+.bimestresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.bimestreCard {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+}
+
+.bimestreHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.bimestreTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0;
+}
+
+.bimestreStatus {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background-color: #f7fafc;
+}
+
+.bimestreStatus svg {
+  margin-right: 4px;
+}
+
+.statusPending {
+  color: #718096;
+  background-color: #f7fafc;
+}
+
+.statusActive {
+  color: #3182ce;
+  background-color: #ebf8ff;
+}
+
+.statusCompleted {
+  color: #38a169;
+  background-color: #f0fff4;
+}
+
+.bimestreDetails {
+  margin: 12px 0;
+  flex-grow: 1;
+}
+
+.bimestreDetail {
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.detailLabel {
+  font-size: 14px;
+  color: #718096;
+}
+
+.detailValue {
+  font-size: 14px;
+  color: #2d3748;
+  font-weight: 500;
+}
+
+.bimestreActions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.buttonManageBimestre {
+  background-color: transparent;
+  border: 1px solid #e2e8f0;
+  color: #4a5568;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.buttonManageBimestre:hover {
+  background-color: #f7fafc;
+  border-color: #cbd5e0;
+}
+/* Estilos adicionales para botones de bimestres */
+.bimestreActions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.buttonStartBimestre {
+  background-color: #4299e1;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.buttonStartBimestre:hover {
+  background-color: #3182ce;
+}
+
+.buttonFinishBimestre {
+  background-color: #ed8936;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.buttonFinishBimestre:hover {
+  background-color: #dd6b20;
+}
+/* Mejoras a los estilos de bimestre según su estado */
+.bimestreCard[data-estado="0"] {
+  border-left: 3px solid #cbd5e0;
+}
+
+.bimestreCard[data-estado="1"] {
+  border-left: 3px solid #3182ce;
+  background-color: #f7fafc;
+}
+
+.bimestreCard[data-estado="2"] {
+  border-left: 3px solid #38a169;
+  background-color: #f8f9fa;
+  opacity: 0.85;
+}
+
+.statusActive {
+  color: #3182ce;
+  background-color: #ebf8ff;
+}
+
+.statusCompleted {
+  color: #38a169;
+  background-color: #f0fff4;
+}
+
+.statusPending {
+  color: #718096;
+  background-color: #f7fafc;
+}

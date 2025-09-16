@@ -1,0 +1,37 @@
+/* Estilos adicionales para botones de bimestres */
+.bimestreActions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.buttonStartBimestre {
+  background-color: #4299e1;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.buttonStartBimestre:hover {
+  background-color: #3182ce;
+}
+
+.buttonFinishBimestre {
+  background-color: #ed8936;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.buttonFinishBimestre:hover {
+  background-color: #dd6b20;
+}
