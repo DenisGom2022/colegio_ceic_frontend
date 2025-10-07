@@ -234,7 +234,6 @@ const StudentListPage = () => {
     
     return (
         <div className={styles.pageContainer}>
-            
             {/* Encabezado con botón de crear estudiante */}
             <div className={styles.pageHeader}>
                 <div className={styles.pageTitle}>

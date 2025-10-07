@@ -13,7 +13,8 @@ import {
   FaTasks,
   FaSpinner,
   FaExclamationTriangle,
-  FaLayerGroup
+  FaLayerGroup,
+  FaCheckCircle
 } from "react-icons/fa";
 
 const formatDate = (dateString: string | undefined) => {
@@ -88,6 +89,9 @@ const MisCursosDetailPage = () => {
     catedratico
   } = curso;
   
+  // Verificar si el curso ha finalizado
+  const cursoFinalizado = gradoCiclo?.ciclo?.fechaFin !== null;
+  
   // Los bimestres están dentro de gradoCiclo.ciclo.bimestres, no directamente en curso
   const bimestres = gradoCiclo?.ciclo?.bimestres || [];
   
@@ -109,18 +113,31 @@ const MisCursosDetailPage = () => {
   return (
     <div className={styles.pageContainer}>
       {/* Header */}
-      <div className={styles.courseHeader}>
+      <div className={`${styles.courseHeader} ${cursoFinalizado ? styles.finished : ''}`}>
         <Link to="/mis-cursos" className={styles.backButton}>
           <FaArrowLeft /> Volver a mis cursos
         </Link>
         <div style={{ position: "relative", zIndex: 1 }}>
-          <h1 className={styles.courseTitle}>{nombre}</h1>
+          <h1 className={styles.courseTitle}>
+            {nombre}
+            {cursoFinalizado && (
+              <span className={styles.finishedBadge}>
+                <FaCheckCircle className={styles.finishedIcon} />
+                CURSO FINALIZADO
+              </span>
+            )}
+          </h1>
           <div>
             <strong>{gradoCiclo?.grado?.nombre || "Grado N/A"}</strong> | {gradoCiclo?.grado?.nivelAcademico?.descripcion || "Nivel N/A"}
           </div>
           <div className={styles.courseMeta}>
             <div className={styles.metaItem}>
               <FaCalendarAlt /> {gradoCiclo?.ciclo?.descripcion || "Ciclo N/A"}
+              {cursoFinalizado && (
+                <span style={{ marginLeft: '8px', opacity: 0.8 }}>
+                  (Finalizado el {formatDate(gradoCiclo?.ciclo?.fechaFin || undefined)})
+                </span>
+              )}
             </div>
             <div className={styles.metaItem}>
               <FaClock /> {gradoCiclo?.grado?.jornada?.descripcion || "Jornada N/A"}
@@ -219,6 +236,33 @@ const MisCursosDetailPage = () => {
                     </div>
                   </div>
                   <div className={styles.infoCard}>
+                    <div className={styles.infoLabel}>Estado del curso</div>
+                    <div className={styles.infoValue} style={{ 
+                      color: cursoFinalizado ? '#ef4444' : '#10b981',
+                      fontWeight: '600'
+                    }}>
+                      {cursoFinalizado ? (
+                        <>
+                          <FaCheckCircle style={{ marginRight: '6px', fontSize: '0.9rem' }} />
+                          Finalizado
+                        </>
+                      ) : (
+                        <>
+                          <FaClock style={{ marginRight: '6px', fontSize: '0.9rem' }} />
+                          Activo
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  {cursoFinalizado && (
+                    <div className={styles.infoCard}>
+                      <div className={styles.infoLabel}>Fecha de finalización</div>
+                      <div className={styles.infoValue}>
+                        {formatDate(gradoCiclo?.ciclo?.fechaFin || undefined)}
+                      </div>
+                    </div>
+                  )}
+                  <div className={styles.infoCard}>
                     <div className={styles.infoLabel}>Nota máxima</div>
                     <div className={styles.infoValue}>{notaMaxima} pts.</div>
                   </div>
@@ -236,6 +280,15 @@ const MisCursosDetailPage = () => {
 
             {activeTab === "tasks" && (
               <div className={styles.tasksContainer}>
+                {cursoFinalizado && (
+                  <div className={styles.finishedNotice}>
+                    <FaCheckCircle />
+                    <span>
+                      <strong>Curso finalizado:</strong> No se pueden crear nuevas tareas. 
+                      Todas las tareas mostradas son del período académico completado.
+                    </span>
+                  </div>
+                )}
                 {curso.tareas && Array.isArray(curso.tareas) && curso.tareas.length > 0 ? (
                   <>
                     <div className={styles.tasksHeader}>
@@ -397,12 +450,18 @@ const MisCursosDetailPage = () => {
           </div>
 
           <div className={styles.sidebarSection}>
-            <Link 
-              to={`/crear-tarea?idCurso=${curso.id}&curso=${curso.nombre}${selectedBimestre ? `&nroBimestre=${bimestres.find(e => e.id == selectedBimestre)?.numeroBimestre}` : ''}`} 
-              className={styles.actionButton}
-            >
-              <FaTasks size={16} /> Nueva tarea
-            </Link>
+            {cursoFinalizado ? (
+              <div className={`${styles.actionButton} ${styles.disabled}`}>
+                <FaCheckCircle size={16} /> Curso finalizado
+              </div>
+            ) : (
+              <Link 
+                to={`/crear-tarea?idCurso=${curso.id}&curso=${curso.nombre}${selectedBimestre ? `&nroBimestre=${bimestres.find(e => e.id == selectedBimestre)?.numeroBimestre}` : ''}`} 
+                className={styles.actionButton}
+              >
+                <FaTasks size={16} /> Nueva tarea
+              </Link>
+            )}
           </div>
         </div>
       </div>

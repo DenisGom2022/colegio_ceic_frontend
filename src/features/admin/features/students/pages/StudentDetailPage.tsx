@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getStudentByCui, deleteStudent } from '../services/studentService';
-import type { Student, StudentGuardian } from '../models/Student';
+import type { Student, StudentGuardian, StudentAssignment } from '../models/Student';
 import styles from './StudentDetailPage.module.css';
 import DeleteConfirmModal from '../../../../../components/DeleteConfirmModal';
 import FloatingNotification from '../../../../../components/FloatingNotification/FloatingNotification';
@@ -91,6 +91,27 @@ const StudentDetailPage: React.FC = () => {
   const getInitials = (nombre: string | undefined, apellido: string | undefined) => {
     if (!nombre || !apellido) return '';
     return `${nombre.charAt(0)}${apellido.charAt(0)}`;
+  };
+
+  // Función para obtener la asignación del ciclo activo
+  const getActiveAssignment = () => {
+    if (!student?.asignaciones) return null;
+    return student.asignaciones.find(asignacion => 
+      asignacion.gradoCiclo.ciclo.fechaFin === null
+    );
+  };
+
+  // Función para obtener las asignaciones de ciclos anteriores
+  const getPreviousAssignments = () => {
+    if (!student?.asignaciones) return [];
+    return student.asignaciones.filter(asignacion => 
+      asignacion.gradoCiclo.ciclo.fechaFin !== null
+    );
+  };
+
+  // Función para formatear el precio
+  const formatPrice = (price: string) => {
+    return `Q${parseFloat(price).toFixed(2)}`;
   };
 
   if (loading) {
@@ -300,6 +321,109 @@ const StudentDetailPage: React.FC = () => {
           {!student.responsables || student.responsables.length === 0 && (
             <div className={styles.emptyState}>No hay responsables registrados</div>
           )}
+
+          {/* Sección de Asignaciones */}
+          <div id="asignaciones" className={styles.detailSection}>
+            <div className={styles.sectionHeader}>
+              <div className={styles.sectionIcon}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+              </div>
+              <h2 className={styles.sectionTitle}>Asignaciones Académicas</h2>
+            </div>
+
+            {/* Asignación del Ciclo Activo */}
+            {getActiveAssignment() && (
+              <div className={styles.activeAssignmentSection}>
+                <h3 className={styles.subsectionTitle}>Ciclo Actual</h3>
+                <div className={`${styles.assignmentCard} ${getActiveAssignment()?.idEstadoAsignacion === 1 ? styles.activeAssignment : styles.inactiveAssignment}`}>
+                  <div className={styles.assignmentHeader}>
+                    <div className={styles.assignmentCycle}>
+                      <h4>{getActiveAssignment()?.gradoCiclo.ciclo.descripcion}</h4>
+                      <span className={getActiveAssignment()?.idEstadoAsignacion === 1 ? styles.activeLabel : styles.inactiveLabel}>
+                        {getActiveAssignment()?.idEstadoAsignacion === 1 ? 'Activo' : 'Inactivo'}
+                      </span>
+                    </div>
+                    <div className={`${styles.assignmentStatus} ${getActiveAssignment()?.idEstadoAsignacion === 1 ? styles.statusActive : styles.statusInactive}`}>
+                      {getActiveAssignment()?.estadoAsignacion.descripcion}
+                    </div>
+                  </div>
+                  <div className={styles.assignmentDetails}>
+                    <div className={styles.assignmentInfo}>
+                      <span className={styles.assignmentLabel}>Grado:</span>
+                      <span>{getActiveAssignment()?.gradoCiclo.grado.nombre} - {getActiveAssignment()?.gradoCiclo.grado.nivelAcademico.descripcion}</span>
+                    </div>
+                    <div className={styles.assignmentInfo}>
+                      <span className={styles.assignmentLabel}>Jornada:</span>
+                      <span>{getActiveAssignment()?.gradoCiclo.grado.jornada.descripcion}</span>
+                    </div>
+                    <div className={styles.assignmentInfo}>
+                      <span className={styles.assignmentLabel}>Precio de Inscripción:</span>
+                      <span>{formatPrice(getActiveAssignment()?.gradoCiclo.precioInscripcion || '0')}</span>
+                    </div>
+                    <div className={styles.assignmentInfo}>
+                      <span className={styles.assignmentLabel}>Precio por Pago:</span>
+                      <span>{formatPrice(getActiveAssignment()?.gradoCiclo.precioPago || '0')}</span>
+                    </div>
+                    <div className={styles.assignmentInfo}>
+                      <span className={styles.assignmentLabel}>Cantidad de Pagos:</span>
+                      <span>{getActiveAssignment()?.gradoCiclo.cantidadPagos}</span>
+                    </div>
+                    <div className={styles.assignmentInfo}>
+                      <span className={styles.assignmentLabel}>Fecha de Asignación:</span>
+                      <span>{formatDate(getActiveAssignment()?.createdAt)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Asignaciones de Ciclos Anteriores */}
+            {getPreviousAssignments().length > 0 && (
+              <div className={styles.previousAssignmentsSection}>
+                <h3 className={styles.subsectionTitle}>Ciclos Anteriores</h3>
+                <div className={styles.assignmentsList}>
+                  {getPreviousAssignments().map((asignacion: StudentAssignment) => (
+                    <div key={asignacion.id} className={`${styles.assignmentCard} ${asignacion.idEstadoAsignacion === 2 ? styles.inactiveAssignment : ''}`}>
+                      <div className={styles.assignmentHeader}>
+                        <div className={styles.assignmentCycle}>
+                          <h4>{asignacion.gradoCiclo.ciclo.descripcion}</h4>
+                          <span className={styles.finishedLabel}>Finalizado: {formatDate(asignacion.gradoCiclo.ciclo.fechaFin || undefined)}</span>
+                        </div>
+                        <div className={`${styles.assignmentStatus} ${asignacion.idEstadoAsignacion === 1 ? styles.statusActive : styles.statusInactive}`}>
+                          {asignacion.estadoAsignacion.descripcion}
+                        </div>
+                      </div>
+                      <div className={styles.assignmentDetails}>
+                        <div className={styles.assignmentInfo}>
+                          <span className={styles.assignmentLabel}>Grado:</span>
+                          <span>{asignacion.gradoCiclo.grado.nombre} - {asignacion.gradoCiclo.grado.nivelAcademico.descripcion}</span>
+                        </div>
+                        <div className={styles.assignmentInfo}>
+                          <span className={styles.assignmentLabel}>Jornada:</span>
+                          <span>{asignacion.gradoCiclo.grado.jornada.descripcion}</span>
+                        </div>
+                        <div className={styles.assignmentInfo}>
+                          <span className={styles.assignmentLabel}>Fecha de Asignación:</span>
+                          <span>{formatDate(asignacion.createdAt)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Mensaje cuando no hay asignaciones */}
+            {(!student.asignaciones || student.asignaciones.length === 0) && (
+              <div className={styles.emptyState}>No hay asignaciones registradas</div>
+            )}
+          </div>
         </div>
       </div>
       

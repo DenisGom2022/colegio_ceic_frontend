@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useListMisCursos } from "../hooks/useListMisCursos";
 import styles from "./MisCursosPage.module.css";
-import { FaSearch, FaBook, FaExclamationTriangle, FaUserGraduate, FaTasks } from "react-icons/fa";
+import { FaSearch, FaBook, FaExclamationTriangle, FaUserGraduate, FaTasks, FaCheckCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 // Opciones para el número de registros por página
@@ -15,24 +15,39 @@ const MisCursosPage = () => {
   const [pageSize, setPageSize] = useState(PAGE_SIZE_OPTIONS[0]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSearchQuery, setActiveSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"todos" | "activos" | "finalizados">("todos");
   
-  // Filtrar cursos por búsqueda
+  // Filtrar cursos por búsqueda y estado
   const filteredCursos = misCursos ? misCursos.filter(curso => {
-    if (!activeSearchQuery) return true;
-    const searchTerm = activeSearchQuery.toLowerCase();
-    return (
-      (curso.nombre && curso.nombre.toLowerCase().includes(searchTerm)) ||
-      (curso.gradoCiclo?.grado?.nombre && curso.gradoCiclo.grado.nombre.toLowerCase().includes(searchTerm)) ||
-      (curso.gradoCiclo?.ciclo?.descripcion && curso.gradoCiclo.ciclo.descripcion.toLowerCase().includes(searchTerm)) ||
-      (curso.gradoCiclo?.grado?.nivelAcademico?.descripcion && curso.gradoCiclo.grado.nivelAcademico.descripcion.toLowerCase().includes(searchTerm)) ||
-      (curso.gradoCiclo?.grado?.jornada?.descripcion && curso.gradoCiclo.grado.jornada.descripcion.toLowerCase().includes(searchTerm))
-    );
+    // Filtro por búsqueda
+    if (activeSearchQuery) {
+      const searchTerm = activeSearchQuery.toLowerCase();
+      const matchesSearch = (
+        (curso.nombre && curso.nombre.toLowerCase().includes(searchTerm)) ||
+        (curso.gradoCiclo?.grado?.nombre && curso.gradoCiclo.grado.nombre.toLowerCase().includes(searchTerm)) ||
+        (curso.gradoCiclo?.ciclo?.descripcion && curso.gradoCiclo.ciclo.descripcion.toLowerCase().includes(searchTerm)) ||
+        (curso.gradoCiclo?.grado?.nivelAcademico?.descripcion && curso.gradoCiclo.grado.nivelAcademico.descripcion.toLowerCase().includes(searchTerm)) ||
+        (curso.gradoCiclo?.grado?.jornada?.descripcion && curso.gradoCiclo.grado.jornada.descripcion.toLowerCase().includes(searchTerm))
+      );
+      if (!matchesSearch) return false;
+    }
+    
+    // Filtro por estado
+    const cursoFinalizado = curso.gradoCiclo?.ciclo?.fechaFin !== null;
+    if (statusFilter === "activos" && cursoFinalizado) return false;
+    if (statusFilter === "finalizados" && !cursoFinalizado) return false;
+    
+    return true;
   }) : [];
   
   // Calcular datos de paginación
   const totalCursos = filteredCursos.length;
   const totalPages = Math.ceil(totalCursos / pageSize) || 1;
   const paginatedCursos = filteredCursos.slice((page - 1) * pageSize, page * pageSize);
+  
+  // Calcular estadísticas de cursos
+  const cursosActivos = misCursos ? misCursos.filter(curso => curso.gradoCiclo?.ciclo?.fechaFin === null).length : 0;
+  const cursosFinalizados = misCursos ? misCursos.filter(curso => curso.gradoCiclo?.ciclo?.fechaFin !== null).length : 0;
   
   // Handlers
   const handleSearch = (e: React.FormEvent) => {
@@ -73,34 +88,58 @@ const MisCursosPage = () => {
     }
     
     if (paginatedCursos.length === 0) {
+      let message = "No tienes cursos asignados en este momento";
+      
+      if (activeSearchQuery && statusFilter !== "todos") {
+        message = `No se encontraron cursos ${statusFilter} que coincidan con "${activeSearchQuery}"`;
+      } else if (activeSearchQuery) {
+        message = `No se encontraron cursos que coincidan con "${activeSearchQuery}"`;
+      } else if (statusFilter === "activos") {
+        message = "No tienes cursos activos en este momento";
+      } else if (statusFilter === "finalizados") {
+        message = "No tienes cursos finalizados";
+      }
+      
       return (
         <tr>
           <td colSpan={7} className={styles.emptyState}>
             <div className={styles.emptyIcon}>📚</div>
-            <div className={styles.emptyMessage}>
-              {activeSearchQuery 
-                ? `No se encontraron cursos que coincidan con "${activeSearchQuery}"`
-                : "No tienes cursos asignados en este momento"
-              }
-            </div>
+            <div className={styles.emptyMessage}>{message}</div>
           </td>
         </tr>
       );
     }
     
-    return paginatedCursos.map((curso, index) => (
-      <tr key={curso.id || index} className={styles.courseRow}>
-        <td>
-          <div className={styles.nameCell}>
-            <div className={styles.avatar}>
-              {curso.nombre?.substring(0, 2) || "CR"}
+    return paginatedCursos.map((curso, index) => {
+      // Verificar si el curso ha finalizado
+      const cursoFinalizado = curso.gradoCiclo?.ciclo?.fechaFin !== null;
+      
+      return (
+        <tr 
+          key={curso.id || index} 
+          className={`${styles.courseRow} ${cursoFinalizado ? styles.finished : ''}`}
+        >
+          <td>
+            <div className={styles.nameCell}>
+              <div className={styles.avatar}>
+                {curso.nombre?.substring(0, 2) || "CR"}
+              </div>
+              <div>
+                <div className={`${styles.courseTitle} ${cursoFinalizado ? styles.finished : ''}`}>
+                  {curso.nombre}
+                  {cursoFinalizado && (
+                    <span className={styles.finishedBadge}>
+                      <FaCheckCircle className={styles.finishedIcon} />
+                      FINALIZADO
+                    </span>
+                  )}
+                </div>
+                <div className={`${styles.courseCode} ${cursoFinalizado ? styles.finished : ''}`}>
+                  ID: {curso.id}
+                </div>
+              </div>
             </div>
-            <div>
-              <div className={styles.courseTitle}>{curso.nombre}</div>
-              <div className={styles.courseCode}>ID: {curso.id}</div>
-            </div>
-          </div>
-        </td>
+          </td>
         <td className={styles.centeredCell}>{curso.notaMaxima || "N/A"}</td>
         <td className={styles.centeredCell}>{curso.notaAprobada || "N/A"}</td>
         <td>{curso.gradoCiclo?.grado?.nombre || "N/A"}</td>
@@ -127,7 +166,7 @@ const MisCursosPage = () => {
             >
               <FaBook size={16} />
             </Link>
-            {esCatedratico && (
+            {esCatedratico && !cursoFinalizado && (
               <Link
                 to={`/mis-cursos/${curso.id}/nueva-tarea`}
                 className={`${styles.actionButton} ${styles.edit}`}
@@ -139,7 +178,8 @@ const MisCursosPage = () => {
           </div>
         </td>
       </tr>
-    ));
+      );
+    });
   };
 
   return (
@@ -149,7 +189,17 @@ const MisCursosPage = () => {
         <div className={styles.pageTitle}>
           <FaUserGraduate size={28} />
           Mis Cursos
-          <span className={styles.badgeCount}>{totalCursos}</span>
+          <span className={styles.badgeCount}>{misCursos?.length || 0}</span>
+        </div>
+        <div className={styles.coursesStats}>
+          <div className={styles.statItem}>
+            <span className={styles.statNumber}>{cursosActivos}</span>
+            <span className={styles.statLabel}>Activos</span>
+          </div>
+          <div className={styles.statItem}>
+            <span className={styles.statNumber}>{cursosFinalizados}</span>
+            <span className={styles.statLabel}>Finalizados</span>
+          </div>
         </div>
       </div>
 
@@ -163,7 +213,7 @@ const MisCursosPage = () => {
         </div>
       )}
 
-      {/* Barra de búsqueda */}
+      {/* Barra de búsqueda y filtros */}
       <div className={styles.toolbarSection}>
         <div className={styles.searchTools}>
           <form 
@@ -195,22 +245,53 @@ const MisCursosPage = () => {
               Buscar
             </button>
           </form>
+          
+          {/* Filtro de estado */}
+          <div className={styles.statusFilter}>
+            <label htmlFor="statusFilter">Estado:</label>
+            <select
+              id="statusFilter"
+              className={styles.selectFilter}
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value as "todos" | "activos" | "finalizados");
+                setPage(1);
+              }}
+            >
+              <option value="todos">Todos los cursos</option>
+              <option value="activos">Solo activos</option>
+              <option value="finalizados">Solo finalizados</option>
+            </select>
+          </div>
         </div>
       </div>
 
       {/* Indicador de búsqueda activa */}
-      {activeSearchQuery && (
+      {(activeSearchQuery || statusFilter !== "todos") && (
         <div className={styles.activeSearchIndicator}>
-          <span className={styles.searchLabel}>Búsqueda actual:</span>
-          <span className={styles.searchTerm}>{activeSearchQuery}</span>
+          {activeSearchQuery && (
+            <>
+              <span className={styles.searchLabel}>Búsqueda:</span>
+              <span className={styles.searchTerm}>{activeSearchQuery}</span>
+            </>
+          )}
+          {statusFilter !== "todos" && (
+            <>
+              <span className={styles.searchLabel}>Estado:</span>
+              <span className={styles.searchTerm}>
+                {statusFilter === "activos" ? "Cursos activos" : "Cursos finalizados"}
+              </span>
+            </>
+          )}
           <button 
             className={styles.clearSearchButton}
             onClick={() => {
               setActiveSearchQuery("");
               setSearchQuery("");
+              setStatusFilter("todos");
               setPage(1);
             }}
-            title="Limpiar búsqueda"
+            title="Limpiar filtros"
           >
             ×
           </button>

@@ -32,7 +32,7 @@ export const CreateTareaPage = () => {
   const [bimestre, setBimestre] = useState<any>(nroBimestre);
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
-  const [punteo, setPunteo] = useState(100);
+  const [punteo, setPunteo] = useState(10);
   const [fechaEntrega, setFechaEntrega] = useState("");
 
   const { createTarea, error, loading, success } = useCreateTarea();
