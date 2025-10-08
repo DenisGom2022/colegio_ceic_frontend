@@ -38,6 +38,7 @@ const StudentListPage = () => {
     const [pageSize, setPageSize] = useState(savedFilters?.pageSize || PAGE_SIZE_OPTIONS[0]);
     const [searchQuery, setSearchQuery] = useState(savedFilters?.searchQuery || "");
     const [activeSearchQuery, setActiveSearchQuery] = useState(savedFilters?.activeSearchQuery || "");
+    const [showActiveCycleOnly, setShowActiveCycleOnly] = useState(savedFilters?.showActiveCycleOnly || false);
     const [lastViewedStudent, setLastViewedStudent] = useState(localStorage.getItem('lastViewedStudent') || "");
     const [highlightedRow, setHighlightedRow] = useState("");
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -48,8 +49,25 @@ const StudentListPage = () => {
     const { deleteStudent: eliminarEstudiante, loading: isDeleting, error: deleteError } = useDeleteStudent();
     
     // Calcular total de estudiantes y datos para mostrar
-    const studentItems = students?.items || [];
+    const allStudentItems = students?.items || [];
     const total = students?.totalItems || 0;
+
+    // Función para verificar si un estudiante está asignado al ciclo activo
+    const isAssignedToActiveCycle = (student: Student): boolean => {
+        if (!student.asignaciones || student.asignaciones.length === 0) {
+            return false;
+        }
+        
+        // Un estudiante está asignado al ciclo activo si tiene cualquier asignación a un ciclo con fechaFin === null
+        return student.asignaciones.some(asignacion => 
+            asignacion.gradoCiclo?.ciclo?.fechaFin === null
+        );
+    };
+
+    // Filtrar estudiantes según el filtro de ciclo activo
+    const studentItems = showActiveCycleOnly 
+        ? allStudentItems.filter(isAssignedToActiveCycle)
+        : allStudentItems;
     
     useEffect(() => {
         // Aplicar resaltado si se viene de ver detalles de un estudiante
@@ -71,16 +89,17 @@ const StudentListPage = () => {
             page,
             pageSize,
             searchQuery,
-            activeSearchQuery
+            activeSearchQuery,
+            showActiveCycleOnly
         });
-    }, [page, pageSize, searchQuery, activeSearchQuery]);
+    }, [page, pageSize, searchQuery, activeSearchQuery, showActiveCycleOnly]);
     
     useEffect(() => {
-        // Reset a página 1 cuando cambia la búsqueda activa o el tamaño de página
+        // Reset a página 1 cuando cambia la búsqueda activa, el tamaño de página o el filtro de ciclo activo
         if (page !== 1) {
             setPage(1);
         }
-    }, [activeSearchQuery, pageSize]);
+    }, [activeSearchQuery, pageSize, showActiveCycleOnly]);
     
     useEffect(() => {
         // Recargar datos después de una eliminación exitosa
@@ -99,6 +118,11 @@ const StudentListPage = () => {
     const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setPageSize(Number(e.target.value));
         setPage(1);
+    };
+
+    const handleActiveCycleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setShowActiveCycleOnly(e.target.checked);
+        setPage(1); // Reset a la primera página cuando cambia el filtro
     };
 
     // Funciones para manejar el modal de eliminación
@@ -157,9 +181,33 @@ const StudentListPage = () => {
         return '';
     };
 
+    // Obtener información del estado del ciclo del estudiante
+    const getCycleStatus = (student: Student) => {
+        if (!student.asignaciones || student.asignaciones.length === 0) {
+            return { text: 'Sin asignar', class: styles.badgeInactive, isActive: false };
+        }
+
+        // Buscar cualquier asignación en ciclo activo (fechaFin === null)
+        const assignmentInActiveCycle = student.asignaciones.find(asignacion => 
+            asignacion.gradoCiclo?.ciclo?.fechaFin === null
+        );
+
+        if (assignmentInActiveCycle) {
+            return { 
+                text: 'Activo', 
+                class: styles.badgeActive, 
+                isActive: true
+            };
+        }
+
+        return { text: 'Inactivo', class: styles.badgeInactive, isActive: false };
+    };
+
     // Renderizar estudiante con resaltado condicional
     const renderStudentRow = (student: Student) => {
         const isHighlighted = highlightedRow === student.cui;
+        const cycleStatus = getCycleStatus(student);
+        
         return (
             <tr key={student.cui} className={`${styles.userRow} ${isHighlighted ? styles.highlightedRow : ''}`}>
                 <td>
@@ -178,6 +226,14 @@ const StudentListPage = () => {
                 <td>
                     <span className={`${styles.badge} ${getGenderBadgeClass(student.genero)}`}>
                         {student.genero || 'N/A'}
+                    </span>
+                </td>
+                <td>
+                    <span 
+                        className={`${styles.badge} ${cycleStatus.class}`}
+                        title={cycleStatus.text}
+                    >
+                        {cycleStatus.text}
                     </span>
                 </td>
                 <td className={styles.dateCell}>
@@ -216,12 +272,14 @@ const StudentListPage = () => {
         if (studentItems.length === 0) {
             return (
                 <tr>
-                    <td colSpan={6} className={styles.emptyState}>
+                    <td colSpan={7} className={styles.emptyState}>
                         <div className={styles.emptyIcon}>👨‍🎓</div>
                         <div className={styles.emptyMessage}>
-                            {activeSearchQuery 
-                                ? `No se encontraron estudiantes que coincidan con "${activeSearchQuery}"`
-                                : "No hay estudiantes registrados en el sistema"
+                            {showActiveCycleOnly
+                                ? "No hay estudiantes en ciclo activo"
+                                : activeSearchQuery 
+                                    ? `No se encontraron estudiantes que coincidan con "${activeSearchQuery}"`
+                                    : "No hay estudiantes registrados en el sistema"
                             }
                         </div>
                     </td>
@@ -239,7 +297,12 @@ const StudentListPage = () => {
                 <div className={styles.pageTitle}>
                     <FaGraduationCap size={28} />
                     Gestión de Estudiantes
-                    <span className={styles.badgeCount}>{total}</span>
+                    <span className={styles.badgeCount}>
+                        {showActiveCycleOnly 
+                            ? `${studentItems.length} activos de ${total}`
+                            : total
+                        }
+                    </span>
                 </div>
 
                 <Link to="/admin/estudiantes/crear" className={styles.createButton}>
@@ -280,6 +343,19 @@ const StudentListPage = () => {
                             Buscar
                         </button>
                     </form>
+
+                    {/* Filtro para ciclo activo */}
+                    <div className={styles.filterCheckbox}>
+                        <label className={styles.checkboxLabel}>
+                            <input
+                                type="checkbox"
+                                checked={showActiveCycleOnly}
+                                onChange={handleActiveCycleFilterChange}
+                                className={styles.checkbox}
+                            />
+                            Solo ciclo activo
+                        </label>
+                    </div>
                 </div>
             </div>
 
@@ -302,6 +378,24 @@ const StudentListPage = () => {
                 </div>
             )}
 
+            {/* Indicador de filtro de ciclo activo */}
+            {showActiveCycleOnly && (
+                <div className={styles.activeSearchIndicator}>
+                    <span className={styles.searchLabel}>Filtro activo:</span>
+                    <span className={styles.searchTerm}>Solo ciclo activo</span>
+                    <button 
+                        className={styles.clearSearchButton}
+                        onClick={() => {
+                            setShowActiveCycleOnly(false);
+                            setPage(1);
+                        }}
+                        title="Quitar filtro"
+                    >
+                        ×
+                    </button>
+                </div>
+            )}
+
             {/* Tabla de estudiantes */}
             <div className={styles.tableCard}>
                 <div className={styles.tableWrapper}>
@@ -312,6 +406,7 @@ const StudentListPage = () => {
                             <th>Nombre</th>
                             <th>Teléfono</th>
                             <th>Género</th>
+                            <th>Estado Ciclo</th>
                             <th>Fecha Creación</th>
                             <th className={styles.actionCell}>Acciones</th>
                         </tr>
@@ -339,7 +434,8 @@ const StudentListPage = () => {
                     </div>
 
                     <div className={styles.paginationInfo}>
-                        Mostrando {studentItems.length} de {total} registros
+                        Mostrando {studentItems.length} de {showActiveCycleOnly ? studentItems.length : total} registros
+                        {showActiveCycleOnly && <span className={styles.filterIndicator}> (filtrado)</span>}
                     </div>
 
                     <div className={styles.pagination}>
