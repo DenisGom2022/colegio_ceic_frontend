@@ -99,6 +99,11 @@ const ModernSideMenu: React.FC = () => {
             label: "Ciclos",
             path: "/admin/ciclos",
             icon: <FaCalendarAlt className={styles.menuIcon} />
+        },
+        {
+            label: "Asignaciones Alumno",
+            path: "/admin/asignaciones",
+            icon: <FaGraduationCap className={styles.menuIcon} />
         }
     ];
     

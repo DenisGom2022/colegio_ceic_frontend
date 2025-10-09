@@ -7,6 +7,7 @@ import AdminDashboard from "../features/admin/features/dashboard/pages/AdminDash
 
 // Feature Routes
 import { userRoutes, teacherRoutes, studentRoutes, cycleRoutes, gradeRoutes, courseRoutes } from "../features/admin/routes";
+import { asignacionesRoutes } from "../features/admin/routes/asignacionRoute";
 
 export const adminRoutes = (
   <>
@@ -33,6 +34,9 @@ export const adminRoutes = (
     
     {/* Cursos - Rutas importadas del módulo de cursos */}
     {courseRoutes}
+    
+    {/* asignaciones - Rutas importadas del módulo de asignaciones */}
+    {asignacionesRoutes}
     
     {/* Ciclos - Rutas importadas del módulo de ciclos */}
     {cycleRoutes.map(route => {
