@@ -28,4 +28,16 @@ export const asignacionesService = {
     });
     return response.data;
   },
+
+  /**
+   * Obtiene una asignación de alumno específica por su ID
+   * @param id ID de la asignación a obtener
+   * @returns Detalles de la asignación incluyendo información del alumno, grado, ciclo y responsables
+   */
+  getAsignacionAlumno: async (id: number): Promise<any> => {
+    const response = await axios.get(`${environments.VITE_API_URL}/asignaciones-alumno/${id}`, {
+      headers: getAuthHeaders()
+    });
+    return response.data;
+  },
 }

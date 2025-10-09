@@ -1,0 +1,472 @@
+.detailPageContainer {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #4b5563;
+  transition: all 0.2s ease;
+}
+
+.backButton:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.headerIcon {
+  color: #4f46e5;
+}
+
+.headerText h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.editButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.editButton:hover {
+  background-color: #4338ca;
+}
+
+.statusBanner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  color: white;
+  font-weight: 500;
+}
+
+.statusActive {
+  background-color: #10b981;
+}
+
+.statusInactive {
+  background-color: #f43f5e;
+}
+
+.statusPending {
+  background-color: #f59e0b;
+}
+
+.statusDate {
+  margin-left: auto;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.iconActive,
+.iconInactive,
+.iconPending {
+  font-size: 18px;
+}
+
+.tabsContainer {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0;
+}
+
+.tabButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  color: #6b7280;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tabButton:hover {
+  color: #4f46e5;
+}
+
+.activeTab {
+  color: #4f46e5;
+  border-bottom: 2px solid #4f46e5;
+}
+
+.contentContainer {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+.infoSection {
+  margin-bottom: 32px;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 18px;
+  color: #111827;
+  margin-top: 0;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sectionIcon {
+  color: #4f46e5;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.studentInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatarLarge {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: #4f46e5;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.studentName h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: #111827;
+}
+
+.studentMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.studentCUI {
+  font-weight: 500;
+}
+
+.contactInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.contactIcon {
+  color: #4f46e5;
+}
+
+.iconMale {
+  color: #3b82f6;
+}
+
+.iconFemale {
+  color: #ec4899;
+}
+
+.infoCard {
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.infoCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.infoCardIcon {
+  color: #4f46e5;
+  font-size: 18px;
+}
+
+.infoCardHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #111827;
+}
+
+.infoCardContent p {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.infoCardMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.financeCard {
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;
+}
+
+.financeItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.financeLabel {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.financeValue {
+  font-weight: 500;
+  color: #111827;
+  font-size: 14px;
+}
+
+.financeItemTotal {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.financeValueTotal {
+  font-weight: 600;
+  color: #4f46e5;
+  font-size: 16px;
+}
+
+.auditGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.auditItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.auditLabel {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.auditValue {
+  font-weight: 500;
+  color: #111827;
+}
+
+.responsablesList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.responsableCard {
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.responsableHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.responsableAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #4f46e5;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.responsableTitle h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  color: #111827;
+}
+
+.parentescoTag {
+  display: inline-block;
+  background-color: #e0e7ff;
+  color: #4f46e5;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.responsableDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.responsableDetail {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.detailLabel {
+  color: #6b7280;
+}
+
+.detailValue {
+  font-weight: 500;
+  color: #111827;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px 0;
+  color: #6b7280;
+}
+
+.addButton {
+  display: inline-flex;
+  margin-top: 16px;
+  background-color: #4f46e5;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.addButton:hover {
+  background-color: #4338ca;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 0;
+  text-align: center;
+  color: #6b7280;
+}
+
+.loadingSpinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border-left-color: #4f46e5;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.errorContainer,
+.notFoundContainer {
+  text-align: center;
+  padding: 100px 0;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.errorContainer h2,
+.notFoundContainer h2 {
+  color: #ef4444;
+  margin-bottom: 16px;
+}
+
+.errorContainer p,
+.notFoundContainer p {
+  color: #6b7280;
+  margin-bottom: 24px;
+}
