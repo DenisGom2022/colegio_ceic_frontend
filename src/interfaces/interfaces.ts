@@ -48,6 +48,31 @@ export interface Tarea {
   deletedAt: string | null;
 }
 
+export interface AsignacionAlumno {
+  id: number;
+  idGradoCiclo: number;
+  idAlumno: string;
+  idEstadoAsignacion: number;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  alumno: Alumno;
+}
+
+export interface Alumno {
+  cui: string;
+  primerNombre: string;
+  segundoNombre: string;
+  tercerNombre: string;
+  primerApellido: string;
+  segundoApellido: string;
+  telefono: string;
+  genero: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
 export interface GradoCiclo {
   id: number;
   idGrado: number;
@@ -60,6 +85,7 @@ export interface GradoCiclo {
   deletedAt: string | null;
   ciclo: Ciclo;
   grado: Grado;
+  asignacionesAlumno?: AsignacionAlumno[];
 }
 
 export interface Ciclo {

@@ -604,3 +604,106 @@
   border-right: 5px solid transparent;
   border-top: 5px solid #667eea;
 }
+
+/* Students styles */
+.studentsContainer {
+  padding: 16px 0;
+}
+
+.studentsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.studentCount {
+  font-size: 0.875rem;
+  color: #64748b;
+  background-color: #f1f5f9;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.studentsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.studentCard {
+  background-color: #f8fafc;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #f1f5f9;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.studentCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #667eea;
+}
+
+.studentAvatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.studentInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.studentName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #334155;
+  margin: 0 0 12px 0;
+  word-wrap: break-word;
+}
+
+.studentDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.studentDetail {
+  font-size: 0.75rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.studentDetail strong {
+  font-weight: 600;
+  color: #475569;
+  min-width: 50px;
+}
+
+@media (max-width: 768px) {
+  .studentsList {
+    grid-template-columns: 1fr;
+  }
+  
+  .studentsHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

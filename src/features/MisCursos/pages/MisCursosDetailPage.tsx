@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useMiCurso } from "../hooks/useMiCurso";
 import styles from "./MisCursosDetailPage.module.css";
-import type { Bimestre } from "../../../interfaces/interfaces";
+import type { Bimestre, AsignacionAlumno } from "../../../interfaces/interfaces";
 import {
   FaArrowLeft,
   FaBook,
@@ -14,7 +14,9 @@ import {
   FaSpinner,
   FaExclamationTriangle,
   FaLayerGroup,
-  FaCheckCircle
+  FaCheckCircle,
+  FaUsers,
+  FaUserGraduate
 } from "react-icons/fa";
 
 const formatDate = (dateString: string | undefined) => {
@@ -173,6 +175,12 @@ const MisCursosDetailPage = () => {
               onClick={() => setActiveTab("notes")}
             >
               Notas
+            </div>
+            <div
+              className={`${styles.tab} ${activeTab === "students" ? styles.tabActive : ""}`}
+              onClick={() => setActiveTab("students")}
+            >
+              Alumnos
             </div>
           </div>
           
@@ -372,6 +380,75 @@ const MisCursosDetailPage = () => {
                       "Las notas calificadas aparecerán aquí"
                   }
                 </p>
+              </div>
+            )}
+
+            {activeTab === "students" && (
+              <div className={styles.studentsContainer}>
+                <div className={styles.studentsHeader}>
+                  <h3 className={styles.sectionTitle}>
+                    <FaUserGraduate style={{ marginRight: '8px' }} />
+                    Alumnos inscritos en el curso
+                  </h3>
+                  <p className={styles.studentCount}>
+                    {gradoCiclo?.asignacionesAlumno?.length || 0} estudiantes inscritos
+                  </p>
+                </div>
+
+                {gradoCiclo?.asignacionesAlumno && gradoCiclo.asignacionesAlumno.length > 0 ? (
+                  <div className={styles.studentsList}>
+                    {gradoCiclo.asignacionesAlumno.map((asignacion: AsignacionAlumno) => {
+                      const alumno = asignacion.alumno;
+                      const fullName = `${alumno.primerNombre} ${alumno.segundoNombre || ''} ${alumno.tercerNombre || ''} ${alumno.primerApellido} ${alumno.segundoApellido}`.replace(/\s+/g, ' ').trim();
+                      const initials = getInitials(alumno.primerNombre, alumno.primerApellido);
+                      
+                      return (
+                        <div key={asignacion.id} className={styles.studentCard}>
+                          <div className={styles.studentAvatar}>
+                            {initials}
+                          </div>
+                          <div className={styles.studentInfo}>
+                            <h4 className={styles.studentName}>{fullName}</h4>
+                            <div className={styles.studentDetails}>
+                              <div className={styles.studentDetail}>
+                                <strong>CUI:</strong> {alumno.cui}
+                              </div>
+                              <div className={styles.studentDetail}>
+                                <strong>Género:</strong> {alumno.genero === 'M' ? 'Masculino' : alumno.genero === 'F' ? 'Femenino' : alumno.genero}
+                              </div>
+                              {alumno.telefono && (
+                                <div className={styles.studentDetail}>
+                                  <FaPhone size={12} style={{ marginRight: '4px' }} />
+                                  {alumno.telefono}
+                                </div>
+                              )}
+                              <div className={styles.studentDetail}>
+                                <strong>Estado:</strong> 
+                                <span style={{ 
+                                  color: asignacion.idEstadoAsignacion === 1 ? '#10b981' : '#ef4444',
+                                  fontWeight: '600',
+                                  marginLeft: '4px'
+                                }}>
+                                  {asignacion.idEstadoAsignacion === 1 ? 'Activo' : 'Inactivo'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div style={{ textAlign: "center", padding: "40px 0" }}>
+                    <FaUsers style={{ fontSize: "3rem", color: "#cbd5e1", marginBottom: "16px" }} />
+                    <h3 style={{ color: "#64748b", fontWeight: "500" }}>
+                      No hay alumnos inscritos en este curso
+                    </h3>
+                    <p style={{ color: "#94a3b8", marginTop: "8px" }}>
+                      Los alumnos inscritos aparecerán aquí
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </div>
