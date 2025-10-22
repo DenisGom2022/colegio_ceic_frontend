@@ -7,12 +7,14 @@ interface StudentGradeCardProps {
   asignacion: AsignacionAlumno;
   tareasDelBimestre: Tarea[];
   onCalificar: (tarea: Tarea, asignacion: AsignacionAlumno) => void;
+  onModificarNota: (tarea: Tarea, asignacion: AsignacionAlumno, tareaAlumno: any) => void;
 }
 
 export const StudentGradeCard = ({ 
   asignacion, 
   tareasDelBimestre, 
-  onCalificar 
+  onCalificar,
+  onModificarNota
 }: StudentGradeCardProps) => {
   const alumno = asignacion.alumno;
   const fullName = `${alumno.primerNombre} ${alumno.segundoNombre || ''} ${alumno.tercerNombre || ''} ${alumno.primerApellido} ${alumno.segundoApellido}`.replace(/\s+/g, ' ').trim();
@@ -83,7 +85,9 @@ export const StudentGradeCard = ({
         <div className={styles.taskGradesHeader}>
           <span>Tareas calificadas</span>
           <span>{asignacion.tareaAlumnos?.filter((ta: any) => 
-            tareasDelBimestre.some((t: any) => t.id === ta.idTarea)
+            tareasDelBimestre.some((t: any) => t.id === ta.idTarea) && 
+            ta.punteoObtenido !== null && 
+            ta.punteoObtenido !== undefined
           ).length || 0} / {tareasDelBimestre.length}</span>
         </div>
         {tareasDelBimestre.map((tarea: any) => {
@@ -104,19 +108,47 @@ export const StudentGradeCard = ({
               </div>
               <div className={styles.taskGradeScore}>
                 {punteo !== null ? (
-                  <>
-                    <span 
-                      className={styles.taskGradeValue}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div>
+                      <span 
+                        className={styles.taskGradeValue}
+                        style={{
+                          color: porcentaje !== null && porcentaje >= 60 ? '#10b981' : '#ef4444'
+                        }}
+                      >
+                        {punteo.toFixed(2)}
+                      </span>
+                      <span className={styles.taskGradePercentage}>
+                        ({porcentaje?.toFixed(0)}%)
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => onModificarNota(tarea, asignacion, tareaAlumno)}
                       style={{
-                        color: porcentaje !== null && porcentaje >= 60 ? '#10b981' : '#ef4444'
+                        padding: '4px 10px',
+                        backgroundColor: 'transparent',
+                        color: '#6b7280',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '4px',
+                        fontSize: '0.75rem',
+                        fontWeight: '400',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.backgroundColor = '#f3f4f6';
+                        e.currentTarget.style.color = '#374151';
+                        e.currentTarget.style.borderColor = '#9ca3af';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = '#6b7280';
+                        e.currentTarget.style.borderColor = '#d1d5db';
                       }}
                     >
-                      {punteo.toFixed(2)}
-                    </span>
-                    <span className={styles.taskGradePercentage}>
-                      ({porcentaje?.toFixed(0)}%)
-                    </span>
-                  </>
+                      Editar
+                    </button>
+                  </div>
                 ) : (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span className={styles.taskNotGraded}>Sin calificar</span>

@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useMiCurso } from "../hooks/useMiCurso";
 import { useCreateTareaAlumno } from "../../TareasAlumno/hooks/useCreateTareaAlumno";
+import { useModificaNotaTareaAlumno } from "../../TareasAlumno/hooks/useModificaNotaTareaAlumno";
 import styles from "./MisCursosDetailPage.module.css";
 import type { Bimestre, AsignacionAlumno, Tarea } from "../../../interfaces/interfaces";
 import { FaSpinner, FaExclamationTriangle } from "react-icons/fa";
 
 // Importar los componentes refactorizados
 import { CalificarModal } from "../components/CalificarModal";
+import { ModificarNotaModal } from "../components/ModificarNotaModal";
 import { CourseHeader } from "../components/CourseHeader";
 import { Tabs } from "../components/Tabs";
 import { BimestreSelector } from "../components/BimestreSelector";
@@ -31,6 +33,12 @@ const MisCursosDetailPage = () => {
   const [alumnoSeleccionado, setAlumnoSeleccionado] = useState<string>("");
   const [asignacionId, setAsignacionId] = useState<number | null>(null);
   const { createTarea, loading: loadingCreate, error: errorCreate } = useCreateTareaAlumno();
+  
+  // Estado para el modal de modificar nota
+  const [modalModificarOpen, setModalModificarOpen] = useState(false);
+  const [tareaAlumnoId, setTareaAlumnoId] = useState<number | null>(null);
+  const [punteoActual, setPunteoActual] = useState<number>(0);
+  const { modificarNota, loading: loadingModificar, error: errorModificar } = useModificaNotaTareaAlumno();
 
   // Sincronizar el curso original con el estado local
   useEffect(() => {
@@ -108,6 +116,62 @@ const MisCursosDetailPage = () => {
       // Cerrar modal
       handleCerrarModal();
     }
+  };
+
+  // Funciones para manejar el modal de modificar nota
+  const handleAbrirModalModificar = (tarea: Tarea, asignacion: AsignacionAlumno, tareaAlumno: any) => {
+    setTareaSeleccionada(tarea);
+    setAlumnoSeleccionado(`${asignacion.alumno.primerNombre} ${asignacion.alumno.primerApellido}`);
+    setTareaAlumnoId(tareaAlumno.id);
+    setPunteoActual(parseFloat(tareaAlumno.punteoObtenido));
+    setModalModificarOpen(true);
+  };
+
+  const handleCerrarModalModificar = () => {
+    setModalModificarOpen(false);
+    setTareaSeleccionada(null);
+    setAlumnoSeleccionado("");
+    setTareaAlumnoId(null);
+    setPunteoActual(0);
+  };
+
+  const handleActualizarNota = async (tareaAlumnoId: number, nuevoPunteo: number) => {
+    if (!curso) return;
+    
+    await modificarNota(tareaAlumnoId, nuevoPunteo);
+
+    // Actualizar el estado local del curso con la nota modificada
+    setCurso((prevCurso: any) => {
+      if (!prevCurso) return prevCurso;
+      
+      const cursoActualizado = { ...prevCurso };
+      
+      // Actualizar el punteo en la tarea del alumno
+      if (cursoActualizado.gradoCiclo?.asignacionesAlumno) {
+        cursoActualizado.gradoCiclo.asignacionesAlumno = cursoActualizado.gradoCiclo.asignacionesAlumno.map((asignacion: any) => {
+          if (asignacion.tareaAlumnos) {
+            return {
+              ...asignacion,
+              tareaAlumnos: asignacion.tareaAlumnos.map((ta: any) => {
+                if (ta.id === tareaAlumnoId) {
+                  return {
+                    ...ta,
+                    punteoObtenido: nuevoPunteo
+                  };
+                }
+                return ta;
+              })
+            };
+          }
+          return asignacion;
+        });
+      }
+      
+      return cursoActualizado;
+    });
+    
+    // Cerrar modal
+    handleCerrarModalModificar();
   };
 
   if (loading) {
@@ -218,6 +282,7 @@ const MisCursosDetailPage = () => {
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
                 onCalificar={handleAbrirModalCalificar}
+                onModificarNota={handleAbrirModalModificar}
                 gradoCiclo={gradoCiclo}
               />
             )}
@@ -254,6 +319,19 @@ const MisCursosDetailPage = () => {
         onSubmit={handleGuardarCalificacion}
         loading={loadingCreate}
         error={errorCreate}
+      />
+
+      {/* Modal de modificar nota */}
+      <ModificarNotaModal
+        isOpen={modalModificarOpen}
+        onClose={handleCerrarModalModificar}
+        tarea={tareaSeleccionada}
+        alumnoNombre={alumnoSeleccionado}
+        punteoActual={punteoActual}
+        tareaAlumnoId={tareaAlumnoId}
+        onSubmit={handleActualizarNota}
+        loading={loadingModificar}
+        error={errorModificar}
       />
     </div>
   );

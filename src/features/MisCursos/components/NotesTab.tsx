@@ -10,6 +10,7 @@ interface NotesTabProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   onCalificar: (tarea: Tarea, asignacion: AsignacionAlumno) => void;
+  onModificarNota: (tarea: Tarea, asignacion: AsignacionAlumno, tareaAlumno: any) => void;
   gradoCiclo: any;
 }
 
@@ -20,6 +21,7 @@ export const NotesTab = ({
   searchTerm, 
   onSearchChange, 
   onCalificar,
+  onModificarNota,
   gradoCiclo 
 }: NotesTabProps) => {
   const tareasDelBimestre = curso.tareas?.filter(
@@ -87,6 +89,7 @@ export const NotesTab = ({
                   asignacion={asignacion}
                   tareasDelBimestre={tareasDelBimestre}
                   onCalificar={onCalificar}
+                  onModificarNota={onModificarNota}
                 />
               ))}
             </div>
