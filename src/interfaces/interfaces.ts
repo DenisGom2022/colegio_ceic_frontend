@@ -48,6 +48,18 @@ export interface Tarea {
   deletedAt: string | null;
 }
 
+export interface TareaAlumno {
+  id: number;
+  idTarea: number;
+  idAsignacionAlumno: number;
+  punteoObtenido: string;
+  fechaEntrega: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  tarea: Tarea;
+}
+
 export interface AsignacionAlumno {
   id: number;
   idGradoCiclo: number;
@@ -57,6 +69,7 @@ export interface AsignacionAlumno {
   updatedAt: string;
   deletedAt: string | null;
   alumno: Alumno;
+  tareaAlumnos?: TareaAlumno[];
 }
 
 export interface Alumno {

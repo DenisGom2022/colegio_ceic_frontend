@@ -16,7 +16,8 @@ import {
   FaLayerGroup,
   FaCheckCircle,
   FaUsers,
-  FaUserGraduate
+  FaUserGraduate,
+  FaSearch
 } from "react-icons/fa";
 
 const formatDate = (dateString: string | undefined) => {
@@ -38,6 +39,7 @@ const MisCursosDetailPage = () => {
   const { curso, error, loading } = useMiCurso(id);
   const [activeTab, setActiveTab] = useState("info");
   const [selectedBimestre, setSelectedBimestre] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
   
   useEffect(() => {
     if (curso?.gradoCiclo?.ciclo?.bimestres) {
@@ -367,37 +369,267 @@ const MisCursosDetailPage = () => {
             )}
 
             {activeTab === "notes" && (
-              <div style={{ textAlign: "center", padding: "40px 0" }}>
-                <FaGraduationCap style={{ fontSize: "3rem", color: "#cbd5e1", marginBottom: "16px" }} />
-                <h3 style={{ color: "#64748b", fontWeight: "500" }}>
-                  No hay notas disponibles para el Bimestre {bimestreActual.numeroBimestre}
-                </h3>
-                <p style={{ color: "#94a3b8", marginTop: "8px" }}>
-                  {bimestreActual.idEstado === 0 ? 
-                    "Este bimestre aún no ha iniciado" : 
-                    bimestreActual.idEstado === 2 ? 
-                      "Este bimestre ya ha finalizado" : 
-                      "Las notas calificadas aparecerán aquí"
-                  }
-                </p>
+              <div className={styles.notesContainer}>
+                <div className={styles.notesHeader}>
+                  <div className={styles.notesHeaderTop}>
+                    <div>
+                      <h3 className={styles.sectionTitle}>
+                        <FaGraduationCap style={{ marginRight: '8px' }} />
+                        Calificaciones - Bimestre {bimestreActual?.numeroBimestre}
+                      </h3>
+                      <p className={styles.notesSubtitle}>
+                        {gradoCiclo?.asignacionesAlumno?.filter(asignacion => {
+                          const alumno = asignacion.alumno;
+                          const fullName = `${alumno.primerNombre} ${alumno.segundoNombre || ''} ${alumno.primerApellido} ${alumno.segundoApellido}`.toLowerCase();
+                          return fullName.includes(searchTerm.toLowerCase()) || alumno.cui.includes(searchTerm);
+                        }).length || 0} estudiantes • {' '}
+                        {curso.tareas?.filter(t => t.idBimestre === selectedBimestre).length || 0} tareas
+                      </p>
+                    </div>
+                    <div className={styles.searchContainer}>
+                      <FaSearch className={styles.searchIcon} />
+                      <input
+                        type="text"
+                        placeholder="Buscar estudiante por nombre o CUI..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className={styles.searchInput}
+                      />
+                      {searchTerm && (
+                        <button 
+                          onClick={() => setSearchTerm('')}
+                          className={styles.clearButton}
+                          aria-label="Limpiar búsqueda"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {gradoCiclo?.asignacionesAlumno && gradoCiclo.asignacionesAlumno.length > 0 ? (
+                  <>
+                    {(() => {
+                      const filteredStudents = gradoCiclo.asignacionesAlumno.filter(asignacion => {
+                        const alumno = asignacion.alumno;
+                        const fullName = `${alumno.primerNombre} ${alumno.segundoNombre || ''} ${alumno.primerApellido} ${alumno.segundoApellido}`.toLowerCase();
+                        return fullName.includes(searchTerm.toLowerCase()) || alumno.cui.includes(searchTerm);
+                      });
+
+                      if (filteredStudents.length === 0) {
+                        return (
+                          <div className={styles.noResults}>
+                            <FaSearch style={{ fontSize: '2.5rem', color: '#cbd5e1', marginBottom: '12px' }} />
+                            <h3 style={{ color: '#64748b', fontWeight: '500', margin: '0 0 8px 0' }}>
+                              No se encontraron estudiantes
+                            </h3>
+                            <p style={{ color: '#94a3b8', fontSize: '0.875rem' }}>
+                              Intenta con otro término de búsqueda
+                            </p>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div className={styles.gradesGrid}>
+                          {filteredStudents.map((asignacion) => {
+                      const alumno = asignacion.alumno;
+                      const fullName = `${alumno.primerNombre} ${alumno.segundoNombre || ''} ${alumno.tercerNombre || ''} ${alumno.primerApellido} ${alumno.segundoApellido}`.replace(/\s+/g, ' ').trim();
+                      
+                      // Filtrar tareas del bimestre actual
+                      const tareasDelBimestre = curso.tareas?.filter(
+                        tarea => tarea.idBimestre === selectedBimestre
+                      ) || [];
+                      
+                      // Calcular total de puntos obtenidos
+                      const totalObtenido = tareasDelBimestre.reduce((sum, tarea) => {
+                        const tareaAlumno = asignacion.tareaAlumnos?.find(
+                          ta => ta.idTarea === tarea.id
+                        );
+                        return sum + (tareaAlumno ? parseFloat(tareaAlumno.punteoObtenido) : 0);
+                      }, 0);
+                      
+                      // Calcular total posible
+                      const totalPosible = tareasDelBimestre.reduce((sum, tarea) => sum + tarea.punteo, 0);
+                      const porcentajeTotal = totalPosible > 0 ? (totalObtenido / totalPosible) * 100 : 0;
+                      const isApproved = porcentajeTotal >= 60;
+                      
+                      return (
+                        <div key={asignacion.id} className={styles.gradeCard}>
+                          {/* Header del alumno */}
+                          <div className={styles.gradeCardHeader}>
+                            <div className={styles.studentInfo}>
+                              <div className={styles.studentAvatarLarge}>
+                                {getInitials(alumno.primerNombre, alumno.primerApellido)}
+                              </div>
+                              <div className={styles.studentDetails}>
+                                <h4 className={styles.studentNameLarge}>{fullName}</h4>
+                                <span className={styles.studentCui}>CUI: {alumno.cui}</span>
+                              </div>
+                            </div>
+                            <div className={`${styles.statusBadge} ${isApproved ? styles.approved : styles.failed}`}>
+                              {isApproved ? '✓ Aprobado' : '✗ Reprobado'}
+                            </div>
+                          </div>
+
+                          {/* Resumen de puntos */}
+                          <div className={styles.gradeSummary}>
+                            <div className={styles.summaryItem}>
+                              <span className={styles.summaryLabel}>Total obtenido</span>
+                              <span className={`${styles.summaryValue} ${isApproved ? styles.approved : styles.failed}`}>
+                                {totalObtenido.toFixed(2)} pts
+                              </span>
+                            </div>
+                            <div className={styles.summaryDivider}>/</div>
+                            <div className={styles.summaryItem}>
+                              <span className={styles.summaryLabel}>Total posible</span>
+                              <span className={styles.summaryValue}>{totalPosible} pts</span>
+                            </div>
+                            <div className={styles.summaryDivider}>•</div>
+                            <div className={styles.summaryItem}>
+                              <span className={styles.summaryLabel}>Porcentaje</span>
+                              <span className={`${styles.summaryValue} ${isApproved ? styles.approved : styles.failed}`}>
+                                {porcentajeTotal.toFixed(1)}%
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Barra de progreso */}
+                          <div className={styles.progressBarContainer}>
+                            <div 
+                              className={`${styles.progressBarFill} ${isApproved ? styles.approved : styles.failed}`}
+                              style={{ width: `${Math.min(porcentajeTotal, 100)}%` }}
+                            ></div>
+                          </div>
+
+                          {/* Lista de tareas */}
+                          <div className={styles.taskGradesList}>
+                            <div className={styles.taskGradesHeader}>
+                              <span>Tareas calificadas</span>
+                              <span>{asignacion.tareaAlumnos?.filter(ta => 
+                                tareasDelBimestre.some(t => t.id === ta.idTarea)
+                              ).length || 0} / {tareasDelBimestre.length}</span>
+                            </div>
+                            {tareasDelBimestre.map((tarea) => {
+                              const tareaAlumno = asignacion.tareaAlumnos?.find(
+                                ta => ta.idTarea === tarea.id
+                              );
+                              const punteo = tareaAlumno ? parseFloat(tareaAlumno.punteoObtenido) : null;
+                              const porcentaje = punteo !== null ? (punteo / tarea.punteo) * 100 : null;
+                              
+                              return (
+                                <div key={tarea.id} className={styles.taskGradeItem}>
+                                  <div className={styles.taskGradeInfo}>
+                                    <FaTasks className={styles.taskIcon} />
+                                    <div className={styles.taskGradeDetails}>
+                                      <span className={styles.taskGradeName}>{tarea.titulo}</span>
+                                      <span className={styles.taskGradeMax}>Máximo: {tarea.punteo} pts</span>
+                                    </div>
+                                  </div>
+                                  <div className={styles.taskGradeScore}>
+                                    {punteo !== null ? (
+                                      <>
+                                        <span 
+                                          className={styles.taskGradeValue}
+                                          style={{
+                                            color: porcentaje !== null && porcentaje >= 60 ? '#10b981' : '#ef4444'
+                                          }}
+                                        >
+                                          {punteo.toFixed(2)}
+                                        </span>
+                                        <span className={styles.taskGradePercentage}>
+                                          ({porcentaje?.toFixed(0)}%)
+                                        </span>
+                                      </>
+                                    ) : (
+                                      <span className={styles.taskNotGraded}>Sin calificar</span>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                        </div>
+                      );
+                    })()}
+                  </>
+                ) : (
+                  <div style={{ textAlign: "center", padding: "40px 0" }}>
+                    <FaGraduationCap style={{ fontSize: "3rem", color: "#cbd5e1", marginBottom: "16px" }} />
+                    <h3 style={{ color: "#64748b", fontWeight: "500" }}>
+                      No hay alumnos inscritos en este curso
+                    </h3>
+                  </div>
+                )}
               </div>
             )}
 
             {activeTab === "students" && (
               <div className={styles.studentsContainer}>
                 <div className={styles.studentsHeader}>
-                  <h3 className={styles.sectionTitle}>
-                    <FaUserGraduate style={{ marginRight: '8px' }} />
-                    Alumnos inscritos en el curso
-                  </h3>
-                  <p className={styles.studentCount}>
-                    {gradoCiclo?.asignacionesAlumno?.length || 0} estudiantes inscritos
-                  </p>
+                  <div>
+                    <h3 className={styles.sectionTitle}>
+                      <FaUserGraduate style={{ marginRight: '8px' }} />
+                      Alumnos inscritos en el curso
+                    </h3>
+                    <p className={styles.studentCount}>
+                      {gradoCiclo?.asignacionesAlumno?.filter(asignacion => {
+                        const alumno = asignacion.alumno;
+                        const fullName = `${alumno.primerNombre} ${alumno.segundoNombre || ''} ${alumno.primerApellido} ${alumno.segundoApellido}`.toLowerCase();
+                        return fullName.includes(searchTerm.toLowerCase()) || alumno.cui.includes(searchTerm);
+                      }).length || 0} estudiantes inscritos
+                    </p>
+                  </div>
+                  <div className={styles.searchContainer}>
+                    <FaSearch className={styles.searchIcon} />
+                    <input
+                      type="text"
+                      placeholder="Buscar estudiante por nombre o CUI..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className={styles.searchInput}
+                    />
+                    {searchTerm && (
+                      <button 
+                        onClick={() => setSearchTerm('')}
+                        className={styles.clearButton}
+                        aria-label="Limpiar búsqueda"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {gradoCiclo?.asignacionesAlumno && gradoCiclo.asignacionesAlumno.length > 0 ? (
-                  <div className={styles.studentsList}>
-                    {gradoCiclo.asignacionesAlumno.map((asignacion: AsignacionAlumno) => {
+                  (() => {
+                    const filteredStudents = gradoCiclo.asignacionesAlumno.filter(asignacion => {
+                      const alumno = asignacion.alumno;
+                      const fullName = `${alumno.primerNombre} ${alumno.segundoNombre || ''} ${alumno.primerApellido} ${alumno.segundoApellido}`.toLowerCase();
+                      return fullName.includes(searchTerm.toLowerCase()) || alumno.cui.includes(searchTerm);
+                    });
+
+                    if (filteredStudents.length === 0) {
+                      return (
+                        <div className={styles.noResults}>
+                          <FaSearch style={{ fontSize: '2.5rem', color: '#cbd5e1', marginBottom: '12px' }} />
+                          <h3 style={{ color: '#64748b', fontWeight: '500', margin: '0 0 8px 0' }}>
+                            No se encontraron estudiantes
+                          </h3>
+                          <p style={{ color: '#94a3b8', fontSize: '0.875rem' }}>
+                            Intenta con otro término de búsqueda
+                          </p>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className={styles.studentsList}>
+                        {filteredStudents.map((asignacion: AsignacionAlumno) => {
                       const alumno = asignacion.alumno;
                       const fullName = `${alumno.primerNombre} ${alumno.segundoNombre || ''} ${alumno.tercerNombre || ''} ${alumno.primerApellido} ${alumno.segundoApellido}`.replace(/\s+/g, ' ').trim();
                       const initials = getInitials(alumno.primerNombre, alumno.primerApellido);
@@ -437,7 +669,9 @@ const MisCursosDetailPage = () => {
                         </div>
                       );
                     })}
-                  </div>
+                      </div>
+                    );
+                  })()
                 ) : (
                   <div style={{ textAlign: "center", padding: "40px 0" }}>
                     <FaUsers style={{ fontSize: "3rem", color: "#cbd5e1", marginBottom: "16px" }} />

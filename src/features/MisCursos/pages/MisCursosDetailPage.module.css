@@ -613,8 +613,10 @@
 .studentsHeader {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 24px;
+  gap: 24px;
+  flex-wrap: wrap;
 }
 
 .studentCount {
@@ -703,7 +705,391 @@
   
   .studentsHeader {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+  }
+}
+
+/* Notes/Grades styles - Card Design */
+.notesContainer {
+  padding: 16px 0;
+}
+
+.notesHeader {
+  margin-bottom: 24px;
+}
+
+.notesHeaderTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.notesSubtitle {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-top: 8px;
+}
+
+.searchContainer {
+  position: relative;
+  min-width: 320px;
+  flex: 0 1 auto;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 42px 12px 42px;
+  border: 2px solid #e2e8f0;
+  border-radius: 24px;
+  font-size: 0.875rem;
+  color: #334155;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: #667eea;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.searchInput::placeholder {
+  color: #94a3b8;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  font-size: 0.875rem;
+  pointer-events: none;
+}
+
+.clearButton {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #e2e8f0;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #64748b;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.clearButton:hover {
+  background: #cbd5e1;
+  color: #334155;
+}
+
+.noResults {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 2px dashed #e2e8f0;
+}
+
+.gradesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 24px;
+}
+
+.gradeCard {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.gradeCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+  border-color: #667eea;
+}
+
+.gradeCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.studentInfo {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex: 1;
+}
+
+.studentAvatarLarge {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.studentDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.studentNameLarge {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.studentCui {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.statusBadge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.statusBadge.approved {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.statusBadge.failed {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.gradeSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 8px;
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.summaryLabel {
+  font-size: 0.7rem;
+  color: #64748b;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summaryValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.summaryValue.approved {
+  color: #10b981;
+}
+
+.summaryValue.failed {
+  color: #ef4444;
+}
+
+.summaryDivider {
+  font-size: 1.5rem;
+  color: #cbd5e1;
+  font-weight: 300;
+}
+
+.progressBarContainer {
+  height: 8px;
+  background-color: #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.progressBarFill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.progressBarFill.approved {
+  background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+}
+
+.progressBarFill.failed {
+  background: linear-gradient(90deg, #ef4444 0%, #f87171 100%);
+}
+
+.taskGradesList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.taskGradesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.taskGradeItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.taskGradeItem:hover {
+  background-color: #f1f5f9;
+  transform: translateX(4px);
+}
+
+.taskGradeInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.taskIcon {
+  color: #667eea;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.taskGradeDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.taskGradeName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.taskGradeMax {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.taskGradeScore {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.taskGradeValue {
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.taskGradePercentage {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.taskNotGraded {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-style: italic;
+  padding: 4px 10px;
+  background-color: #f1f5f9;
+  border-radius: 12px;
+}
+
+@media (max-width: 1200px) {
+  .gradesGrid {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .gradesGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .notesHeaderTop {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .searchContainer {
+    min-width: 100%;
+  }
+  
+  .gradeCardHeader {
+    flex-direction: column;
     gap: 12px;
+  }
+  
+  .statusBadge {
+    align-self: flex-start;
+  }
+  
+  .gradeSummary {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .summaryDivider {
+    display: none;
+  }
+  
+  .summaryItem {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 8px;
+    background: white;
+    border-radius: 6px;
   }
 }
