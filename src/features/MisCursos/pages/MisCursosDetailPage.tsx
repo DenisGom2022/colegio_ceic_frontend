@@ -53,7 +53,9 @@ const CalificarModal = ({ isOpen, onClose, tarea, alumnoNombre, onSubmit, loadin
   useEffect(() => {
     if (isOpen) {
       setPunteo("");
-      setFechaEntrega("");
+      // Establecer la fecha actual como valor por defecto
+      const today = new Date().toISOString().split('T')[0];
+      setFechaEntrega(today);
     }
   }, [isOpen]);
 
@@ -544,14 +546,14 @@ const MisCursosDetailPage = () => {
                       </h3>
                       {selectedBimestre && (
                         <p className={styles.taskCount}>
-                          {curso.tareas.filter(tarea => tarea.idBimestre === selectedBimestre).length} tareas en este bimestre
+                          {curso.tareas.filter((tarea: Tarea) => tarea.idBimestre === selectedBimestre).length} tareas en este bimestre
                         </p>
                       )}
                     </div>
                     <div className={styles.tasksList}>
                       {curso.tareas
-                        .filter(tarea => tarea.idBimestre === selectedBimestre)
-                        .map((tarea) => {
+                        .filter((tarea: Tarea) => tarea.idBimestre === selectedBimestre)
+                        .map((tarea: Tarea) => {
                         return (
                           <div key={tarea.id} className={styles.taskCard}>
                             <div className={styles.taskHeader}>
@@ -597,7 +599,7 @@ const MisCursosDetailPage = () => {
                         <li>Cantidad de tareas totales: {Array.isArray(curso.tareas) ? curso.tareas.length : "N/A"}</li>
                         <li>Bimestre seleccionado: {selectedBimestre} (Bimestre {bimestreActual?.numeroBimestre})</li>
                         <li>Tareas en este bimestre: {curso.tareas && Array.isArray(curso.tareas) ? 
-                          curso.tareas.filter(t => t.idBimestre === selectedBimestre).length : "N/A"}</li>
+                          curso.tareas.filter((t: Tarea) => t.idBimestre === selectedBimestre).length : "N/A"}</li>
                       </ul>
                     </div>
                   </div>
@@ -615,12 +617,12 @@ const MisCursosDetailPage = () => {
                         Calificaciones - Bimestre {bimestreActual?.numeroBimestre}
                       </h3>
                       <p className={styles.notesSubtitle}>
-                        {gradoCiclo?.asignacionesAlumno?.filter(asignacion => {
+                        {gradoCiclo?.asignacionesAlumno?.filter((asignacion: AsignacionAlumno) => {
                           const alumno = asignacion.alumno;
                           const fullName = `${alumno.primerNombre} ${alumno.segundoNombre || ''} ${alumno.primerApellido} ${alumno.segundoApellido}`.toLowerCase();
                           return fullName.includes(searchTerm.toLowerCase()) || alumno.cui.includes(searchTerm);
                         }).length || 0} estudiantes • {' '}
-                        {curso.tareas?.filter(t => t.idBimestre === selectedBimestre).length || 0} tareas
+                        {curso.tareas?.filter((t: Tarea) => t.idBimestre === selectedBimestre).length || 0} tareas
                       </p>
                     </div>
                     <div className={styles.searchContainer}>
@@ -648,7 +650,7 @@ const MisCursosDetailPage = () => {
                 {gradoCiclo?.asignacionesAlumno && gradoCiclo.asignacionesAlumno.length > 0 ? (
                   <>
                     {(() => {
-                      const filteredStudents = gradoCiclo.asignacionesAlumno.filter(asignacion => {
+                      const filteredStudents = gradoCiclo.asignacionesAlumno.filter((asignacion: AsignacionAlumno) => {
                         const alumno = asignacion.alumno;
                         const fullName = `${alumno.primerNombre} ${alumno.segundoNombre || ''} ${alumno.primerApellido} ${alumno.segundoApellido}`.toLowerCase();
                         return fullName.includes(searchTerm.toLowerCase()) || alumno.cui.includes(searchTerm);
@@ -670,25 +672,25 @@ const MisCursosDetailPage = () => {
 
                       return (
                         <div className={styles.gradesGrid}>
-                          {filteredStudents.map((asignacion) => {
+                          {filteredStudents.map((asignacion: AsignacionAlumno) => {
                       const alumno = asignacion.alumno;
                       const fullName = `${alumno.primerNombre} ${alumno.segundoNombre || ''} ${alumno.tercerNombre || ''} ${alumno.primerApellido} ${alumno.segundoApellido}`.replace(/\s+/g, ' ').trim();
                       
                       // Filtrar tareas del bimestre actual
                       const tareasDelBimestre = curso.tareas?.filter(
-                        tarea => tarea.idBimestre === selectedBimestre
+                        (tarea: Tarea) => tarea.idBimestre === selectedBimestre
                       ) || [];
                       
                       // Calcular total de puntos obtenidos
-                      const totalObtenido = tareasDelBimestre.reduce((sum, tarea) => {
+                      const totalObtenido = tareasDelBimestre.reduce((sum: number, tarea: any) => {
                         const tareaAlumno = asignacion.tareaAlumnos?.find(
-                          ta => ta.idTarea === tarea.id
+                          (ta: any) => ta.idTarea === tarea.id
                         );
                         return sum + (tareaAlumno ? parseFloat(tareaAlumno.punteoObtenido) : 0);
                       }, 0);
                       
                       // Calcular total posible
-                      const totalPosible = tareasDelBimestre.reduce((sum, tarea) => sum + tarea.punteo, 0);
+                      const totalPosible = tareasDelBimestre.reduce((sum: number, tarea: any) => sum + tarea.punteo, 0);
                       const porcentajeTotal = totalPosible > 0 ? (totalObtenido / totalPosible) * 100 : 0;
                       const isApproved = porcentajeTotal >= 60;
                       
@@ -744,13 +746,13 @@ const MisCursosDetailPage = () => {
                           <div className={styles.taskGradesList}>
                             <div className={styles.taskGradesHeader}>
                               <span>Tareas calificadas</span>
-                              <span>{asignacion.tareaAlumnos?.filter(ta => 
-                                tareasDelBimestre.some(t => t.id === ta.idTarea)
+                              <span>{asignacion.tareaAlumnos?.filter((ta: any) => 
+                                tareasDelBimestre.some((t: any) => t.id === ta.idTarea)
                               ).length || 0} / {tareasDelBimestre.length}</span>
                             </div>
-                            {tareasDelBimestre.map((tarea) => {
+                            {tareasDelBimestre.map((tarea: any) => {
                               const tareaAlumno = asignacion.tareaAlumnos?.find(
-                                ta => ta.idTarea === tarea.id
+                                (ta: any) => ta.idTarea === tarea.id
                               );
                               const punteo = tareaAlumno ? parseFloat(tareaAlumno.punteoObtenido) : null;
                               const porcentaje = punteo !== null ? (punteo / tarea.punteo) * 100 : null;
@@ -834,7 +836,7 @@ const MisCursosDetailPage = () => {
                       Alumnos inscritos en el curso
                     </h3>
                     <p className={styles.studentCount}>
-                      {gradoCiclo?.asignacionesAlumno?.filter(asignacion => {
+                      {gradoCiclo?.asignacionesAlumno?.filter((asignacion: AsignacionAlumno) => {
                         const alumno = asignacion.alumno;
                         const fullName = `${alumno.primerNombre} ${alumno.segundoNombre || ''} ${alumno.primerApellido} ${alumno.segundoApellido}`.toLowerCase();
                         return fullName.includes(searchTerm.toLowerCase()) || alumno.cui.includes(searchTerm);
@@ -864,7 +866,7 @@ const MisCursosDetailPage = () => {
 
                 {gradoCiclo?.asignacionesAlumno && gradoCiclo.asignacionesAlumno.length > 0 ? (
                   (() => {
-                    const filteredStudents = gradoCiclo.asignacionesAlumno.filter(asignacion => {
+                    const filteredStudents = gradoCiclo.asignacionesAlumno.filter((asignacion: AsignacionAlumno) => {
                       const alumno = asignacion.alumno;
                       const fullName = `${alumno.primerNombre} ${alumno.segundoNombre || ''} ${alumno.primerApellido} ${alumno.segundoApellido}`.toLowerCase();
                       return fullName.includes(searchTerm.toLowerCase()) || alumno.cui.includes(searchTerm);
@@ -1024,7 +1026,7 @@ const MisCursosDetailPage = () => {
               </div>
             ) : (
               <Link 
-                to={`/crear-tarea?idCurso=${curso.id}&curso=${curso.nombre}${selectedBimestre ? `&nroBimestre=${bimestres.find(e => e.id == selectedBimestre)?.numeroBimestre}` : ''}`} 
+                to={`/crear-tarea?idCurso=${curso.id}&curso=${curso.nombre}${selectedBimestre ? `&nroBimestre=${bimestres.find((e: Bimestre) => e.id == selectedBimestre)?.numeroBimestre}` : ''}`} 
                 className={styles.actionButton}
               >
                 <FaTasks size={16} /> Nueva tarea
