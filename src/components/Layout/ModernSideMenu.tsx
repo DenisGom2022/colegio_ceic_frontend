@@ -6,8 +6,8 @@ import { useAuth } from '../../features/auth/hooks/useAuth';
 import { useSideMenu } from './SideMenuContext';
 import { 
     FaHome, FaUsers, FaBook, FaCalendarAlt, 
-    FaCog, FaClipboardList, FaChalkboardTeacher, 
-    FaChartBar, FaBell, FaSignOutAlt, FaUserShield,
+    FaClipboardList, FaChalkboardTeacher, 
+    FaSignOutAlt, FaUserShield,
     FaGraduationCap, FaBars, FaTimes, FaChevronRight,
     FaChevronLeft, FaLayerGroup
 } from 'react-icons/fa';

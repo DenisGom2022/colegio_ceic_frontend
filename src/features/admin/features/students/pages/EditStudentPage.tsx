@@ -55,7 +55,7 @@ const EditStudentPage = () => {
     ]);
 
     // Hook para actualizar estudiante
-    const { updateStudent, loading: updating, error: updateError } = useUpdateStudent();
+    const { updateStudent, loading: updating } = useUpdateStudent();
 
     // Limpiar referencia cuando el componente se desmonta
     useEffect(() => {

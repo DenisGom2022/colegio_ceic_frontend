@@ -14,7 +14,6 @@ import {
     FaCheckCircle,
     FaTimesCircle,
     FaCalendarCheck,
-    FaSpinner
 } from "react-icons/fa";
 import type { Ciclo } from "../../services/cicloService";
 import DeleteConfirmModal from "../../components/DeleteConfirmModal";

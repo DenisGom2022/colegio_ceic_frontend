@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { FaGraduationCap, FaUser, FaExclamationCircle, FaTimes } from 'react-icons/fa';
 import { getCatedraticos } from '../../../../../services/catedraticoService';
-import type { Catedratico } from '../../../../../hooks/useTablaCatedratico';
 import styles from './AddCourseModal.module.css';
+import type { Catedratico } from '../../../../../interfaces/interfaces';
 
 interface AddCourseModalProps {
     isOpen: boolean;

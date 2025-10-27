@@ -1,5 +1,5 @@
 import axios from "axios";
-import { environments } from "../../../utils";
+import { environments } from "../../../utils/environments";
 
 const API_URL = environments.VITE_API_URL;
 if (!API_URL) {

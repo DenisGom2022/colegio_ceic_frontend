@@ -21,8 +21,8 @@ export const UserDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [showNotification, setShowNotification] = useState<boolean>(false);
-  const [notificationType, setNotificationType] = useState<'success' | 'error'>('success');
-  const [notificationMessage, setNotificationMessage] = useState<string>('');
+  const [notificationType] = useState<'success' | 'error'>('success');
+  const [notificationMessage] = useState<string>('');
   // Dummy data para registro de actividad (en una implementación real, esto vendría de una API)
   const [activityLogs] = useState<ActivityLog[]>([
     {

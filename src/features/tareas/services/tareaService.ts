@@ -1,6 +1,6 @@
 import axios from "axios";
-import { environments } from "../../../utils";
 import type { Curso } from "../../../interfaces/interfaces";
+import { environments } from "../../../utils/environments";
 
 const getAuthHeaders = () => {
     const token = localStorage.getItem('ceic_token');

@@ -1,10 +1,11 @@
 import type { FC } from "react"
-import type { Curso } from "../services/gradoService"
+//import type { Curso } from "../services/gradoService"
 import type { Usuario } from "../../users";
 import { Link } from "react-router-dom";
 import { FaEye, FaPencilAlt, FaTrash, FaGraduationCap, FaUser, FaPlus } from "react-icons/fa";
 
 import styles from "./CoursesTable.module.css";
+import type { Curso } from "../../../../../interfaces/interfaces";
 
 interface CoursesTableProps {
     cursos: Curso[];
@@ -20,7 +21,7 @@ const formatNombreCompleto = (usuario: Usuario) => {
         usuario.tercerNombre,
         usuario.primerApellido,
         usuario.segundoApellido
-    ].filter(Boolean);
+    ].filter((parte): parte is string => Boolean(parte));
     return partes.join(" ");
 }
 

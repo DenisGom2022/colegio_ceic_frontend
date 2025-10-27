@@ -3,10 +3,10 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaPencilAlt, FaTrash, FaUser, FaIdCard, FaCalendarAlt, FaBook, FaGraduationCap, FaCheckCircle, FaClock, FaSchool } from 'react-icons/fa';
 import { useTeacher } from '../hooks/useTeacher';
 import { useDeleteTeacher } from '../hooks/useDeleteTeacher';
-import type { Curso } from '../models/Teacher';
 import DeleteConfirmModal from '../../../../../components/DeleteConfirmModal';
 import FloatingNotification from '../../../../../components/FloatingNotification';
 import styles from './TeacherDetailPage.module.css';
+import type { Curso } from '../../../../../interfaces/interfaces';
 
 export const TeacherDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

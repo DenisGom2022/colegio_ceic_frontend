@@ -79,7 +79,6 @@ const CycleListPage: React.FC = () => {
             
             // Verificar si hay suficiente espacio debajo (más estricto)
             const spaceBelow = windowHeight - rect.bottom;
-            const spaceAbove = rect.top;
             
             // Si no hay suficiente espacio debajo, mostrar arriba
             if (spaceBelow < tooltipHeight + margin) {

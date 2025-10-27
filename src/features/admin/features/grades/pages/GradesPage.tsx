@@ -41,35 +41,6 @@ interface GradoCiclo {
     ciclo: Ciclo;
 }
 
-interface NivelAcademico {
-    id: number;
-    descripcion: string;
-    createdAt: string;
-    updatedAt: string;
-    deletedAt: null;
-}
-
-interface Jornada {
-    id: number;
-    descripcion: string;
-    createdAt: string;
-    updatedAt: string;
-    deletedAt: null;
-}
-
-interface Grado {
-    id: number;
-    nombre: string;
-    idNivel: number;
-    idJornada: number;
-    createdAt: string;
-    updatedAt: string;
-    deletedAt: null;
-    nivelAcademico: NivelAcademico;
-    jornada: Jornada;
-    gradosCiclo: GradoCiclo[];
-}
-
 // Interface para estadísticas de grados
 interface GradeStatistics {
     total: number;
@@ -123,16 +94,6 @@ const GradesPage: React.FC = () => {
         return grade.gradosCiclo.some(
             (gradoCiclo: GradoCiclo) => gradoCiclo.ciclo && gradoCiclo.ciclo.fechaFin === null
         );
-    };
-    
-    // Obtener el ciclo activo de un grado
-    const getActiveCycle = (grade: any): GradoCiclo | null => {
-        if (!grade.gradosCiclo || grade.gradosCiclo.length === 0) return null;
-        
-        // Encontrar ciclo con fechaFin = null
-        return grade.gradosCiclo.find(
-            (gradoCiclo: GradoCiclo) => gradoCiclo.ciclo && gradoCiclo.ciclo.fechaFin === null
-        ) || null;
     };
     
     // Calcular estadísticas cuando se cargan los grados

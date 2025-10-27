@@ -2,9 +2,9 @@ export interface Usuario {
     usuario: string;
     primerNombre: string;
     segundoNombre: string;
-    tercerNombre: string;
+    tercerNombre: string | null;
     primerApellido: string;
-    segundoApellido: string;
+    segundoApellido: string | null;
     idTipoUsuario: number;
     telefono: string;
     cambiarContrasena: number;

@@ -3,32 +3,22 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import styles from './EditCoursePage.module.css';
 import selectionStyles from '../components/GradeSelectionButton.module.css';
 import gradeInfoStyles from './GradeInfoStyles.module.css';
-import Tooltip from "../../../../../components/ui/Tooltip";
 import {
     FaBook,
-    FaChalkboardTeacher,
-    FaHashtag,
-    FaCalendarAlt,
     FaArrowLeft,
     FaCheck,
-    FaCog,
     FaGraduationCap,
     FaSpinner,
     FaSave,
     FaExclamationTriangle,
     FaUserTie,
-    FaPercentage,
-    FaInfoCircle,
-    FaQuestionCircle
+    FaPercentage
 } from "react-icons/fa";
 import { getCourseById } from '../services/courseService';
 import { updateCurso } from '../../grades/services/cursoService';
 import GradeSelectionModal from '../components/GradeSelectionModal';
 import TeacherSelectionModal from '../components/TeacherSelectionModal';
 import { gradoService } from '../../grades/services/gradoService';
-
-// Puedes ajustar el import del modelo según tu estructura
-import type { Course } from "../models";
 
 interface FormErrors {
     [key: string]: string;

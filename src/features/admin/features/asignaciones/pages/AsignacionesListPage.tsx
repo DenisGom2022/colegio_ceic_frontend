@@ -90,6 +90,11 @@ export const AsignacionesListPage = () => {
 
   // Renderizar asignación con resaltado condicional
   const renderAsignacionRow = (asignacion: any) => {
+    // Verificar si el ciclo ha finalizado y el estado es activo
+    const cicloFinalizado = asignacion.gradoCiclo?.ciclo?.fechaFin !== null;
+    const esActivo = asignacion.idEstadoAsignacion === 1;
+    const mostrarFinalizado = esActivo && cicloFinalizado;
+    
     return (
       <tr key={asignacion.id} className={styles.userRow}>
         <td>
@@ -109,9 +114,9 @@ export const AsignacionesListPage = () => {
         <td>{asignacion.gradoCiclo?.ciclo?.descripcion || 'N/A'}</td>
         <td>
           <span 
-            className={`${styles.badge} ${getEstadoBadgeClass(asignacion.idEstadoAsignacion)}`}
+            className={`${styles.badge} ${mostrarFinalizado ? styles.badgeInactive : getEstadoBadgeClass(asignacion.idEstadoAsignacion)}`}
           >
-            {asignacion.estadoAsignacion?.descripcion || 'N/A'}
+            {mostrarFinalizado ? 'Finalizado' : (asignacion.estadoAsignacion?.descripcion || 'N/A')}
           </span>
         </td>
         <td className={styles.dateCell}>

@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { Catedratico, Curso } from "../../../interfaces/interfaces";
-import { environments } from "../../../utils";
+import { environments } from "../../../utils/environments";
 
 const API_URL = environments.VITE_API_URL;
 if (!API_URL) {

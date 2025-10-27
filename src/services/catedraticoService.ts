@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { environments } from '../utils/environments';
-import type { Catedratico } from '../hooks/useTablaCatedratico';
+import type { Catedratico } from '../interfaces/interfaces';
 
 const API_URL = environments.VITE_API_URL;
 

@@ -1,5 +1,4 @@
-import React from 'react';
-import { FaUsersCog, FaChalkboardTeacher, FaBook, FaCalendarAlt, FaChartLine, FaCog, FaBell, FaGraduationCap, FaUserTie } from 'react-icons/fa';
+import { FaUsersCog, FaChalkboardTeacher, FaBook, FaCalendarAlt, FaChartLine, FaBell, FaGraduationCap, FaUserTie } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../features/auth/hooks/useAuth';
 import styles from './AdminDashboard.module.css';

@@ -22,7 +22,7 @@ const UserSelectionModal: React.FC<UserSelectionModalProps> = ({ isOpen, onClose
   const pageSize = 10;
 
   // Obtener usuarios con el mismo hook que usa UsersPage
-  const { usuarios, total, totalPages, cargando: loading, recargarDatos } = useTablaUsuario(page, pageSize, activeSearchQuery);
+  const { usuarios, totalPages, cargando: loading } = useTablaUsuario(page, pageSize, activeSearchQuery);
 
   // Manejar búsqueda
   const handleSearch = (e?: React.FormEvent) => {

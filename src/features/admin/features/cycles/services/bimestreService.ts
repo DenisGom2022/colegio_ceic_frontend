@@ -1,5 +1,5 @@
 import axios from "axios";
-import { environments } from "../../../../../utils";
+import { environments } from "../../../../../utils/environments";
 
 const getAuthHeaders = () => {
     const token = localStorage.getItem('ceic_token');

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { environments } from "../../../../../utils";
+import { environments } from "../../../../../utils/environments";
 
 // Configuración para incluir automáticamente el token en las peticiones
 const getAuthHeaders = () => {

@@ -1,1 +1,1 @@
-export type { Course, CoursesResponse, Catedratico, Ciclo, GradoCiclo, Usuario, TipoUsuario } from './Course';
+export type { Course, CoursesResponse, Ciclo, GradoCiclo } from './Course';

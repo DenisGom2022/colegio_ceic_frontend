@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { environments } from '../../../../../utils/environments';
-import type { Usuario } from '../../users';
 import type { Curso } from '../../../../../interfaces/interfaces';
 
 interface NivelAcademico {

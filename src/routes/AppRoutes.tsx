@@ -17,7 +17,6 @@ import Forbidden from "../pages/Forbidden";
 import { adminRoutes } from "./adminRoutes";
 import { MisCursosRoutes } from "../features/routes/MisCursosRoutes";
 import { TareasRoutes } from "../features/routes/TareasRoutes";
-import { asignacionesRoutes } from "../features/admin/routes/asignacionRoute";
 
 export default function AppRoutes() {
     return (

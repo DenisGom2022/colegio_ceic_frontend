@@ -13,8 +13,7 @@ interface StudentTableProps {
 const StudentTable: React.FC<StudentTableProps> = ({ 
   students, 
   isLoading, 
-  onDelete,
-  deleteLoading
+  onDelete
 }) => {
   const formatName = (student: Student) => {
     const nombres = [
