@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { useListAsignaciones } from "../hooks/useListAsignaciones";
+import { useEliminarAsignacion } from "../hooks/useEliminarAsignacion";
 import { FaGraduationCap, FaSearch, FaEye, FaPencilAlt, FaTrash, FaPlus } from "react-icons/fa";
 import styles from "../../users/pages/UsersPage.module.css";
 import { Link } from "react-router-dom";
+import DeleteConfirmModal from "../../../../../components/DeleteConfirmModal";
 
 // Opciones para el número de registros por página
 const PAGE_SIZE_OPTIONS = [5, 10, 15, 25, 50, 100];
@@ -29,11 +31,25 @@ export const AsignacionesListPage = () => {
   const [searchQuery, setSearchQuery] = useState(savedFilters?.searchQuery || "");
   const [activeSearchQuery, setActiveSearchQuery] = useState(savedFilters?.activeSearchQuery || "");
 
+  // Estados para el modal de eliminación
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [asignacionToDelete, setAsignacionToDelete] = useState<{ id: number; nombre: string } | null>(null);
+  
+  // Estados para notificaciones
+  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
   const { data, loading, error } = useListAsignaciones({
     page: page,
     limit: pageSize,
     nombre: activeSearchQuery
   });
+
+  const { 
+    eliminarAsignacion, 
+    loading: deleteLoading, 
+    error: deleteError, 
+    data: deleteData 
+  } = useEliminarAsignacion();
 
   // Extraer datos de la respuesta
   const asignaciones = data?.asignaciones || [];
@@ -57,6 +73,33 @@ export const AsignacionesListPage = () => {
     }
   }, [activeSearchQuery, pageSize]);
 
+  // Efecto para manejar el resultado de la eliminación
+  useEffect(() => {
+    if (deleteData) {
+      setNotification({ type: 'success', message: deleteData.message });
+      setShowDeleteModal(false);
+      setAsignacionToDelete(null);
+      
+      // Ocultar notificación después de 3 segundos
+      setTimeout(() => setNotification(null), 3000);
+      
+      // Recargar la lista (esto se hace automáticamente al cambiar el estado)
+      // Si estamos en una página > 1 y solo quedaba 1 registro, volver a la página anterior
+      if (asignaciones.length === 1 && page > 1) {
+        setPage(page - 1);
+      }
+    }
+  }, [deleteData]);
+
+  useEffect(() => {
+    if (deleteError) {
+      setNotification({ type: 'error', message: deleteError });
+      
+      // Ocultar notificación después de 5 segundos
+      setTimeout(() => setNotification(null), 5000);
+    }
+  }, [deleteError]);
+
   // Handlers
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,6 +109,27 @@ export const AsignacionesListPage = () => {
   const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setPageSize(Number(e.target.value));
     setPage(1);
+  };
+
+  // Funciones para manejar la eliminación
+  const handleDeleteClick = (asignacion: any) => {
+    const nombreCompleto = `${asignacion.alumno?.primerNombre || ''} ${asignacion.alumno?.primerApellido || ''}`.trim();
+    setAsignacionToDelete({ 
+      id: asignacion.id, 
+      nombre: nombreCompleto || `Asignación #${asignacion.id}` 
+    });
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (asignacionToDelete) {
+      await eliminarAsignacion(asignacionToDelete.id);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false);
+    setAsignacionToDelete(null);
   };
 
   // Formatear fecha
@@ -139,7 +203,7 @@ export const AsignacionesListPage = () => {
           </Link>
           <button
             className={`${styles.actionButton} ${styles.delete}`}
-            onClick={() => {/* TODO: Implementar lógica de eliminación */}}
+            onClick={() => handleDeleteClick(asignacion)}
             title="Eliminar asignación"
           >
             <FaTrash size={16} />
@@ -361,6 +425,25 @@ export const AsignacionesListPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal de confirmación de eliminación */}
+      <DeleteConfirmModal
+        isOpen={showDeleteModal}
+        title="Eliminar Asignación"
+        message={`¿Está seguro que desea eliminar la asignación de ${asignacionToDelete?.nombre || 'este alumno'}?`}
+        itemId={asignacionToDelete?.id.toString() || ''}
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        isLoading={deleteLoading}
+        confirmButtonText="Eliminar"
+      />
+
+      {/* Notificación flotante */}
+      {notification && (
+        <div className={`${styles.notification} ${notification.type === 'success' ? styles.successNotification : styles.errorNotification}`}>
+          {notification.message}
+        </div>
+      )}
     </div>
   );
 };

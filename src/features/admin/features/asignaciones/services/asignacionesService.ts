@@ -75,5 +75,18 @@ export const asignacionesService = {
             { headers: getAuthHeaders() }
         );
         return response.data;
+    },
+
+    /**
+     * Elimina una asignación de alumno
+     * @param id ID de la asignación a eliminar
+     * @returns Mensaje de confirmación o error
+     */
+    deleteAsignacionAlumno: async (id: number): Promise<{ message: string }> => {
+        const response = await axios.delete(
+            `${environments.VITE_API_URL}/asignaciones-alumno/${id}`,
+            { headers: getAuthHeaders() }
+        );
+        return response.data;
     }
 }
