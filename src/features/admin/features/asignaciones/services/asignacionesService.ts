@@ -59,7 +59,21 @@ export const asignacionesService = {
         return response.data;
     },
 
-
-
-
+    /**
+     * Actualiza una asignación de alumno existente
+     * @param id ID de la asignación a actualizar
+     * @param idGrado Nuevo ID del grado
+     * @returns La asignación actualizada o mensaje de error
+     */
+    updateAsignacionAlumno: async (
+        id: number,
+        idGrado: number
+    ): Promise<any> => {
+        const response = await axios.put(
+            `${environments.VITE_API_URL}/asignaciones-alumno/${id}`,
+            { idGrado },
+            { headers: getAuthHeaders() }
+        );
+        return response.data;
+    }
 }

@@ -4,6 +4,7 @@ import { MainLayout } from "../../../components";
 import { AsignacionesListPage } from "../features/asignaciones/pages/AsignacionesListPage";
 import AsignacionDetailPage from "../features/asignaciones/pages/AsignacionDetailPage";
 import CreateAsignacionPage from "../features/asignaciones/pages/CreateAsignacionPage";
+import ModificaAsignacionPage from "../features/asignaciones/pages/ModificaAsignacionPage";
 
 export const asignacionesRoutes = (
   <>
@@ -21,6 +22,15 @@ export const asignacionesRoutes = (
       <ProtectedRouteAdmin>
         <MainLayout title="Nueva Asignación">
           <CreateAsignacionPage />
+        </MainLayout>
+      </ProtectedRouteAdmin>
+    } />
+    
+    {/* Editar asignación */}
+    <Route path="asignaciones/editar/:id" element={
+      <ProtectedRouteAdmin>
+        <MainLayout title="Modificar Asignación">
+          <ModificaAsignacionPage />
         </MainLayout>
       </ProtectedRouteAdmin>
     } />

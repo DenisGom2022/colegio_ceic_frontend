@@ -65,6 +65,82 @@
   transform: translateX(-2px);
 }
 
+.infoCard {
+  background-color: #f0f4ff;
+  border-radius: 12px;
+  padding: 28px 32px;
+  margin: 0 32px 24px;
+  border: 1px solid #c7d2fe;
+}
+
+.infoTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e1b4b;
+  margin: 0 0 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.infoLabel {
+  font-size: 0.8125rem;
+  color: #4338ca;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.infoValue {
+  font-size: 0.9375rem;
+  color: #1e1b4b;
+  font-weight: 500;
+}
+
+.loadingContainer,
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+  min-height: 400px;
+}
+
+.loadingContainer .spinner {
+  width: 48px;
+  height: 48px;
+  border-width: 4px;
+  border-color: #6366f1;
+  border-top-color: transparent;
+  margin-bottom: 20px;
+}
+
+.loadingContainer p,
+.errorContainer h2 {
+  font-size: 1.125rem;
+  color: #374151;
+  margin: 0;
+}
+
+.errorContainer h2 {
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
 .formCard {
   background-color: #ffffff;
   border-radius: 12px;
@@ -302,6 +378,16 @@
     padding: 28px 20px;
     margin: 0 16px 24px;
     border-radius: 10px;
+  }
+
+  .infoCard {
+    padding: 20px 16px;
+    margin: 0 16px 20px;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .formActions {
