@@ -517,6 +517,198 @@
   gap: 16px;
 }
 
+/* Estilos para las tareas */
+.tasksSection {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 2px dashed #e5e7eb;
+}
+
+.tasksSubtitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tasksSubtitle::before {
+  content: '📝';
+  font-size: 1.25rem;
+}
+
+.tasksList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.taskCard {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.taskCard:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.taskHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.taskTitleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.taskTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.gradedBadge {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.notGradedBadge {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+}
+
+.taskScore {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+
+.scoreObtained {
+  font-size: 1.25rem;
+  color: #10b981;
+  background: #f0fdf4;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 2px solid #10b981;
+}
+
+.scoreTotal {
+  font-size: 1.125rem;
+  color: #6b7280;
+  background: #f9fafb;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+}
+
+.taskDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.taskDescription {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.taskDescription p {
+  margin: 0;
+  color: #4b5563;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.taskLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.taskInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.taskInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.taskInfo span:last-child {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.taskGradeInfo {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 2px solid #10b981;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+.gradeDetails {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gradeLabel {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #047857;
+}
+
+.gradeFinal {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #10b981;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .assignmentHeader {
@@ -531,5 +723,20 @@
   
   .subsectionTitle {
     font-size: 1rem;
+  }
+
+  .taskHeader {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .taskInfoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .gradeDetails {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
   }
 }

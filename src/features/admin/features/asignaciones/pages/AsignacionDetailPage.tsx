@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useOneAsignacion } from "../hooks/useOneAsignacion";
+import { generateAsignacionPDF } from "../../../../../services/pdfService";
 import styles from "./AsignacionDetailPage.module.css"; 
 import {
   FaArrowLeft,
@@ -18,7 +19,8 @@ import {
   FaUserFriends,
   FaLayerGroup,
   FaCheckCircle,
-  FaExclamationCircle
+  FaExclamationCircle,
+  FaFilePdf
 } from "react-icons/fa";
 
 const AsignacionDetailPage = () => {
@@ -88,6 +90,13 @@ const AsignacionDetailPage = () => {
     }
   };
 
+  // Manejar descarga de PDF
+  const handleDownloadPDF = () => {
+    if (asignacion) {
+      generateAsignacionPDF(asignacion);
+    }
+  };
+
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -148,12 +157,22 @@ const AsignacionDetailPage = () => {
           </div>
         </div>
 
-        <Link 
-          to={`/admin/asignaciones/editar/${asignacion.id}`}
-          className={styles.editButton}
-        >
-          <FaEdit /> Editar
-        </Link>
+        <div className={styles.headerActions}>
+          <button 
+            onClick={handleDownloadPDF}
+            className={styles.pdfButton}
+            title="Descargar Ficha de Inscripción"
+          >
+            <FaFilePdf /> Descargar PDF
+          </button>
+          
+          <Link 
+            to={`/admin/asignaciones/editar/${asignacion.id}`}
+            className={styles.editButton}
+          >
+            <FaEdit /> Editar
+          </Link>
+        </div>
       </div>
 
       {/* Estado de la asignación */}

@@ -380,6 +380,94 @@ const StudentDetailPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Tareas del Ciclo Actual */}
+                {student.tareasAsignadas && student.tareasAsignadas.length > 0 && (
+                  <div className={styles.tasksSection}>
+                    <h4 className={styles.tasksSubtitle}>Tareas Asignadas</h4>
+                    <div className={styles.tasksList}>
+                      {student.tareasAsignadas.map((tarea) => {
+                        // Verificar si la tarea está en el array de tareas entregadas
+                        const tareaEntregada = student.tareasEntregadas?.find(
+                          (te) => te.idTarea === tarea.id
+                        );
+                        const isGraded = !!tareaEntregada;
+                        
+                        return (
+                          <div key={tarea.id} className={styles.taskCard}>
+                            <div className={styles.taskHeader}>
+                              <div className={styles.taskTitleSection}>
+                                <h3 className={styles.taskTitle}>{tarea.titulo}</h3>
+                                <span className={isGraded ? styles.gradedBadge : styles.notGradedBadge}>
+                                  {isGraded ? '✓ Calificada' : '⏳ Pendiente de calificar'}
+                                </span>
+                              </div>
+                              <div className={styles.taskScore}>
+                                {isGraded ? (
+                                  <span className={styles.scoreObtained}>
+                                    {tareaEntregada.punteoObtenido} / {tarea.punteo} pts
+                                  </span>
+                                ) : (
+                                  <span className={styles.scoreTotal}>{tarea.punteo} pts</span>
+                                )}
+                              </div>
+                            </div>
+                            
+                            <div className={styles.taskDetails}>
+                              <div className={styles.taskDescription}>
+                                <span className={styles.taskLabel}>Descripción:</span>
+                                <p>{tarea.descripcion}</p>
+                              </div>
+                              
+                              <div className={styles.taskInfoGrid}>
+                                <div className={styles.taskInfo}>
+                                  <span className={styles.taskLabel}>Curso:</span>
+                                  <span>{tarea.curso.nombre}</span>
+                                </div>
+                                
+                                <div className={styles.taskInfo}>
+                                  <span className={styles.taskLabel}>Catedrático:</span>
+                                  <span>
+                                    {[
+                                      tarea.curso.catedratico.usuario.primerNombre,
+                                      tarea.curso.catedratico.usuario.segundoNombre,
+                                      tarea.curso.catedratico.usuario.primerApellido,
+                                      tarea.curso.catedratico.usuario.segundoApellido
+                                    ].filter(Boolean).join(' ')}
+                                  </span>
+                                </div>
+                                
+                                <div className={styles.taskInfo}>
+                                  <span className={styles.taskLabel}>Fecha de entrega:</span>
+                                  <span>{formatDate(tarea.fechaEntrega)}</span>
+                                </div>
+                                
+                                {isGraded && tareaEntregada && (
+                                  <div className={styles.taskInfo}>
+                                    <span className={styles.taskLabel}>Fecha de calificación:</span>
+                                    <span>{formatDate(tareaEntregada.fechaEntrega)}</span>
+                                  </div>
+                                )}
+                              </div>
+                              
+                              {isGraded && tareaEntregada && (
+                                <div className={styles.taskGradeInfo}>
+                                  <div className={styles.gradeDetails}>
+                                    <span className={styles.gradeLabel}>Calificación obtenida:</span>
+                                    <span className={styles.gradeFinal}>
+                                      {tareaEntregada.punteoObtenido} / {tarea.punteo} pts
+                                      ({((parseFloat(tareaEntregada.punteoObtenido) / tarea.punteo) * 100).toFixed(1)}%)
+                                    </span>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

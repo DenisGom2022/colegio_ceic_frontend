@@ -630,3 +630,38 @@
 .notFoundContainer .backButton:hover {
   background: #1f2937;
 }
+
+/* Contenedor de acciones en el header */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Botón de PDF */
+.pdfButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 9px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(220, 38, 38, 0.2);
+}
+
+.pdfButton:hover {
+  background: #b91c1c;
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
+  transform: translateY(-1px);
+}
+
+.pdfButton:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(220, 38, 38, 0.2);
+}

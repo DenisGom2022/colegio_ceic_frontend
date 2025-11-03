@@ -53,7 +53,12 @@ export const getStudents = async (
 export const getStudentByCui = async (cui: string): Promise<Student> => {
   try {
     console.log(`Solicitando estudiante con CUI: ${cui}`);
-    const response = await axios.get<{message: string, Alumno: Student}>(`${API_URL}/alumno/${cui}`, {
+    const response = await axios.get<{
+      message: string;
+      Alumno: Student;
+      tareasAsignadas?: any[];
+      tareasEntregadas?: any[];
+    }>(`${API_URL}/alumno/${cui}`, {
       headers: getAuthHeaders()
     });
     
@@ -64,7 +69,14 @@ export const getStudentByCui = async (cui: string): Promise<Student> => {
       throw new Error(`No se encontraron datos para el estudiante con CUI ${cui}`);
     }
     
-    return response.data.Alumno;
+    // Agregar las tareas al objeto del alumno
+    const alumnoConTareas: Student = {
+      ...response.data.Alumno,
+      tareasAsignadas: response.data.tareasAsignadas || [],
+      tareasEntregadas: response.data.tareasEntregadas || []
+    };
+    
+    return alumnoConTareas;
   } catch (error: any) {
     console.error(`Error al obtener estudiante con CUI ${cui}:`, error);
     // Mejorar el mensaje de error para depuración
