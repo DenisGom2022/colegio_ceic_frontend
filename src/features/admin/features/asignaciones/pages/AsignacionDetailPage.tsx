@@ -84,42 +84,6 @@ const AsignacionDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>("info");
   const { asignacion, loading, error } = useOneAsignacion(Number(id));
-  pagado: boolean;
-  monto: string;
-  pago?: Pago;
-  esSiguiente: boolean;
-}
-
-interface Asignacion {
-  id: number;
-  alumno: Persona;
-  idEstadoAsignacion: number;
-  estadoAsignacion?: {
-    descripcion: string;
-  };
-  updatedAt: string;
-  pagos?: Pago[];
-  ciclo?: {
-    descripcion: string;
-    anio: number;
-  };
-  grado?: {
-    descripcion: string;
-  };
-  seccion?: {
-    descripcion: string;
-  };
-  createdAt: string;
-  updatedBy?: string;
-  montoInscripcion?: string;
-  montoMensualidad?: string;
-}
-
-const AsignacionDetailPage = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<TabType>("info");
-  const { asignacion, loading, error } = useOneAsignacion(Number(id));
 
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return "N/A";
@@ -170,188 +134,10 @@ const AsignacionDetailPage = () => {
     }
   };
 
-  const renderInfoEstudiante = () => {
-    if (!asignacion || !asignacion.alumno) return null;
-    const alumno = asignacion.alumno;
-
-    return (
-      <div className={styles.infoGrid}>
-        <div className={styles.infoItem}>
-          <span className={styles.infoLabel}>
-            <FaIdCard /> Nombre Completo
-          </span>
-          <span className={styles.infoValue}>
-            {getNombreCompleto(alumno)}
-          </span>
-        </div>
-        {/* Agregar más detalles del estudiante aquí */}
-      </div>
-    );
-  };
-
-  const renderInfoAcademica = () => {
-    if (!asignacion) return null;
-
-    return (
-      <div className={styles.infoGrid}>
-        <div className={styles.infoItem}>
-          <span className={styles.infoLabel}>
-            <FaCalendarAlt /> Ciclo Escolar
-          </span>
-          <span className={styles.infoValue}>
-            {`${asignacion.ciclo?.descripcion || "N/A"} ${asignacion.ciclo?.anio || ""}`}
-          </span>
-        </div>
-        <div className={styles.infoItem}>
-          <span className={styles.infoLabel}>
-            <FaBook /> Grado
-          </span>
-          <span className={styles.infoValue}>
-            {asignacion.grado?.descripcion || "N/A"}
-          </span>
-        </div>
-        <div className={styles.infoItem}>
-          <span className={styles.infoLabel}>
-            <FaUser /> Sección
-          </span>
-          <span className={styles.infoValue}>
-            {asignacion.seccion?.descripcion || "N/A"}
-          </span>
-        </div>
-      </div>
-    );
-  };
-
-  const renderInfoFinanciera = () => {
-    if (!asignacion) return null;
-
-    return (
-      <div className={styles.infoGrid}>
-        <div className={styles.infoItem}>
-          <span className={styles.infoLabel}>
-            <FaDollarSign /> Monto Inscripción
-          </span>
-          <span className={styles.infoValue}>
-            {formatCurrency(asignacion.montoInscripcion)}
-          </span>
-        </div>
-        <div className={styles.infoItem}>
-          <span className={styles.infoLabel}>
-            <FaDollarSign /> Monto Mensualidad
-          </span>
-          <span className={styles.infoValue}>
-            {formatCurrency(asignacion.montoMensualidad)}
-          </span>
-        </div>
-      </div>
-    );
-  };
-
-  const renderInfoAuditoria = () => {
-    if (!asignacion) return null;
-
-    return (
-      <div className={styles.infoGrid}>
-        <div className={styles.infoItem}>
-          <span className={styles.infoLabel}>
-            <FaRegClock /> Fecha de Creación
-          </span>
-          <span className={styles.infoValue}>
-            {formatDate(asignacion.createdAt)}
-          </span>
-        </div>
-        <div className={styles.infoItem}>
-          <span className={styles.infoLabel}>
-            <FaRegClock /> Última Modificación
-          </span>
-          <span className={styles.infoValue}>
-            {formatDate(asignacion.updatedAt)}
-          </span>
-        </div>
-        {asignacion.updatedBy && (
-          <div className={styles.infoItem}>
-            <span className={styles.infoLabel}>
-              <FaUser /> Modificado por
-            </span>
-            <span className={styles.infoValue}>
-              {asignacion.updatedBy}
-            </span>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderResponsables = () => {
-    // Implementar cuando tengamos la información de responsables
-    return (
-      <div className={styles.responsablesContainer}>
-        <p>Sección en desarrollo</p>
-      </div>
-    );
-  };
-
-  const renderPagos = () => {
-    // Implementar cuando tengamos la información de pagos
-    return (
-      <div className={styles.pagosContainer}>
-        <p>Sección en desarrollo</p>
-      </div>
-    );
-  };
-  
-  const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit"
-    });
-  };
-  
-  const formatCurrency = (amount: string | number | undefined) => {
-    if (!amount) return "Q0.00";
-    return `Q${parseFloat(amount.toString()).toFixed(2)}`;
-  };
-  
-  const getNombreCompleto = (persona: any) => {
-    if (!persona) return "N/A";
-    return [
-      persona.primerNombre,
-      persona.segundoNombre,
-      persona.tercerNombre,
-      persona.primerApellido,
-      persona.segundoApellido
-    ].filter(Boolean).join(" ");
-  };
-  
   const getGenderIcon = (genero: string) => {
     if (!genero) return null;
     const isMale = genero.toLowerCase() === "m" || genero.toLowerCase() === "masculino";
     return isMale ? <FaMale className={styles.iconMale} /> : <FaFemale className={styles.iconFemale} />;
-  };
-  
-  const getStatusClass = (estadoId: number) => {
-    const statusMap: Record<number, string> = {
-      1: styles.statusActive,
-      2: styles.statusInactive
-    };
-    return statusMap[estadoId] || styles.statusPending;
-  };
-  
-  const getStatusIcon = (estadoId: number) => {
-    if (estadoId === 1) return <FaCheckCircle className={styles.iconActive} />;
-    if (estadoId === 2) return <FaExclamationCircle className={styles.iconInactive} />;
-    return <FaRegClock className={styles.iconPending} />;
-  };
-
-  const handleDownloadPDF = () => {
-    if (asignacion) {
-      generateAsignacionPDF(asignacion);
-    }
   };
 
   const calcularDatosPagos = () => {
@@ -415,11 +201,11 @@ const AsignacionDetailPage = () => {
       pendientePagar
     };
   };
-  
+
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
-        <div className={styles.loadingSpinner}></div>
+        <div className={styles.loadingSpinner} />
         <p>Cargando detalles de la asignación...</p>
       </div>
     );
@@ -889,109 +675,6 @@ const AsignacionDetailPage = () => {
               <div className={styles.sectionHeader}>
                 <h2 className={styles.sectionTitle}>
                   <FaFileInvoiceDollar className={styles.sectionIcon} /> 
-                  Información Financiera
-                </h2>
-              </div>
-              <div className={styles.sectionContent}>
-                {renderInfoFinanciera()}
-              </div>
-            </section>
-
-            <section className={styles.section}>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>
-                  <FaHistory className={styles.sectionIcon} /> 
-                  Información de Auditoría
-                </h2>
-              </div>
-              <div className={styles.sectionContent}>
-                {renderInfoAuditoria()}
-              </div>
-            </section>
-          </div>
-        )}
-        
-        {activeTab === "responsables" && (
-          <section className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>
-                <FaUserFriends className={styles.sectionIcon} /> 
-                Responsables del Estudiante
-              </h2>
-            </div>
-            <div className={styles.sectionContent}>
-              {renderResponsables()}
-            </div>
-          </section>
-        )}
-
-        {activeTab === "pagos" && (
-          <section className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>
-                <FaFileInvoiceDollar className={styles.sectionIcon} /> 
-                Control de Pagos
-              </h2>
-            </div>
-            <div className={styles.sectionContent}>
-              {renderPagos()}
-            </div>
-          </section>
-        )}
-      </main>
-    </div>
-  );
-        <button 
-          className={`${styles.tabButton} ${activeTab === "info" ? styles.activeTab : ""}`}
-          onClick={() => setActiveTab("info")}
-        >
-          <FaUser /> Información General
-        </button>
-        <button 
-          className={`${styles.tabButton} ${activeTab === "responsables" ? styles.activeTab : ""}`}
-          onClick={() => setActiveTab("responsables")}
-        >
-          <FaUserFriends /> Responsables
-        </button>
-        <button 
-          className={`${styles.tabButton} ${activeTab === "pagos" ? styles.activeTab : ""}`}
-          onClick={() => setActiveTab("pagos")}
-        >
-          <FaDollarSign /> Control de Pagos
-        </button>
-      </nav>
-
-      <main className={styles.contentContainer}>
-        {activeTab === "info" && (
-          <div className={styles.infoContainer}>
-            <section className={styles.section}>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>
-                  <FaUser className={styles.sectionIcon} /> 
-                  Información del Estudiante
-                </h2>
-              </div>
-              <div className={styles.sectionContent}>
-                {renderInfoEstudiante()}
-              </div>
-            </section>
-
-            <section className={styles.section}>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>
-                  <FaBook className={styles.sectionIcon} /> 
-                  Información Académica
-                </h2>
-              </div>
-              <div className={styles.sectionContent}>
-                {renderInfoAcademica()}
-              </div>
-            </section>
-
-            <section className={styles.section}>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>
-                  <FaDollarSign className={styles.sectionIcon} /> 
                   Información Financiera
                 </h2>
               </div>
