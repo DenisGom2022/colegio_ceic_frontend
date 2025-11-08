@@ -1,72 +1,107 @@
-﻿/* ====================================
-   ASIGNACIÓN DETAIL PAGE - CORPORATE DESIGN
-   ==================================== */
+﻿/* === CORPORATE THEME VARIABLES === */
+:root {
+  --primary: #2563eb;
+  --primary-light: #3b82f6;
+  --primary-dark: #1d4ed8;
+  --success: #10b981;
+  --success-light: #34d399;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --neutral-50: #f8fafc;
+  --neutral-100: #f1f5f9;
+  --neutral-200: #e2e8f0;
+  --neutral-300: #cbd5e1;
+  --neutral-400: #94a3b8;
+  --neutral-500: #64748b;
+  --neutral-600: #475569;
+  --neutral-700: #334155;
+  --neutral-800: #1e293b;
+  --neutral-900: #0f172a;
+}
 
-/* === MAIN CONTAINER === */
+/* === MAIN LAYOUT === */
 .detailPageContainer {
   min-height: 100vh;
-  background: #f8f9fa;
+  background: var(--neutral-50);
 }
 
 /* === PAGE HEADER === */
-.pageHeader {
-  background: #ffffff;
-  padding: 24px 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.headerWrapper {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  padding: 24px 0 0;
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
-.backButton {
+.pageHeader {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.headerTop {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.backButton {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  background: rgba(255, 255, 255, 0.1);
   color: white;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .backButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
 }
 
 .headerTitle {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   flex: 1;
+  margin: 0 48px;
 }
 
 .headerIcon {
-  color: #3b82f6;
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
-.headerTitle h1 {
+.headerTitleText h1 {
   margin: 0;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 600;
-  color: #1f2937;
+  color: white;
+  letter-spacing: -0.5px;
 }
 
 .subtitle {
-  margin: 4px 0 0 0;
-  font-size: 14px;
-  color: #6b7280;
-  font-weight: 400;
+  margin: 6px 0 0;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
 }
 
 .headerActions {
@@ -76,12 +111,17 @@
 
 .pdfButton,
 .editButton {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  border: none;
   border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -117,38 +157,34 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 32px;
-  background: #f9fafb;
-  border-left: 4px solid #6b7280;
+  padding: 12px 0;
+  background: transparent;
   font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .statusBanner span:first-of-type {
   flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .statusDate {
-  margin-left: auto;
   font-size: 13px;
-  opacity: 0.8;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .statusActive {
-  background: #f0fdf4;
-  border-color: #10b981;
-  color: #065f46;
+  color: var(--success-light);
 }
 
 .statusInactive {
-  background: #fef2f2;
-  border-color: #ef4444;
-  color: #991b1b;
+  color: var(--danger);
 }
 
 .statusPending {
-  background: #fefce8;
-  border-color: #f59e0b;
-  color: #92400e;
+  color: var(--warning);
 }
 
 .iconActive,
@@ -157,38 +193,57 @@
   font-size: 18px;
 }
 
-/* === TABS === */
+/* === NAVIGATION === */
+.navigationBar {
+  background: white;
+  margin-top: 24px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--neutral-200);
+}
+
 .tabsContainer {
-  background: #ffffff;
-  border-bottom: 2px solid #e5e7eb;
+  max-width: 1280px;
+  margin: 0 auto;
   display: flex;
-  gap: 0;
-  padding: 0 32px;
+  gap: 4px;
 }
 
 .tabButton {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 16px 24px;
+  padding: 16px 20px;
   background: transparent;
   border: none;
-  border-bottom: 3px solid transparent;
-  color: #64748b;
+  border-bottom: 2px solid transparent;
+  color: var(--neutral-600);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
+  position: relative;
+  margin-bottom: -1px;
 }
 
 .tabButton:hover {
-  color: #3b82f6;
-  background: #f8fafc;
+  color: var(--primary);
+  background: var(--neutral-50);
+}
+
+.tabButton svg {
+  font-size: 16px;
 }
 
 .activeTab {
-  color: #3b82f6;
-  border-bottom-color: #3b82f6;
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background: white;
+}
+
+.activeTab:hover {
+  background: white;
 }
 
 /* === CONTENT CONTAINER === */
