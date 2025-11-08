@@ -650,3 +650,366 @@ export const generateReciboPagoPDF = (pago: PagoData, asignacion: AsignacionPago
   const nombreArchivo = `Recibo_Pago_${nombreEstudiante}_${pago.id}.pdf`;
   doc.save(nombreArchivo);
 };
+
+// Interfaces para el reporte de notas
+interface NotasAlumno {
+  id: number;
+  alumno: {
+    primerNombre: string;
+    segundoNombre?: string;
+    tercerNombre?: string;
+    primerApellido: string;
+    segundoApellido?: string;
+    cui: string;
+  };
+  tareaAlumnos?: Array<{
+    id: number;
+    punteoObtenido: number;
+    tarea: {
+      id: number;
+      titulo: string;
+      punteo: number;
+    };
+  }>;
+}
+
+interface CursoNotasData {
+  nombre: string;
+  notaMaxima: number;
+  notaAprobada: number;
+  catedratico?: {
+    primerNombre?: string;
+    primerApellido?: string;
+  };
+  gradoCiclo?: {
+    grado?: {
+      nombre?: string;
+    };
+    ciclo?: {
+      descripcion?: string;
+    };
+    asignacionesAlumno?: NotasAlumno[];
+  };
+  tareas?: Array<{
+    id: number;
+    titulo: string;
+    descripcion?: string;
+    punteo: number;
+    idBimestre: number;
+  }>;
+}
+
+interface BimestreData {
+  id: number;
+  numeroBimestre: number;
+  descripcion?: string;
+}
+
+export const generateReporteNotasPDF = (
+  curso: CursoNotasData, 
+  bimestre: BimestreData,
+  bimestreId: number
+) => {
+  const doc = new jsPDF('landscape'); // Formato horizontal para más columnas
+  const pageWidth = doc.internal.pageSize.width;
+  const pageHeight = doc.internal.pageSize.height;
+  const margin = 15;
+  let yPos = 20;
+
+  // Colores corporativos
+  const primaryColor = [37, 99, 235]; // Azul
+  const darkGray = [55, 65, 81];
+  const lightGray = [243, 244, 246];
+
+  // Función para formatear nombres
+  const getNombreCompleto = (persona: any) => {
+    if (!persona) return "N/A";
+    return [
+      persona.primerNombre || '',
+      persona.segundoNombre || '',
+      persona.tercerNombre || '',
+      persona.primerApellido || '',
+      persona.segundoApellido || ''
+    ].filter(Boolean).join(' ');
+  };
+
+  // === ENCABEZADO ===
+  doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  doc.rect(0, 0, pageWidth, 12, 'F');
+  
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(18);
+  doc.setFont('helvetica', 'bold');
+  doc.text('COLEGIO CEIC', pageWidth / 2, 8, { align: 'center' });
+  
+  yPos = 17;
+  doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Centro Educativo de Innovación y Creatividad', pageWidth / 2, yPos, { align: 'center' });
+  
+  yPos += 8;
+  doc.setDrawColor(lightGray[0], lightGray[1], lightGray[2]);
+  doc.setLineWidth(0.5);
+  doc.line(margin, yPos, pageWidth - margin, yPos);
+  
+  yPos += 8;
+  
+  // Título del reporte
+  doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('REPORTE DE CALIFICACIONES', pageWidth / 2, yPos, { align: 'center' });
+  
+  yPos += 10;
+
+  // === INFORMACIÓN DEL CURSO ===
+  doc.setFillColor(lightGray[0], lightGray[1], lightGray[2]);
+  doc.rect(margin, yPos, pageWidth - 2 * margin, 20, 'F');
+  
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+  
+  const leftCol = margin + 5;
+  const rightCol = pageWidth / 2 + 10;
+  
+  yPos += 5;
+  doc.text('Curso:', leftCol, yPos);
+  doc.setFont('helvetica', 'normal');
+  doc.text(curso.nombre, leftCol + 20, yPos);
+  
+  doc.setFont('helvetica', 'bold');
+  doc.text('Grado:', rightCol, yPos);
+  doc.setFont('helvetica', 'normal');
+  doc.text(curso.gradoCiclo?.grado?.nombre || 'N/A', rightCol + 20, yPos);
+  
+  yPos += 5;
+  doc.setFont('helvetica', 'bold');
+  doc.text('Catedrático:', leftCol, yPos);
+  doc.setFont('helvetica', 'normal');
+  doc.text(getNombreCompleto(curso.catedratico), leftCol + 25, yPos);
+  
+  doc.setFont('helvetica', 'bold');
+  doc.text('Ciclo:', rightCol, yPos);
+  doc.setFont('helvetica', 'normal');
+  doc.text(curso.gradoCiclo?.ciclo?.descripcion || 'N/A', rightCol + 20, yPos);
+  
+  yPos += 5;
+  doc.setFont('helvetica', 'bold');
+  doc.text('Bimestre:', leftCol, yPos);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`${bimestre.numeroBimestre} - ${bimestre.descripcion || ''}`, leftCol + 22, yPos);
+  
+  doc.setFont('helvetica', 'bold');
+  doc.text('Nota Aprobación:', rightCol, yPos);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`${curso.notaAprobada} / ${curso.notaMaxima}`, rightCol + 35, yPos);
+  
+  yPos += 12;
+
+  // === TABLA DE NOTAS ===
+  // Filtrar tareas del bimestre
+  const tareasDelBimestre = curso.tareas?.filter(t => t.idBimestre === bimestreId) || [];
+  
+  // Preparar datos para la tabla
+  const alumnos = curso.gradoCiclo?.asignacionesAlumno || [];
+  
+  // Crear encabezados dinámicos con números
+  const headers = ['No.', 'CUI', 'Nombre Completo'];
+  tareasDelBimestre.forEach((tarea, index) => {
+    // Usar solo el número de la tarea y los puntos
+    headers.push(`T${index + 1}\n(${tarea.punteo}pts)`);
+  });
+  headers.push('Total', 'Estado');
+  
+  // Crear filas de datos
+  const rows = alumnos.map((asignacion, index) => {
+    const row: any[] = [
+      (index + 1).toString(),
+      asignacion.alumno.cui,
+      getNombreCompleto(asignacion.alumno)
+    ];
+    
+    let totalObtenido = 0;
+    
+    // Agregar calificaciones por tarea
+    tareasDelBimestre.forEach(tarea => {
+      const tareaAlumno = asignacion.tareaAlumnos?.find(
+        (ta: any) => ta.tarea?.id === tarea.id
+      );
+      
+      if (tareaAlumno) {
+        const punteo = parseFloat(tareaAlumno.punteoObtenido.toString());
+        totalObtenido += punteo;
+        row.push(punteo.toFixed(1));
+      } else {
+        row.push('-');
+      }
+    });
+    
+    // Total y estado
+    row.push(totalObtenido.toFixed(1));
+    row.push(totalObtenido >= curso.notaAprobada ? 'Aprobado' : 'Reprobado');
+    
+    return row;
+  });
+  
+  // Calcular total de puntos disponibles
+  const totalPuntos = tareasDelBimestre.reduce((sum, tarea) => sum + tarea.punteo, 0);
+  
+  autoTable(doc, {
+    startY: yPos,
+    head: [headers],
+    body: rows,
+    theme: 'grid',
+    headStyles: {
+      fillColor: [37, 99, 235],
+      textColor: [255, 255, 255],
+      fontStyle: 'bold',
+      fontSize: 8,
+      halign: 'center',
+      valign: 'middle'
+    },
+    bodyStyles: {
+      fontSize: 7,
+      textColor: [55, 65, 81],
+      valign: 'middle'
+    },
+    columnStyles: {
+      0: { cellWidth: 10, halign: 'center' }, // No.
+      1: { cellWidth: 25, halign: 'center' }, // CUI
+      2: { cellWidth: 50, halign: 'left' }, // Nombre
+      // Las tareas tendrán ancho automático
+      [headers.length - 2]: { halign: 'center', fontStyle: 'bold' }, // Total
+      [headers.length - 1]: { halign: 'center', fontStyle: 'bold' } // Estado
+    },
+    alternateRowStyles: {
+      fillColor: [248, 250, 252]
+    },
+    didParseCell: (data) => {
+      // Colorear la columna de estado
+      if (data.column.index === headers.length - 1 && data.section === 'body') {
+        const estado = data.cell.text[0];
+        if (estado === 'Aprobado') {
+          data.cell.styles.textColor = [16, 185, 129];
+          data.cell.styles.fontStyle = 'bold';
+        } else if (estado === 'Reprobado') {
+          data.cell.styles.textColor = [239, 68, 68];
+          data.cell.styles.fontStyle = 'bold';
+        }
+      }
+    }
+  });
+  
+  yPos = (doc as any).lastAutoTable.finalY + 10;
+  
+  // === LEYENDA DE TAREAS ===
+  if (tareasDelBimestre.length > 0) {
+    doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    doc.rect(margin, yPos, pageWidth - 2 * margin, 6, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('LEYENDA DE TAREAS', margin + 3, yPos + 4);
+    
+    yPos += 8;
+    
+    doc.setFillColor(248, 250, 252);
+    doc.setDrawColor(226, 232, 240);
+    doc.setLineWidth(0.5);
+    
+    // Calcular altura necesaria para todas las tareas
+    const tareaHeight = 5;
+    const leyendaHeight = (tareasDelBimestre.length * tareaHeight) + 6;
+    doc.roundedRect(margin, yPos, pageWidth - 2 * margin, leyendaHeight, 2, 2, 'FD');
+    
+    yPos += 4;
+    doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+    doc.setFontSize(8);
+    
+    // Imprimir tareas en dos columnas si hay muchas
+    const mitad = Math.ceil(tareasDelBimestre.length / 2);
+    const colWidth = (pageWidth - 2 * margin) / 2;
+    
+    tareasDelBimestre.forEach((tarea, index) => {
+      const col = index < mitad ? 0 : 1;
+      const row = index < mitad ? index : index - mitad;
+      const x = margin + 5 + (col * colWidth);
+      const y = yPos + (row * tareaHeight);
+      
+      doc.setFont('helvetica', 'bold');
+      doc.text(`T${index + 1}:`, x, y);
+      doc.setFont('helvetica', 'normal');
+      
+      // Truncar el título si es muy largo
+      const titulo = tarea.titulo || 'Sin título';
+      const maxWidth = colWidth - 20;
+      const tituloTruncado = doc.getTextWidth(titulo) > maxWidth 
+        ? titulo.substring(0, 50) + '...' 
+        : titulo;
+      
+      doc.text(tituloTruncado, x + 10, y);
+      doc.setFont('helvetica', 'italic');
+      doc.setTextColor(107, 114, 128);
+      doc.text(`(${tarea.punteo}pts)`, x + 10 + doc.getTextWidth(tituloTruncado) + 2, y);
+      doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+    });
+    
+    yPos += leyendaHeight + 4;
+  }
+  
+  // === RESUMEN ESTADÍSTICO ===
+  const aprobados = alumnos.filter(asignacion => {
+    const total = tareasDelBimestre.reduce((sum, tarea) => {
+      const tareaAlumno = asignacion.tareaAlumnos?.find(
+        (ta: any) => ta.tarea?.id === tarea.id
+      );
+      return sum + (tareaAlumno ? parseFloat(tareaAlumno.punteoObtenido.toString()) : 0);
+    }, 0);
+    return total >= curso.notaAprobada;
+  }).length;
+  
+  const reprobados = alumnos.length - aprobados;
+  const porcentajeAprobacion = alumnos.length > 0 
+    ? ((aprobados / alumnos.length) * 100).toFixed(1) 
+    : '0.0';
+  
+  doc.setFillColor(lightGray[0], lightGray[1], lightGray[2]);
+  doc.roundedRect(margin, yPos, pageWidth - 2 * margin, 18, 2, 2, 'F');
+  
+  yPos += 6;
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+  doc.text('RESUMEN:', leftCol, yPos);
+  
+  yPos += 5;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.text(`Total de Estudiantes: ${alumnos.length}`, leftCol, yPos);
+  doc.text(`Aprobados: ${aprobados}`, leftCol + 60, yPos);
+  doc.text(`Reprobados: ${reprobados}`, leftCol + 110, yPos);
+  doc.text(`Porcentaje de Aprobación: ${porcentajeAprobacion}%`, leftCol + 160, yPos);
+  doc.text(`Total Puntos Disponibles: ${totalPuntos}`, leftCol + 230, yPos);
+  
+  // === PIE DE PÁGINA ===
+  const footerY = pageHeight - 15;
+  
+  doc.setDrawColor(lightGray[0], lightGray[1], lightGray[2]);
+  doc.setLineWidth(0.5);
+  doc.line(margin, footerY, pageWidth - margin, footerY);
+  
+  doc.setFontSize(7);
+  doc.setTextColor(107, 114, 128);
+  doc.text(`Generado: ${new Date().toLocaleString('es-ES')}`, margin, footerY + 4);
+  doc.text(`Página 1 de 1`, pageWidth - margin, footerY + 4, { align: 'right' });
+  
+  // Barra inferior
+  doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  doc.rect(0, pageHeight - 8, pageWidth, 8, 'F');
+  
+  // Guardar el PDF
+  const nombreArchivo = `Reporte_Notas_${curso.nombre.replace(/\s+/g, '_')}_Bimestre${bimestre.numeroBimestre}.pdf`;
+  doc.save(nombreArchivo);
+};

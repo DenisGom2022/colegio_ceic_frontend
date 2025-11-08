@@ -1,5 +1,6 @@
-import { FaGraduationCap, FaSearch } from "react-icons/fa";
+import { FaGraduationCap, FaSearch, FaFilePdf } from "react-icons/fa";
 import { StudentGradeCard } from "./StudentGradeCard";
+import { generateReporteNotasPDF } from "../../../services/pdfService";
 import type { AsignacionAlumno, Bimestre, Tarea } from "../../../interfaces/interfaces";
 import styles from "../pages/MisCursosDetailPage.module.css";
 
@@ -34,6 +35,12 @@ export const NotesTab = ({
     return fullName.includes(searchTerm.toLowerCase()) || alumno.cui.includes(searchTerm);
   }) || [];
 
+  const handleDescargarPDF = () => {
+    if (bimestreActual && selectedBimestre) {
+      generateReporteNotasPDF(curso, bimestreActual, selectedBimestre);
+    }
+  };
+
   return (
     <div className={styles.notesContainer}>
       <div className={styles.notesHeader}>
@@ -47,24 +54,33 @@ export const NotesTab = ({
               {filteredStudents.length} estudiantes • {tareasDelBimestre.length} tareas
             </p>
           </div>
-          <div className={styles.searchContainer}>
-            <FaSearch className={styles.searchIcon} />
-            <input
-              type="text"
-              placeholder="Buscar estudiante por nombre o CUI..."
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className={styles.searchInput}
-            />
-            {searchTerm && (
-              <button 
-                onClick={() => onSearchChange('')}
-                className={styles.clearButton}
-                aria-label="Limpiar búsqueda"
-              >
-                ✕
-              </button>
-            )}
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <button
+              onClick={handleDescargarPDF}
+              className={styles.downloadPdfButton}
+              title="Descargar reporte de calificaciones en PDF"
+            >
+              <FaFilePdf /> Descargar Reporte PDF
+            </button>
+            <div className={styles.searchContainer}>
+              <FaSearch className={styles.searchIcon} />
+              <input
+                type="text"
+                placeholder="Buscar estudiante por nombre o CUI..."
+                value={searchTerm}
+                onChange={(e) => onSearchChange(e.target.value)}
+                className={styles.searchInput}
+              />
+              {searchTerm && (
+                <button 
+                  onClick={() => onSearchChange('')}
+                  className={styles.clearButton}
+                  aria-label="Limpiar búsqueda"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
