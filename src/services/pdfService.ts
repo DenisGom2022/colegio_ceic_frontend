@@ -289,13 +289,20 @@ export const generateReciboPagoPDF = (pago: PagoData, asignacion: AsignacionPago
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
-  const margin = 15;
-  let yPos = 20;
+  const margin = 20;
+  let yPos = 25;
+
+  // Colores corporativos
+  const primaryColor = [37, 99, 235]; // Azul #2563eb
+  const accentColor = [16, 185, 129]; // Verde #10b981
+  const darkGray = [55, 65, 81]; // #374151
+  const lightGray = [243, 244, 246]; // #f3f4f6
 
   // Función auxiliar para agregar texto centrado
-  const addCenteredText = (text: string, y: number, fontSize: number, isBold: boolean = false) => {
+  const addCenteredText = (text: string, y: number, fontSize: number, isBold: boolean = false, color: number[] = [0, 0, 0]) => {
     doc.setFontSize(fontSize);
     doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+    doc.setTextColor(color[0], color[1], color[2]);
     const textWidth = doc.getTextWidth(text);
     doc.text(text, (pageWidth - textWidth) / 2, y);
   };
@@ -396,57 +403,73 @@ export const generateReciboPagoPDF = (pago: PagoData, asignacion: AsignacionPago
   const montoEnLetras = `${convertirNumeroALetras(parteEntera)} QUETZALES CON ${centavos.toString().padStart(2, '0')}/100`;
 
   // === ENCABEZADO ===
-  doc.setDrawColor(16, 185, 129); // Verde
-  doc.setLineWidth(1);
-  doc.line(margin, yPos - 5, pageWidth - margin, yPos - 5);
-
-  addCenteredText('COLEGIO CEIC', yPos + 3, 18, true);
-  addCenteredText('Centro Educativo de Innovación y Creatividad', yPos + 9, 9);
-  addCenteredText('NIT: 12345678-9', yPos + 14, 8);
+  // Barra superior con color primario
+  doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  doc.rect(0, 0, pageWidth, 12, 'F');
   
-  yPos += 20;
-  doc.setLineWidth(0.2);
+  // Logo/Nombre de la institución
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(20);
+  doc.setFont('helvetica', 'bold');
+  doc.text('COLEGIO CEIC', pageWidth / 2, 8, { align: 'center' });
+  
+  yPos = 18;
+  doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  addCenteredText('Centro Educativo de Innovación y Creatividad', yPos, 9, false, darkGray);
+  addCenteredText('NIT: 12345678-9 | Tel: 2222-2222 | info@ceic.edu.gt', yPos + 4, 8, false, [100, 100, 100]);
+  
+  yPos += 10;
+  doc.setDrawColor(lightGray[0], lightGray[1], lightGray[2]);
+  doc.setLineWidth(0.5);
   doc.line(margin, yPos, pageWidth - margin, yPos);
   
-  yPos += 8;
-  addCenteredText('RECIBO DE PAGO', yPos, 16, true);
+  yPos += 10;
   
-  // Número de recibo en una caja destacada
-  yPos += 8;
-  doc.setFillColor(240, 253, 244);
-  doc.setDrawColor(16, 185, 129);
-  doc.setLineWidth(0.3);
-  doc.roundedRect(pageWidth / 2 - 35, yPos - 5, 70, 10, 2, 2, 'FD');
-  doc.setFontSize(11);
+  // Título del documento
+  doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  addCenteredText('RECIBO DE PAGO', yPos, 18, true, primaryColor);
+  
+  yPos += 10;
+  
+  // Número de recibo en caja destacada
+  doc.setFillColor(lightGray[0], lightGray[1], lightGray[2]);
+  doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(pageWidth / 2 - 30, yPos - 6, 60, 10, 2, 2, 'FD');
+  doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(16, 185, 129);
-  doc.text(`No. ${pago.id.toString().padStart(6, '0')}`, pageWidth / 2, yPos + 2, { align: 'center' });
-  doc.setTextColor(0, 0, 0);
+  doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  doc.text(`No. ${pago.id.toString().padStart(6, '0')}`, pageWidth / 2, yPos, { align: 'center' });
+  
+  yPos += 10;
+
+  // === INFORMACIÓN DE FECHAS ===
+  doc.setFillColor(lightGray[0], lightGray[1], lightGray[2]);
+  doc.rect(margin, yPos, pageWidth - 2 * margin, 10, 'F');
+  
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+  doc.text('Fecha de Pago:', margin + 3, yPos + 4);
+  doc.setFont('helvetica', 'normal');
+  doc.text(formatDate(pago.fechaPago), margin + 30, yPos + 4);
+  
+  doc.setFont('helvetica', 'bold');
+  doc.text('Fecha de Emisión:', margin + 3, yPos + 7.5);
+  doc.setFont('helvetica', 'normal');
+  doc.text(formatDateTime(pago.createdAt), margin + 35, yPos + 7.5);
   
   yPos += 15;
 
-  // === INFORMACIÓN DEL RECIBO ===
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Fecha de Pago:', margin, yPos);
-  doc.setFont('helvetica', 'normal');
-  doc.text(formatDate(pago.fechaPago), margin + 30, yPos);
-  
-  doc.setFont('helvetica', 'bold');
-  doc.text('Fecha de Emisión:', pageWidth - margin - 55, yPos);
-  doc.setFont('helvetica', 'normal');
-  doc.text(formatDateTime(pago.createdAt), pageWidth - margin - 55 + 35, yPos);
-  
-  yPos += 8;
-
   // === INFORMACIÓN DEL ESTUDIANTE ===
-  doc.setFillColor(16, 185, 129);
-  doc.rect(margin, yPos, pageWidth - 2 * margin, 6, 'F');
+  doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  doc.rect(margin, yPos, pageWidth - 2 * margin, 7, 'F');
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(10);
+  doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
-  doc.text('DATOS DEL ESTUDIANTE', margin + 3, yPos + 4);
-  doc.setTextColor(0, 0, 0);
+  doc.text('INFORMACIÓN DEL ESTUDIANTE', margin + 3, yPos + 4.5);
   
   yPos += 9;
 
@@ -455,16 +478,21 @@ export const generateReciboPagoPDF = (pago: PagoData, asignacion: AsignacionPago
     theme: 'plain',
     styles: { 
       fontSize: 9,
-      cellPadding: 2,
-      lineColor: [220, 220, 220],
-      lineWidth: 0.1
+      cellPadding: 3,
+      lineColor: [226, 232, 240],
+      lineWidth: 0.5,
+      textColor: [55, 65, 81]
     },
     columnStyles: {
-      0: { fontStyle: 'bold', cellWidth: 45 },
+      0: { 
+        fontStyle: 'bold', 
+        cellWidth: 50,
+        textColor: [75, 85, 99]
+      },
       1: { cellWidth: 'auto' }
     },
     body: [
-      ['Nombre:', getNombreCompleto(asignacion.alumno)],
+      ['Nombre Completo:', getNombreCompleto(asignacion.alumno)],
       ['CUI:', asignacion.alumno?.cui || 'N/A'],
       ['Grado:', asignacion.gradoCiclo?.grado?.nombre || 'N/A'],
       ['Ciclo Escolar:', asignacion.gradoCiclo?.ciclo?.descripcion || 'N/A']
@@ -474,12 +502,12 @@ export const generateReciboPagoPDF = (pago: PagoData, asignacion: AsignacionPago
   yPos = (doc as any).lastAutoTable.finalY + 10;
 
   // === DETALLE DEL PAGO ===
-  doc.setFillColor(16, 185, 129);
-  doc.rect(margin, yPos, pageWidth - 2 * margin, 6, 'F');
+  doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  doc.rect(margin, yPos, pageWidth - 2 * margin, 7, 'F');
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(10);
+  doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
-  doc.text('DETALLE DEL PAGO', margin + 3, yPos + 4);
+  doc.text('DETALLE DEL PAGO', margin + 3, yPos + 4.5);
   doc.setTextColor(0, 0, 0);
   
   yPos += 9;
@@ -488,21 +516,28 @@ export const generateReciboPagoPDF = (pago: PagoData, asignacion: AsignacionPago
 
   autoTable(doc, {
     startY: yPos,
-    theme: 'striped',
+    theme: 'grid',
     headStyles: {
-      fillColor: [240, 240, 240],
-      textColor: [0, 0, 0],
+      fillColor: [226, 232, 240],
+      textColor: [55, 65, 81],
       fontStyle: 'bold',
-      fontSize: 9
+      fontSize: 10,
+      lineColor: [203, 213, 225],
+      lineWidth: 0.5
     },
-    styles: { 
+    bodyStyles: {
+      textColor: [55, 65, 81],
       fontSize: 9,
-      cellPadding: 3
+      lineColor: [226, 232, 240],
+      lineWidth: 0.5
+    },
+    alternateRowStyles: {
+      fillColor: [248, 250, 252]
     },
     columnStyles: {
-      0: { cellWidth: 80 },
-      1: { cellWidth: 40, halign: 'right' },
-      2: { cellWidth: 40, halign: 'right' }
+      0: { cellWidth: 90, fontStyle: 'normal' },
+      1: { cellWidth: 30, halign: 'center' },
+      2: { cellWidth: 40, halign: 'right', fontStyle: 'bold' }
     },
     head: [['Concepto', 'Cantidad', 'Monto']],
     body: [
@@ -511,88 +546,104 @@ export const generateReciboPagoPDF = (pago: PagoData, asignacion: AsignacionPago
     ]
   });
 
-  yPos = (doc as any).lastAutoTable.finalY + 2;
+  yPos = (doc as any).lastAutoTable.finalY + 5;
 
   // === TOTALES ===
-  doc.setFillColor(245, 245, 245);
-  doc.rect(margin, yPos, pageWidth - 2 * margin, 20, 'F');
+  // Fondo para la sección de totales
+  doc.setFillColor(lightGray[0], lightGray[1], lightGray[2]);
+  doc.setDrawColor(226, 232, 240);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(margin, yPos, pageWidth - 2 * margin, 22, 2, 2, 'FD');
   
   yPos += 6;
-  doc.setFontSize(9);
+  doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+  doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  doc.text('Subtotal:', pageWidth - margin - 60, yPos);
-  doc.text(formatCurrency(pago.valor), pageWidth - margin - 5, yPos, { align: 'right' });
-  
-  yPos += 5;
-  doc.text('Mora:', pageWidth - margin - 60, yPos);
-  doc.text(formatCurrency(pago.mora), pageWidth - margin - 5, yPos, { align: 'right' });
+  doc.text('Subtotal:', pageWidth - margin - 55, yPos);
+  doc.setFont('helvetica', 'bold');
+  doc.text(formatCurrency(pago.valor), pageWidth - margin - 7, yPos, { align: 'right' });
   
   yPos += 6;
-  doc.setDrawColor(16, 185, 129);
-  doc.setLineWidth(0.3);
-  doc.line(pageWidth - margin - 60, yPos - 1, pageWidth - margin - 5, yPos - 1);
-  
-  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Mora:', pageWidth - margin - 55, yPos);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(16, 185, 129);
-  doc.text('TOTAL:', pageWidth - margin - 60, yPos + 4);
-  doc.text(formatCurrency(totalConMora), pageWidth - margin - 5, yPos + 4, { align: 'right' });
+  doc.text(formatCurrency(pago.mora), pageWidth - margin - 7, yPos, { align: 'right' });
+  
+  yPos += 7;
+  doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  doc.setLineWidth(0.8);
+  doc.line(pageWidth - margin - 55, yPos - 1, pageWidth - margin - 7, yPos - 1);
+  
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
+  doc.text('TOTAL:', pageWidth - margin - 55, yPos + 5);
+  doc.text(formatCurrency(totalConMora), pageWidth - margin - 7, yPos + 5, { align: 'right' });
   doc.setTextColor(0, 0, 0);
 
-  yPos += 12;
+  yPos += 14;
 
   // === MONTO EN LETRAS ===
-  doc.setFillColor(240, 253, 244);
-  doc.setDrawColor(16, 185, 129);
-  doc.setLineWidth(0.3);
-  doc.roundedRect(margin, yPos, pageWidth - 2 * margin, 12, 2, 2, 'FD');
+  doc.setFillColor(248, 250, 252);
+  doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(margin, yPos, pageWidth - 2 * margin, 14, 2, 2, 'FD');
   
   doc.setFontSize(8);
   doc.setFont('helvetica', 'bold');
-  doc.text('Son:', margin + 3, yPos + 5);
+  doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+  doc.text('Son:', margin + 3, yPos + 6);
   doc.setFont('helvetica', 'normal');
-  const montoLetrasLines = doc.splitTextToSize(montoEnLetras, pageWidth - 2 * margin - 15);
-  doc.text(montoLetrasLines, margin + 12, yPos + 5);
+  const montoLetrasLines = doc.splitTextToSize(montoEnLetras, pageWidth - 2 * margin - 18);
+  doc.text(montoLetrasLines, margin + 13, yPos + 6);
 
-  yPos += 18;
+  yPos += 20;
 
   // === OBSERVACIONES ===
-  doc.setFontSize(8);
+  doc.setFontSize(7.5);
   doc.setFont('helvetica', 'italic');
-  doc.setTextColor(100, 100, 100);
+  doc.setTextColor(107, 114, 128);
   doc.text('• Este recibo es válido únicamente con el sello y firma de la institución.', margin, yPos);
   doc.text('• Conserve este documento como comprobante de pago.', margin, yPos + 4);
   doc.text('• Los pagos realizados no son reembolsables.', margin, yPos + 8);
 
-  yPos += 18;
+  yPos += 16;
 
   // === FIRMA ===
   const signatureY = yPos;
   const centerX = pageWidth / 2;
 
-  doc.setTextColor(0, 0, 0);
-  doc.setLineWidth(0.3);
-  doc.setDrawColor(0, 0, 0);
-  doc.line(centerX - 30, signatureY, centerX + 30, signatureY);
+  doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+  doc.setLineWidth(0.5);
+  doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  doc.line(centerX - 35, signatureY, centerX + 35, signatureY);
 
-  doc.setFontSize(8);
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
-  doc.text('Firma y Sello de Autorización', centerX, signatureY + 4, { align: 'center' });
+  doc.text('Firma y Sello de Autorización', centerX, signatureY + 5, { align: 'center' });
 
   // === PIE DE PÁGINA ===
-  doc.setFontSize(7);
-  doc.setTextColor(150, 150, 150);
-  doc.text('Dirección: Guatemala, Ciudad', margin, pageHeight - 15);
-  doc.text('Teléfono: 2222-2222', margin, pageHeight - 11);
-  doc.text('Email: info@ceic.edu.gt', margin, pageHeight - 7);
+  const footerY = pageHeight - 20;
   
-  doc.text(`Código de asignación: #${asignacion.id}`, pageWidth - margin, pageHeight - 11, { align: 'right' });
-  doc.text(`Generado: ${new Date().toLocaleString('es-ES')}`, pageWidth - margin, pageHeight - 7, { align: 'right' });
+  // Línea decorativa superior
+  doc.setDrawColor(lightGray[0], lightGray[1], lightGray[2]);
+  doc.setLineWidth(0.5);
+  doc.line(margin, footerY, pageWidth - margin, footerY);
+  
+  // Información de contacto
+  doc.setFontSize(7);
+  doc.setTextColor(107, 114, 128);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Dirección: Guatemala, Ciudad', margin, footerY + 4);
+  doc.text('Teléfono: 2222-2222 | Email: info@ceic.edu.gt', margin, footerY + 8);
+  
+  // Información del documento
+  doc.text(`Código de asignación: #${asignacion.id}`, pageWidth - margin, footerY + 4, { align: 'right' });
+  doc.text(`Generado: ${new Date().toLocaleString('es-ES')}`, pageWidth - margin, footerY + 8, { align: 'right' });
 
-  // Línea inferior decorativa
-  doc.setDrawColor(16, 185, 129);
-  doc.setLineWidth(1);
-  doc.line(margin, pageHeight - 5, pageWidth - margin, pageHeight - 5);
+  // Barra inferior con color primario
+  doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  doc.rect(0, pageHeight - 8, pageWidth, 8, 'F');
 
   // Guardar el PDF
   const nombreEstudiante = getNombreCompleto(asignacion.alumno).replace(/\s+/g, '_');
