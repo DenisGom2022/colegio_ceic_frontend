@@ -5,6 +5,7 @@ import { AsignacionesListPage } from "../features/asignaciones/pages/Asignacione
 import AsignacionDetailPage from "../features/asignaciones/pages/AsignacionDetailPage";
 import CreateAsignacionPage from "../features/asignaciones/pages/CreateAsignacionPage";
 import ModificaAsignacionPage from "../features/asignaciones/pages/ModificaAsignacionPage";
+import RegistrarPagoPage from "../features/asignaciones/pages/RegistrarPagoPage";
 
 export const asignacionesRoutes = (
   <>
@@ -31,6 +32,15 @@ export const asignacionesRoutes = (
       <ProtectedRouteAdmin>
         <MainLayout title="Modificar Asignación">
           <ModificaAsignacionPage />
+        </MainLayout>
+      </ProtectedRouteAdmin>
+    } />
+    
+    {/* Registrar pago */}
+    <Route path="asignaciones/:id/pagar/:pagoInfo" element={
+      <ProtectedRouteAdmin>
+        <MainLayout title="Registrar Pago">
+          <RegistrarPagoPage />
         </MainLayout>
       </ProtectedRouteAdmin>
     } />

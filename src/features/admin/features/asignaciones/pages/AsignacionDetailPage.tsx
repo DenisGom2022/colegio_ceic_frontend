@@ -1,7 +1,7 @@
 ﻿import React, { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useOneAsignacion } from "../hooks/useOneAsignacion";
-import { generateAsignacionPDF } from "../../../../../services/pdfService";
+import { generateAsignacionPDF, generateReciboPagoPDF } from "../../../../../services/pdfService";
 import styles from "./AsignacionDetailPage.module.css";
 import {
   FaArrowLeft,
@@ -497,29 +497,41 @@ const AsignacionDetailPage: React.FC = () => {
               </div>
               
               {item.pagado && item.pago ? (
-                <div className={styles.pagoDetails}>
-                  <div className={styles.pagoDetail}>
-                    <FaCalendarAlt />
-                    <label>Fecha de Pago:</label>
-                    <span>{formatDate(item.pago.fechaPago)}</span>
-                  </div>
-                  
-                  {parseFloat(item.pago.mora) > 0 && (
+                <>
+                  <div className={styles.pagoDetails}>
                     <div className={styles.pagoDetail}>
-                      <FaExclamationCircle />
-                      <label>Mora:</label>
-                      <span className={styles.moraValue}>
-                        {formatCurrency(item.pago.mora)}
-                      </span>
+                      <FaCalendarAlt />
+                      <label>Fecha de Pago:</label>
+                      <span>{formatDate(item.pago.fechaPago)}</span>
                     </div>
-                  )}
-                  
-                  <div className={styles.pagoDetail}>
-                    <FaRegClock />
-                    <label>Registrado:</label>
-                    <span>{formatDate(item.pago.createdAt)}</span>
+                    
+                    {parseFloat(item.pago.mora) > 0 && (
+                      <div className={styles.pagoDetail}>
+                        <FaExclamationCircle />
+                        <label>Mora:</label>
+                        <span className={styles.moraValue}>
+                          {formatCurrency(item.pago.mora)}
+                        </span>
+                      </div>
+                    )}
+                    
+                    <div className={styles.pagoDetail}>
+                      <FaRegClock />
+                      <label>Registrado:</label>
+                      <span>{formatDate(item.pago.createdAt)}</span>
+                    </div>
                   </div>
-                </div>
+                  
+                  <div className={styles.pagoAcciones}>
+                    <button 
+                      className={styles.reciboButton}
+                      onClick={() => generateReciboPagoPDF(item.pago!, asignacion)}
+                      title="Descargar Recibo de Pago"
+                    >
+                      <FaFilePdf /> Descargar Recibo
+                    </button>
+                  </div>
+                </>
               ) : (
                 <div className={styles.pagoAcciones}>
                   {item.esSiguiente ? (
