@@ -812,6 +812,12 @@ export const generateReporteNotasPDF = (
   // Filtrar tareas del bimestre
   const tareasDelBimestre = curso.tareas?.filter(t => t.idBimestre === bimestreId) || [];
   
+  // Debug: Verificar estructura de datos
+  console.log('=== DEBUG REPORTE PDF ===');
+  console.log('Tareas del bimestre:', tareasDelBimestre);
+  console.log('Primer alumno (ejemplo):', curso.gradoCiclo?.asignacionesAlumno?.[0]);
+  console.log('Tareas del primer alumno:', curso.gradoCiclo?.asignacionesAlumno?.[0]?.tareaAlumnos);
+  
   // Preparar datos para la tabla
   const alumnos = curso.gradoCiclo?.asignacionesAlumno || [];
   
@@ -835,8 +841,19 @@ export const generateReporteNotasPDF = (
     
     // Agregar calificaciones por tarea
     tareasDelBimestre.forEach(tarea => {
+      // Buscar la tarea del alumno - intentar con diferentes estructuras posibles
       const tareaAlumno = asignacion.tareaAlumnos?.find(
-        (ta: any) => ta.tarea?.id === tarea.id
+        (ta: any) => {
+          // Verificar si ta.tarea existe y tiene id
+          if (ta.tarea && ta.tarea.id) {
+            return ta.tarea.id === tarea.id;
+          }
+          // Si no tiene tarea, verificar si ta.idTarea existe
+          if (ta.idTarea) {
+            return ta.idTarea === tarea.id;
+          }
+          return false;
+        }
       );
       
       if (tareaAlumno) {
