@@ -1030,3 +1030,373 @@ export const generateReporteNotasPDF = (
   const nombreArchivo = `Reporte_Notas_${curso.nombre.replace(/\s+/g, '_')}_Bimestre${bimestre.numeroBimestre}.pdf`;
   doc.save(nombreArchivo);
 };
+
+// Interfaz para el reporte de calificaciones del alumno
+interface TareaAlumnoData {
+  id: number;
+  idTarea: number;
+  punteoObtenido: string | number;
+  fechaEntrega: string;
+  tarea: {
+    id: number;
+    titulo: string;
+    descripcion: string;
+    punteo: number;
+    fechaEntrega: string;
+    curso?: {
+      id: number;
+      nombre: string;
+      notaMaxima: number;
+      notaAprobada: number;
+    };
+  };
+}
+
+interface AsignacionCalificacionesData {
+  id: number;
+  alumno: {
+    primerNombre: string;
+    segundoNombre?: string;
+    tercerNombre?: string;
+    primerApellido: string;
+    segundoApellido?: string;
+    cui: string;
+    genero?: string;
+    telefono?: string;
+  };
+  gradoCiclo?: {
+    grado?: {
+      nombre?: string;
+      nivelAcademico?: { descripcion?: string };
+      jornada?: { descripcion?: string };
+    };
+    ciclo?: {
+      descripcion?: string;
+      id?: number;
+    };
+  };
+  tareaAlumnos?: TareaAlumnoData[];
+}
+
+export const generateReporteCalificacionesAlumnoPDF = (asignacion: AsignacionCalificacionesData) => {
+  const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.width;
+  const pageHeight = doc.internal.pageSize.height;
+  const margin = 15;
+  let yPos = 20;
+
+  // Colores corporativos
+  const primaryColor = [37, 99, 235]; // Azul
+  const successColor = [16, 185, 129]; // Verde
+  const dangerColor = [239, 68, 68]; // Rojo
+  const darkGray = [55, 65, 81];
+  const lightGray = [243, 244, 246];
+
+  // Función para formatear nombres completos
+  const getNombreCompleto = (persona: any) => {
+    if (!persona) return "N/A";
+    return [
+      persona.primerNombre || '',
+      persona.segundoNombre || '',
+      persona.tercerNombre || '',
+      persona.primerApellido || '',
+      persona.segundoApellido || ''
+    ].filter(Boolean).join(' ');
+  };
+
+  // Función para formatear fechas
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
+  };
+
+  // Función auxiliar para agregar texto centrado
+  const addCenteredText = (text: string, y: number, fontSize: number, isBold: boolean = false, color: number[] = [0, 0, 0]) => {
+    doc.setFontSize(fontSize);
+    doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+    doc.setTextColor(color[0], color[1], color[2]);
+    const textWidth = doc.getTextWidth(text);
+    doc.text(text, (pageWidth - textWidth) / 2, y);
+  };
+
+  // === ENCABEZADO ===
+  doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  doc.rect(0, 0, pageWidth, 12, 'F');
+  
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(20);
+  doc.setFont('helvetica', 'bold');
+  doc.text('COLEGIO CEIC', pageWidth / 2, 8, { align: 'center' });
+  
+  yPos = 18;
+  doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  addCenteredText('Centro Educativo de Innovación y Creatividad', yPos, 9, false, darkGray);
+  
+  yPos += 8;
+  doc.setDrawColor(lightGray[0], lightGray[1], lightGray[2]);
+  doc.setLineWidth(0.5);
+  doc.line(margin, yPos, pageWidth - margin, yPos);
+  
+  yPos += 8;
+  
+  // Título del documento
+  doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  addCenteredText('REPORTE DE CALIFICACIONES', yPos, 16, true, primaryColor);
+  addCenteredText(asignacion.gradoCiclo?.ciclo?.descripcion || 'N/A', yPos + 6, 10, false, darkGray);
+  
+  yPos += 15;
+
+  // === INFORMACIÓN DEL ESTUDIANTE ===
+  doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  doc.rect(margin, yPos, pageWidth - 2 * margin, 7, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'bold');
+  doc.text('DATOS DEL ESTUDIANTE', margin + 3, yPos + 4.5);
+  
+  yPos += 9;
+
+  autoTable(doc, {
+    startY: yPos,
+    theme: 'plain',
+    styles: { 
+      fontSize: 9,
+      cellPadding: 3,
+      lineColor: [226, 232, 240],
+      lineWidth: 0.5,
+      textColor: [55, 65, 81]
+    },
+    columnStyles: {
+      0: { 
+        fontStyle: 'bold', 
+        cellWidth: 50,
+        textColor: [75, 85, 99]
+      },
+      1: { cellWidth: 'auto' }
+    },
+    body: [
+      ['Nombre Completo:', getNombreCompleto(asignacion.alumno)],
+      ['CUI:', asignacion.alumno?.cui || 'N/A'],
+      ['Grado:', asignacion.gradoCiclo?.grado?.nombre || 'N/A'],
+      ['Nivel:', asignacion.gradoCiclo?.grado?.nivelAcademico?.descripcion || 'N/A'],
+      ['Jornada:', asignacion.gradoCiclo?.grado?.jornada?.descripcion || 'N/A']
+    ]
+  });
+
+  yPos = (doc as any).lastAutoTable.finalY + 10;
+
+  // === AGRUPAR TAREAS POR CURSO ===
+  const tareasPorCurso: { [key: number]: TareaAlumnoData[] } = {};
+  
+  if (asignacion.tareaAlumnos && asignacion.tareaAlumnos.length > 0) {
+    asignacion.tareaAlumnos.forEach((tareaAlumno) => {
+      const cursoId = tareaAlumno.tarea?.curso?.id;
+      if (cursoId) {
+        if (!tareasPorCurso[cursoId]) {
+          tareasPorCurso[cursoId] = [];
+        }
+        tareasPorCurso[cursoId].push(tareaAlumno);
+      }
+    });
+  }
+
+  const cursos = Object.keys(tareasPorCurso);
+
+  if (cursos.length === 0) {
+    // Sin calificaciones
+    doc.setFillColor(lightGray[0], lightGray[1], lightGray[2]);
+    doc.roundedRect(margin, yPos, pageWidth - 2 * margin, 30, 3, 3, 'F');
+    
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(107, 114, 128);
+    addCenteredText('No hay calificaciones registradas', yPos + 15, 12, false, [107, 114, 128]);
+  } else {
+    // === CALIFICACIONES POR CURSO ===
+    cursos.forEach((cursoIdStr, index) => {
+      const cursoId = parseInt(cursoIdStr);
+      const tareas = tareasPorCurso[cursoId];
+      const primerTarea = tareas[0];
+      const curso = primerTarea.tarea.curso;
+
+      // Verificar si hay espacio suficiente para el siguiente curso
+      if (yPos > pageHeight - 80) {
+        doc.addPage();
+        yPos = 20;
+      }
+
+      // Calcular totales
+      const totalPunteoObtenido = tareas.reduce(
+        (sum, ta) => sum + parseFloat(ta.punteoObtenido.toString()),
+        0
+      );
+
+      const totalPuntosPosibles = tareas.reduce(
+        (sum, ta) => sum + ta.tarea.punteo,
+        0
+      );
+
+      const porcentaje = totalPuntosPosibles > 0 
+        ? (totalPunteoObtenido / totalPuntosPosibles) * 100 
+        : 0;
+
+      // Calcular la nota equivalente sobre la nota máxima del curso
+      const notaMaxima = curso?.notaMaxima || 100;
+      const notaAprobada = curso?.notaAprobada || 60;
+      const notaEquivalente = totalPuntosPosibles > 0 
+        ? (totalPunteoObtenido / totalPuntosPosibles) * notaMaxima
+        : 0;
+      
+      const aprobado = notaEquivalente >= notaAprobada;
+
+      // Encabezado del curso
+      const cursoColor = aprobado ? successColor : dangerColor;
+      doc.setFillColor(cursoColor[0], cursoColor[1], cursoColor[2]);
+      doc.rect(margin, yPos, pageWidth - 2 * margin, 8, 'F');
+      
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text(curso?.nombre || 'Curso sin nombre', margin + 3, yPos + 5.5);
+      
+      // Estado en el encabezado
+      const estadoTexto = aprobado ? 'APROBADO' : 'REPROBADO';
+      const estadoWidth = doc.getTextWidth(estadoTexto);
+      doc.text(estadoTexto, pageWidth - margin - estadoWidth - 3, yPos + 5.5);
+      
+      yPos += 10;
+
+      // Resumen del curso
+      doc.setFillColor(lightGray[0], lightGray[1], lightGray[2]);
+      doc.rect(margin, yPos, pageWidth - 2 * margin, 12, 'F');
+      
+      doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      
+      const resumeY = yPos + 4;
+      doc.text('Tareas Entregadas:', margin + 3, resumeY);
+      doc.setFont('helvetica', 'normal');
+      doc.text(tareas.length.toString(), margin + 40, resumeY);
+      
+      doc.setFont('helvetica', 'bold');
+      doc.text('Punteo Obtenido:', margin + 60, resumeY);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`${totalPunteoObtenido.toFixed(2)} / ${totalPuntosPosibles}`, margin + 95, resumeY);
+      
+      doc.setFont('helvetica', 'bold');
+      doc.text('Porcentaje:', margin + 135, resumeY);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(aprobado ? successColor[0] : dangerColor[0], aprobado ? successColor[1] : dangerColor[1], aprobado ? successColor[2] : dangerColor[2]);
+      doc.text(`${porcentaje.toFixed(2)}%`, margin + 158, resumeY);
+      
+      doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Nota Aprobación:', margin + 3, resumeY + 5);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`${notaAprobada} / ${notaMaxima}`, margin + 40, resumeY + 5);
+      
+      doc.setFont('helvetica', 'bold');
+      doc.text('Nota Equivalente:', margin + 80, resumeY + 5);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(aprobado ? successColor[0] : dangerColor[0], aprobado ? successColor[1] : dangerColor[1], aprobado ? successColor[2] : dangerColor[2]);
+      doc.text(`${notaEquivalente.toFixed(2)} / ${notaMaxima}`, margin + 118, resumeY + 5);
+      doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+
+      yPos += 14;
+
+      // Tabla de tareas
+      const tareasData = tareas.map((ta, idx) => [
+        (idx + 1).toString(),
+        ta.tarea.titulo,
+        formatDate(ta.tarea.fechaEntrega),
+        formatDate(ta.fechaEntrega),
+        ta.tarea.punteo.toString(),
+        parseFloat(ta.punteoObtenido.toString()).toFixed(2)
+      ]);
+
+      autoTable(doc, {
+        startY: yPos,
+        head: [['No.', 'Tarea', 'Fecha Límite', 'Fecha Entrega', 'Punteo Máx.', 'Punteo Obtenido']],
+        body: tareasData,
+        theme: 'grid',
+        headStyles: {
+          fillColor: [75, 85, 99],
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          fontSize: 8,
+          halign: 'center'
+        },
+        bodyStyles: {
+          fontSize: 7,
+          textColor: [55, 65, 81]
+        },
+        columnStyles: {
+          0: { cellWidth: 10, halign: 'center' },
+          1: { cellWidth: 60, halign: 'left' },
+          2: { cellWidth: 28, halign: 'center', fontSize: 7 },
+          3: { cellWidth: 28, halign: 'center', fontSize: 7 },
+          4: { cellWidth: 20, halign: 'center' },
+          5: { cellWidth: 25, halign: 'center', fontStyle: 'bold' }
+        },
+        alternateRowStyles: {
+          fillColor: [248, 250, 252]
+        },
+        margin: { left: margin, right: margin }
+      });
+
+      yPos = (doc as any).lastAutoTable.finalY + 2;
+
+      // Línea de total para este curso
+      doc.setFillColor(aprobado ? successColor[0] : dangerColor[0], aprobado ? successColor[1] : dangerColor[1], aprobado ? successColor[2] : dangerColor[2]);
+      doc.setDrawColor(aprobado ? successColor[0] : dangerColor[0], aprobado ? successColor[1] : dangerColor[1], aprobado ? successColor[2] : dangerColor[2]);
+      doc.setLineWidth(0.5);
+      doc.roundedRect(margin, yPos, pageWidth - 2 * margin, 8, 2, 2, 'FD');
+      
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('TOTAL DEL CURSO:', margin + 3, yPos + 5.5);
+      doc.text(`${totalPunteoObtenido.toFixed(2)} / ${totalPuntosPosibles} pts (${porcentaje.toFixed(1)}%)`, pageWidth - margin - 60, yPos + 5.5);
+      
+      yPos += 12;
+
+      // Espacio entre cursos
+      if (index < cursos.length - 1) {
+        yPos += 5;
+      }
+    });
+  }
+
+  // === PIE DE PÁGINA ===
+  const footerY = pageHeight - 20;
+  
+  doc.setDrawColor(lightGray[0], lightGray[1], lightGray[2]);
+  doc.setLineWidth(0.5);
+  doc.line(margin, footerY, pageWidth - margin, footerY);
+  
+  doc.setFontSize(7);
+  doc.setTextColor(107, 114, 128);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Dirección: Guatemala, Ciudad', margin, footerY + 4);
+  doc.text('Teléfono: 2222-2222 | Email: info@ceic.edu.gt', margin, footerY + 8);
+  
+  doc.text(`Código de asignación: #${asignacion.id}`, pageWidth - margin, footerY + 4, { align: 'right' });
+  doc.text(`Generado: ${formatDate(new Date().toISOString())} ${new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`, pageWidth - margin, footerY + 8, { align: 'right' });
+
+  // Barra inferior
+  doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  doc.rect(0, pageHeight - 8, pageWidth, 8, 'F');
+
+  // Guardar el PDF
+  const nombreEstudiante = getNombreCompleto(asignacion.alumno).replace(/\s+/g, '_');
+  const nombreArchivo = `Calificaciones_${nombreEstudiante}_${asignacion.id}.pdf`;
+  doc.save(nombreArchivo);
+};

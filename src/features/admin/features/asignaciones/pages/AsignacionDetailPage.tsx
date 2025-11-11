@@ -1,7 +1,11 @@
 ﻿import React, { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useOneAsignacion } from "../hooks/useOneAsignacion";
-import { generateAsignacionPDF, generateReciboPagoPDF } from "../../../../../services/pdfService";
+import { 
+  generateAsignacionPDF, 
+  generateReciboPagoPDF,
+  generateReporteCalificacionesAlumnoPDF 
+} from "../../../../../services/pdfService";
 import styles from "./AsignacionDetailPage.module.css";
 import {
   FaArrowLeft,
@@ -21,10 +25,11 @@ import {
   FaExclamationCircle,
   FaFilePdf,
   FaFileInvoiceDollar,
-  FaHistory
+  FaHistory,
+  FaTasks
 } from "react-icons/fa";
 
-type TabType = "info" | "responsables" | "pagos";
+type TabType = "info" | "responsables" | "pagos" | "tareas";
 
 interface Pago {
   id: number;
@@ -52,31 +57,6 @@ interface PagoDisplay {
   monto: string;
   pago?: Pago;
   esSiguiente: boolean;
-}
-
-interface Asignacion {
-  id: number;
-  alumno: Persona;
-  idEstadoAsignacion: number;
-  estadoAsignacion?: {
-    descripcion: string;
-  };
-  updatedAt: string;
-  pagos?: Pago[];
-  ciclo?: {
-    descripcion: string;
-    anio: number;
-  };
-  grado?: {
-    descripcion: string;
-  };
-  seccion?: {
-    descripcion: string;
-  };
-  createdAt: string;
-  updatedBy?: string;
-  montoInscripcion?: string;
-  montoMensualidad?: string;
 }
 
 const AsignacionDetailPage: React.FC = () => {
@@ -200,6 +180,67 @@ const AsignacionDetailPage: React.FC = () => {
       totalCiclo,
       pendientePagar
     };
+  };
+
+  // Calcular totales por curso
+  const calcularTotalesPorCurso = () => {
+    if (!asignacion?.tareaAlumnos || asignacion.tareaAlumnos.length === 0) {
+      return [];
+    }
+
+    // Agrupar tareas por curso
+    const tareasPorCurso: { [key: number]: any[] } = {};
+    
+    asignacion.tareaAlumnos.forEach((tareaAlumno: any) => {
+      const cursoId = tareaAlumno.tarea?.curso?.id;
+      if (cursoId) {
+        if (!tareasPorCurso[cursoId]) {
+          tareasPorCurso[cursoId] = [];
+        }
+        tareasPorCurso[cursoId].push(tareaAlumno);
+      }
+    });
+
+    // Calcular totales por curso
+    return Object.keys(tareasPorCurso).map((cursoId) => {
+      const tareas = tareasPorCurso[parseInt(cursoId)];
+      const primerTarea = tareas[0];
+      const curso = primerTarea.tarea.curso;
+
+      const totalPunteoObtenido = tareas.reduce(
+        (sum, ta) => sum + parseFloat(ta.punteoObtenido || "0"),
+        0
+      );
+
+      const totalPuntosPosibles = tareas.reduce(
+        (sum, ta) => sum + (ta.tarea?.punteo || 0),
+        0
+      );
+
+      const porcentaje = totalPuntosPosibles > 0 
+        ? (totalPunteoObtenido / totalPuntosPosibles) * 100 
+        : 0;
+
+      // Calcular la nota equivalente sobre la nota máxima del curso
+      const notaMaxima = curso?.notaMaxima || 100;
+      const notaAprobada = curso?.notaAprobada || 60;
+      const notaEquivalente = totalPuntosPosibles > 0 
+        ? (totalPunteoObtenido / totalPuntosPosibles) * notaMaxima
+        : 0;
+
+      return {
+        cursoId: parseInt(cursoId),
+        nombreCurso: curso?.nombre || "Sin nombre",
+        notaMaxima,
+        notaAprobada,
+        notaEquivalente,
+        totalPunteoObtenido,
+        totalPuntosPosibles,
+        porcentaje,
+        cantidadTareas: tareas.length,
+        tareas: tareas
+      };
+    });
   };
 
   if (loading) {
@@ -557,6 +598,109 @@ const AsignacionDetailPage: React.FC = () => {
     );
   };
 
+  const renderTareas = () => {
+    const totalesPorCurso = calcularTotalesPorCurso();
+
+    if (totalesPorCurso.length === 0) {
+      return (
+        <div className={styles.emptyState}>
+          <FaTasks size={48} />
+          <p>No hay tareas entregadas para este estudiante</p>
+        </div>
+      );
+    }
+
+    return (
+      <>
+        <div className={styles.tareasHeaderActions}>
+          <button 
+            className={styles.pdfCalificacionesButton}
+            onClick={() => generateReporteCalificacionesAlumnoPDF(asignacion)}
+            title="Descargar Reporte de Calificaciones"
+          >
+            <FaFilePdf /> Descargar Reporte de Calificaciones
+          </button>
+        </div>
+
+        {totalesPorCurso.map((curso) => (
+          <div key={curso.cursoId} className={styles.cursoCard}>
+            <div className={styles.cursoHeader}>
+              <div className={styles.cursoTitulo}>
+                <FaBook className={styles.cursoIcon} />
+                <h3>{curso.nombreCurso}</h3>
+              </div>
+              <div className={styles.cursoEstadisticas}>
+                <div className={styles.estadistica}>
+                  <span className={styles.estadisticaLabel}>Tareas Entregadas:</span>
+                  <span className={styles.estadisticaValor}>{curso.cantidadTareas}</span>
+                </div>
+                <div className={styles.estadistica}>
+                  <span className={styles.estadisticaLabel}>Punteo Obtenido:</span>
+                  <span className={styles.estadisticaValor}>
+                    {curso.totalPunteoObtenido.toFixed(2)} / {curso.totalPuntosPosibles}
+                  </span>
+                </div>
+                <div className={styles.estadistica}>
+                  <span className={styles.estadisticaLabel}>Nota Equivalente:</span>
+                  <span className={`${styles.estadisticaValor} ${curso.notaEquivalente >= curso.notaAprobada ? styles.aprobado : styles.reprobado}`}>
+                    {curso.notaEquivalente.toFixed(2)} / {curso.notaMaxima}
+                  </span>
+                </div>
+                <div className={styles.estadistica}>
+                  <span className={styles.estadisticaLabel}>Estado:</span>
+                  <span className={`${styles.estadisticaValor} ${curso.notaEquivalente >= curso.notaAprobada ? styles.aprobado : styles.reprobado}`}>
+                    {curso.notaEquivalente >= curso.notaAprobada ? 'APROBADO' : 'REPROBADO'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.progressBarContainer}>
+              <div 
+                className={`${styles.progressBar} ${curso.notaEquivalente >= curso.notaAprobada ? styles.progressAprobado : styles.progressReprobado}`}
+                style={{ width: `${Math.min(curso.porcentaje, 100)}%` }}
+              />
+            </div>
+
+            <div className={styles.tareasList}>
+              {curso.tareas.map((tareaAlumno: any) => (
+                <div key={tareaAlumno.id} className={styles.tareaCard}>
+                  <div className={styles.tareaHeader}>
+                    <div className={styles.tareaInfo}>
+                      <h4>{tareaAlumno.tarea.titulo}</h4>
+                      <p className={styles.tareaDescripcion}>{tareaAlumno.tarea.descripcion}</p>
+                    </div>
+                    <div className={styles.tareaPunteo}>
+                      <span className={styles.punteoObtenido}>
+                        {parseFloat(tareaAlumno.punteoObtenido).toFixed(2)}
+                      </span>
+                      <span className={styles.punteoDivisor}>/</span>
+                      <span className={styles.punteoTotal}>
+                        {tareaAlumno.tarea.punteo}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={styles.tareaDetalles}>
+                    <div className={styles.tareaDetalle}>
+                      <FaCalendarAlt />
+                      <label>Fecha Límite:</label>
+                      <span>{formatDate(tareaAlumno.tarea.fechaEntrega)}</span>
+                    </div>
+                    <div className={styles.tareaDetalle}>
+                      <FaCheckCircle />
+                      <label>Fecha de Entrega:</label>
+                      <span>{formatDate(tareaAlumno.fechaEntrega)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </>
+    );
+  };
+
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -652,6 +796,12 @@ const AsignacionDetailPage: React.FC = () => {
             >
               <FaDollarSign /> Control de Pagos
             </button>
+            <button 
+              className={`${styles.tabButton} ${activeTab === "tareas" ? styles.activeTab : ""}`}
+              onClick={() => setActiveTab("tareas")}
+            >
+              <FaTasks /> Tareas y Calificaciones
+            </button>
           </nav>
         </div>
       </div>
@@ -733,6 +883,20 @@ const AsignacionDetailPage: React.FC = () => {
             </div>
             <div className={styles.sectionContent}>
               {renderPagos()}
+            </div>
+          </section>
+        )}
+
+        {activeTab === "tareas" && (
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>
+                <FaTasks className={styles.sectionIcon} /> 
+                Tareas y Calificaciones por Curso
+              </h2>
+            </div>
+            <div className={styles.sectionContent}>
+              {renderTareas()}
             </div>
           </section>
         )}

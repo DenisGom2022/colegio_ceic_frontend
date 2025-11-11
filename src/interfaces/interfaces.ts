@@ -46,6 +46,7 @@ export interface Tarea {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
+  curso?: Curso;       // Agregamos el curso completo
 }
 
 export interface TareaAlumno {

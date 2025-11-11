@@ -409,14 +409,15 @@
   gap: 16px;
 }
 
-.financeItem {
+.financeCard {
   padding: 20px;
   background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
   border-radius: 12px;
   border: 2px solid #10b981;
 }
 
-.financeItem label {
+.financeCard label,
+.financeLabel {
   display: block;
   font-size: 13px;
   font-weight: 600;
@@ -426,6 +427,7 @@
   letter-spacing: 0.5px;
 }
 
+.financeCard .financeValue,
 .financeValue {
   display: block;
   font-size: 24px;
@@ -433,7 +435,7 @@
   color: #047857;
 }
 
-.financeItemTotal {
+.financeCardTotal {
   padding: 24px;
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   border-radius: 12px;
@@ -441,7 +443,7 @@
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
-.financeItemTotal label {
+.financeCardTotal .financeLabel {
   display: block;
   font-size: 13px;
   font-weight: 600;
@@ -449,12 +451,195 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   opacity: 0.9;
+  color: white;
 }
 
-.financeValueTotal {
+.financeCardTotal .financeValue {
   display: block;
   font-size: 28px;
   font-weight: 700;
+  color: white;
+}
+
+.infoCardHeader {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.infoCardTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--neutral-700);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.infoCardValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin: 0 0 12px 0;
+}
+
+.infoCardMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--neutral-600);
+}
+
+.infoCardMeta > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.estadoFinalizado {
+  color: var(--neutral-500);
+  font-weight: 600;
+}
+
+.estadoActivo {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.sectionHeader {
+  margin-bottom: 20px;
+}
+
+.resumenCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.resumenCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.resumenPagado {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 2px solid var(--success);
+}
+
+.resumenMora {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid var(--danger);
+}
+
+.resumenPendiente {
+  background: linear-gradient(135deg, #fef9c3 0%, #fef08a 100%);
+  border: 2px solid var(--warning);
+}
+
+.resumenTotal {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border: 2px solid var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.resumenTotal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.resumenIcon {
+  font-size: 28px;
+}
+
+.resumenPagado .resumenIcon {
+  color: var(--success);
+}
+
+.resumenMora .resumenIcon {
+  color: var(--danger);
+}
+
+.resumenPendiente .resumenIcon {
+  color: var(--warning);
+}
+
+.resumenTotal .resumenIcon {
+  color: white;
+}
+
+.resumenInfo {
+  flex: 1;
+}
+
+.resumenLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.resumenPagado .resumenLabel {
+  color: #065f46;
+}
+
+.resumenMora .resumenLabel {
+  color: #991b1b;
+}
+
+.resumenPendiente .resumenLabel {
+  color: #92400e;
+}
+
+.resumenTotal .resumenLabel {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.resumenValue {
+  display: block;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.resumenPagado .resumenValue {
+  color: #047857;
+}
+
+.resumenMora .resumenValue {
+  color: #dc2626;
+}
+
+.resumenPendiente .resumenValue {
+  color: #d97706;
+}
+
+.resumenTotal .resumenValue {
+  color: white;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 /* === AUDIT GRID === */
@@ -856,6 +1041,233 @@
   font-style: italic;
 }
 
+/* === TAREAS SECTION === */
+.tareasHeaderActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.pdfCalificacionesButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+}
+
+.pdfCalificacionesButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.cursoCard {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--neutral-200);
+  transition: all 0.2s ease;
+}
+
+.cursoCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border-color: var(--primary);
+}
+
+.cursoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--neutral-200);
+}
+
+.cursoTitulo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cursoTitulo h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--neutral-900);
+}
+
+.cursoIcon {
+  font-size: 24px;
+  color: var(--primary);
+}
+
+.cursoEstadisticas {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.estadistica {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+}
+
+.estadisticaLabel {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--neutral-500);
+  letter-spacing: 0.5px;
+}
+
+.estadisticaValor {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--neutral-900);
+}
+
+.aprobado {
+  color: var(--success) !important;
+}
+
+.reprobado {
+  color: var(--danger) !important;
+}
+
+.progressBarContainer {
+  width: 100%;
+  height: 8px;
+  background: var(--neutral-200);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.progressBar {
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+.progressAprobado {
+  background: linear-gradient(90deg, var(--success) 0%, var(--success-light) 100%);
+}
+
+.progressReprobado {
+  background: linear-gradient(90deg, var(--danger) 0%, #f87171 100%);
+}
+
+.tareasList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tareaCard {
+  background: var(--neutral-50);
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid var(--neutral-200);
+  transition: all 0.2s ease;
+}
+
+.tareaCard:hover {
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-color: var(--primary-light);
+}
+
+.tareaHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.tareaInfo h4 {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--neutral-900);
+}
+
+.tareaDescripcion {
+  margin: 0;
+  font-size: 14px;
+  color: var(--neutral-600);
+  line-height: 1.5;
+}
+
+.tareaPunteo {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+  border-radius: 8px;
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+}
+
+.punteoObtenido {
+  font-size: 24px;
+}
+
+.punteoDivisor {
+  font-size: 18px;
+  opacity: 0.8;
+}
+
+.punteoTotal {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+.tareaDetalles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--neutral-200);
+}
+
+.tareaDetalle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--neutral-600);
+}
+
+.tareaDetalle svg {
+  font-size: 14px;
+  color: var(--neutral-500);
+  flex-shrink: 0;
+}
+
+.tareaDetalle label {
+  font-weight: 600;
+  color: var(--neutral-700);
+}
+
+.tareaDetalle span {
+  color: var(--neutral-900);
+}
+
 /* === LOADING & ERROR STATES === */
 .loadingContainer,
 .errorContainer,
@@ -970,5 +1382,36 @@
 
   .pagoDetails {
     grid-template-columns: 1fr;
+  }
+
+  .cursoEstadisticas {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .estadistica {
+    text-align: left;
+  }
+
+  .tareaHeader {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .tareaPunteo {
+    align-self: flex-start;
+  }
+
+  .tareaDetalles {
+    grid-template-columns: 1fr;
+  }
+
+  .tareasHeaderActions {
+    justify-content: center;
+  }
+
+  .pdfCalificacionesButton {
+    width: 100%;
+    justify-content: center;
   }
 }
