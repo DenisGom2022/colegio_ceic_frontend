@@ -1075,3 +1075,194 @@
     margin-bottom: 8px;
   }
 }
+
+/* Estilos para la sección de servicios */
+.servicesSection {
+  margin-top: 24px;
+}
+
+.servicesSectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.servicesSectionTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.servicesCount {
+  font-size: 0.875rem;
+  color: #6b7280;
+  background-color: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.serviceCard {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.serviceCard:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.serviceHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.serviceIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #eff6ff;
+  color: #3b82f6;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.serviceInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.serviceName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 4px 0;
+  line-height: 1.2;
+}
+
+.serviceValue {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #059669;
+}
+
+.serviceDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.serviceDetail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.serviceDetailLabel {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.serviceDetailValue {
+  color: #111827;
+  font-weight: 600;
+}
+
+.servicesActions {
+  margin-left: auto;
+}
+
+.addServiceButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: #059669;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.addServiceButton:hover {
+  background-color: #047857;
+}
+
+.noServicesMessage {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  background-color: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.noServicesIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background-color: #e5e7eb;
+  color: #6b7280;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.noServicesContent {
+  flex: 1;
+}
+
+.noServicesTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 4px 0;
+}
+
+.noServicesText {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0 0 12px 0;
+}
+
+.createFirstServiceBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.createFirstServiceBtn:hover {
+  background-color: #2563eb;
+}

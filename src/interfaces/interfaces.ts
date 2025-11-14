@@ -87,6 +87,17 @@ export interface Alumno {
   deletedAt: string | null;
 }
 
+export interface Servicio {
+  id: number;
+  descripcion: string;
+  valor: string;
+  fecha_a_pagar: string;
+  id_grado_ciclo: number;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+}
+
 export interface GradoCiclo {
   id: number;
   idGrado: number;
@@ -100,6 +111,7 @@ export interface GradoCiclo {
   ciclo: Ciclo;
   grado: Grado;
   asignacionesAlumno?: AsignacionAlumno[];
+  servicios?: Servicio[];
 }
 
 export interface Ciclo {

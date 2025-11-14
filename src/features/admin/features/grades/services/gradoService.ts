@@ -27,6 +27,17 @@ interface Ciclo {
   deletedAt: string | null;
 }
 
+interface Servicio {
+  id: number;
+  descripcion: string;
+  valor: string;
+  fecha_a_pagar: string;
+  id_grado_ciclo: number;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+}
+
 interface GradoCiclo {
   id: number;
   idGrado: number;
@@ -39,6 +50,7 @@ interface GradoCiclo {
   deletedAt: string | null;
   ciclo: Ciclo;
   cursos?: Curso[];
+  servicios?: Servicio[];
 }
 
 export interface Grado {

@@ -4,12 +4,14 @@ import styles from './GradeDetailPage.module.css';
 import {
     FaArrowLeft, FaEdit, FaGraduationCap, FaSchool, FaClock, FaCalendarAlt,
     FaMoneyBillWave, FaClipboardList, FaHistory, FaExclamationCircle,
-    FaCoins, FaRegCalendarCheck, FaFileInvoiceDollar, FaLink, FaArchive
+    FaCoins, FaRegCalendarCheck, FaFileInvoiceDollar, FaLink, FaArchive,
+    FaCogs
 } from 'react-icons/fa';
-import { useGrado, useCurso } from '../hooks';
+import { useGrado, useCurso, useServicio } from '../hooks';
 import FloatingNotification from '../../../../../components/FloatingNotification/FloatingNotification';
 import CoursesTable from '../components/CoursesTable';
 import AddCourseModal from '../components/AddCourseModal';
+import CreateServiceModal from '../components/CreateServiceModal';
 
 
 // Definición de tipo para el registro de actividad
@@ -214,6 +216,9 @@ export const GradeDetailPage = () => {
     // Estado para el modal de agregar curso
     const [showAddCourseModal, setShowAddCourseModal] = useState<boolean>(false);
 
+    // Estado para el modal de crear servicio
+    const [showCreateServiceModal, setShowCreateServiceModal] = useState<boolean>(false);
+
     // Dummy data para registro de actividad (en una implementación real, esto vendría de una API)
     const [activityLogs] = useState<ActivityLog[]>([
         {
@@ -251,6 +256,14 @@ export const GradeDetailPage = () => {
         createCourseForGrade,
         resetState: resetCourseState
     } = useCurso();
+
+    const {
+        loading: serviceLoading,
+        error: serviceError,
+        message: serviceMessage,
+        createServicio,
+        resetState: resetServiceState
+    } = useServicio();
     
     const localError = '';
 
@@ -409,6 +422,35 @@ export const GradeDetailPage = () => {
             console.error('Error al crear el curso:', error);
             setNotificationType('error');
             setNotificationMessage(courseError || error?.message || 'Error al crear el curso');
+            setShowNotification(true);
+        }
+    };
+
+    // Manejar la creación de servicio
+    const handleCreateService = async (serviceData: {
+        descripcion: string;
+        valor: number;
+        fecha_a_pagar: string;
+        id_grado_ciclo: number;
+    }) => {
+        try {
+            await createServicio(serviceData);
+
+            setShowCreateServiceModal(false);
+            setNotificationType('success');
+            setNotificationMessage(serviceMessage || 'Servicio creado exitosamente');
+            setShowNotification(true);
+
+            // Recargar los datos del grado para mostrar el nuevo servicio
+            if (id) {
+                getGradoById(id);
+            }
+            resetServiceState();
+
+        } catch (error: any) {
+            console.error('Error al crear el servicio:', error);
+            setNotificationType('error');
+            setNotificationMessage(serviceError || error?.message || 'Error al crear el servicio');
             setShowNotification(true);
         }
     };
@@ -658,6 +700,89 @@ export const GradeDetailPage = () => {
                                 gradeId={grado.id}
                                 showAddButton={true}
                             />
+
+                            {/* Sección de servicios */}
+                            <div className={styles.servicesSection}>
+                                <div className={styles.servicesSectionHeader}>
+                                    <div className={styles.sectionIcon}>
+                                        <FaCogs size={16} />
+                                    </div>
+                                    <h4 className={styles.servicesSectionTitle}>Servicios del ciclo</h4>
+                                    {activeCycle.servicios && activeCycle.servicios.length > 0 && (
+                                        <span className={styles.servicesCount}>
+                                            {activeCycle.servicios.length} {activeCycle.servicios.length === 1 ? 'servicio' : 'servicios'}
+                                        </span>
+                                    )}
+                                    <div className={styles.servicesActions}>
+                                        <button
+                                            onClick={() => setShowCreateServiceModal(true)}
+                                            className={styles.addServiceButton}
+                                            title="Crear nuevo servicio"
+                                        >
+                                            <FaCogs size={14} />
+                                            Crear Servicio
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {activeCycle.servicios && activeCycle.servicios.length > 0 ? (
+                                    <div className={styles.servicesGrid}>
+                                        {activeCycle.servicios.map((servicio) => (
+                                            <div key={servicio.id} className={styles.serviceCard}>
+                                                <div className={styles.serviceHeader}>
+                                                    <div className={styles.serviceIcon}>
+                                                        <FaCogs size={18} />
+                                                    </div>
+                                                    <div className={styles.serviceInfo}>
+                                                        <h5 className={styles.serviceName}>{servicio.descripcion}</h5>
+                                                        <div className={styles.serviceValue}>
+                                                            {formatCurrency(servicio.valor)}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className={styles.serviceDetails}>
+                                                    <div className={styles.serviceDetail}>
+                                                        <span className={styles.serviceDetailLabel}>ID:</span>
+                                                        <span className={styles.serviceDetailValue}>{servicio.id}</span>
+                                                    </div>
+                                                    <div className={styles.serviceDetail}>
+                                                        <span className={styles.serviceDetailLabel}>Fecha a pagar:</span>
+                                                        <span className={styles.serviceDetailValue}>
+                                                            {formatDate(servicio.fecha_a_pagar)}
+                                                        </span>
+                                                    </div>
+                                                    <div className={styles.serviceDetail}>
+                                                        <span className={styles.serviceDetailLabel}>Creado:</span>
+                                                        <span className={styles.serviceDetailValue}>
+                                                            {formatDate(servicio.created_at)}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className={styles.noServicesMessage}>
+                                        <div className={styles.noServicesIcon}>
+                                            <FaCogs size={24} />
+                                        </div>
+                                        <div className={styles.noServicesContent}>
+                                            <h5 className={styles.noServicesTitle}>No hay servicios disponibles</h5>
+                                            <p className={styles.noServicesText}>
+                                                Este ciclo no tiene servicios configurados aún.
+                                            </p>
+                                            <button
+                                                onClick={() => setShowCreateServiceModal(true)}
+                                                className={styles.createFirstServiceBtn}
+                                            >
+                                                <FaCogs size={14} />
+                                                Crear primer servicio
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     ) : (
                     <div className={styles.detailSection}>
@@ -830,6 +955,20 @@ export const GradeDetailPage = () => {
                     loading={courseLoading}
                 />
             )}
+
+            {/* Modal de crear servicio */}
+            {showCreateServiceModal && (() => {
+                const activeCycle = getActiveCycle();
+                return activeCycle && (
+                    <CreateServiceModal
+                        isOpen={showCreateServiceModal}
+                        onClose={() => setShowCreateServiceModal(false)}
+                        onSubmit={handleCreateService}
+                        loading={serviceLoading}
+                        id_grado_ciclo={activeCycle.id}
+                    />
+                );
+            })()}
 
             {showNotification && (
                 <FloatingNotification
