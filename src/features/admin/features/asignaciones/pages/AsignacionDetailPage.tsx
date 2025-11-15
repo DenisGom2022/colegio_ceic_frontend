@@ -4,8 +4,10 @@ import { useOneAsignacion } from "../hooks/useOneAsignacion";
 import { 
   generateAsignacionPDF, 
   generateReciboPagoPDF,
-  generateReporteCalificacionesAlumnoPDF 
+  generateReporteCalificacionesAlumnoPDF,
+  generateReciboServicioPDF
 } from "../../../../../services/pdfService";
+import PagoServicioModal from "../components/PagoServicioModal";
 import styles from "./AsignacionDetailPage.module.css";
 import {
   FaArrowLeft,
@@ -26,10 +28,12 @@ import {
   FaFilePdf,
   FaFileInvoiceDollar,
   FaHistory,
-  FaTasks
+  FaTasks,
+  FaCogs,
+  FaShoppingCart
 } from "react-icons/fa";
 
-type TabType = "info" | "responsables" | "pagos" | "tareas";
+type TabType = "info" | "responsables" | "pagos" | "tareas" | "servicios";
 
 interface Pago {
   id: number;
@@ -59,11 +63,70 @@ interface PagoDisplay {
   esSiguiente: boolean;
 }
 
+interface Servicio {
+  id: number;
+  descripcion: string;
+  valor: string;
+  fecha_a_pagar: string;
+  id_grado_ciclo: number;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+}
+
+interface PagoServicio {
+  id: number;
+  idServicio: number;
+  idAsignacionAlumno: number;
+  valor: string;
+  fechaPagado: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  servicio: Servicio;
+}
+
+interface ServicioDisplay {
+  servicio: Servicio;
+  pagado: boolean;
+  pagoServicio?: PagoServicio;
+}
+
 const AsignacionDetailPage: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>("info");
-  const { asignacion, loading, error } = useOneAsignacion(Number(id));
+  const { asignacion, loading, error, recargarDatos } = useOneAsignacion(Number(id));
+  
+  // Estado para el modal de pago de servicio
+  const [pagoServicioModal, setPagoServicioModal] = useState<{
+    isOpen: boolean;
+    servicio: Servicio | null;
+  }>({
+    isOpen: false,
+    servicio: null
+  });
+
+  // Función para abrir el modal de pago de servicio
+  const abrirModalPagoServicio = (servicio: Servicio) => {
+    setPagoServicioModal({
+      isOpen: true,
+      servicio
+    });
+  };
+
+  // Función para cerrar el modal de pago de servicio
+  const cerrarModalPagoServicio = () => {
+    setPagoServicioModal({
+      isOpen: false,
+      servicio: null
+    });
+  };
+
+  // Función para manejar el éxito del pago
+  const handlePagoExitoso = () => {
+    recargarDatos(); // Recargar los datos de la asignación
+  };
 
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return "N/A";
@@ -239,6 +302,26 @@ const AsignacionDetailPage: React.FC = () => {
         porcentaje,
         cantidadTareas: tareas.length,
         tareas: tareas
+      };
+    });
+  };
+
+  // Calcular servicios pagados y pendientes
+  const calcularDatosServicios = () => {
+    if (!asignacion?.gradoCiclo?.servicios || !asignacion.pagosServicio) {
+      return [];
+    }
+
+    const servicios = asignacion.gradoCiclo.servicios;
+    const pagosServicio = asignacion.pagosServicio;
+
+    return servicios.map((servicio: Servicio) => {
+      const pagoServicio = pagosServicio.find((pago: PagoServicio) => pago.idServicio === servicio.id);
+      
+      return {
+        servicio,
+        pagado: !!pagoServicio,
+        pagoServicio
       };
     });
   };
@@ -701,6 +784,177 @@ const AsignacionDetailPage: React.FC = () => {
     );
   };
 
+  const renderServicios = () => {
+    const serviciosData = calcularDatosServicios();
+
+    if (serviciosData.length === 0) {
+      return (
+        <div className={styles.emptyState}>
+          <FaCogs size={48} />
+          <p>No hay servicios registrados para este grado y ciclo</p>
+        </div>
+      );
+    }
+
+    const serviciosPagados = serviciosData.filter((item: ServicioDisplay) => item.pagado);
+    const serviciosPendientes = serviciosData.filter((item: ServicioDisplay) => !item.pagado);
+
+    const totalServicios = serviciosData.reduce((sum: number, item: ServicioDisplay) => sum + parseFloat(item.servicio.valor), 0);
+    const totalPagadoServicios = serviciosPagados.reduce((sum: number, item: ServicioDisplay) => sum + parseFloat(item.servicio.valor), 0);
+    const totalPendienteServicios = totalServicios - totalPagadoServicios;
+
+    return (
+      <>
+        <div className={styles.serviciosResumen}>
+          <div className={`${styles.resumenCard} ${styles.resumenPagado}`}>
+            <div className={styles.resumenIcon}>
+              <FaCheckCircle />
+            </div>
+            <div className={styles.resumenInfo}>
+              <div className={styles.resumenLabel}>Servicios Pagados</div>
+              <div className={styles.resumenValue}>{serviciosPagados.length} / {serviciosData.length}</div>
+              <div className={styles.resumenSubtext}>{formatCurrency(totalPagadoServicios)}</div>
+            </div>
+          </div>
+
+          <div className={`${styles.resumenCard} ${styles.resumenPendiente}`}>
+            <div className={styles.resumenIcon}>
+              <FaRegClock />
+            </div>
+            <div className={styles.resumenInfo}>
+              <div className={styles.resumenLabel}>Servicios Pendientes</div>
+              <div className={styles.resumenValue}>{serviciosPendientes.length} servicios</div>
+              <div className={styles.resumenSubtext}>{formatCurrency(totalPendienteServicios)}</div>
+            </div>
+          </div>
+
+          <div className={styles.resumenTotal}>
+            <div className={styles.resumenIcon}>
+              <FaShoppingCart />
+            </div>
+            <div className={styles.resumenInfo}>
+              <div className={styles.resumenLabel}>Total Servicios</div>
+              <div className={styles.resumenValue}>{formatCurrency(totalServicios)}</div>
+            </div>
+          </div>
+        </div>
+
+        {serviciosPendientes.length > 0 && (
+          <div className={styles.serviciosSection}>
+            <h3 className={styles.serviciosSectionTitle}>
+              <FaRegClock className={styles.serviciosSectionIcon} />
+              Servicios Pendientes de Pago
+            </h3>
+            <div className={styles.serviciosList}>
+              {serviciosPendientes.map((item: ServicioDisplay) => (
+                <div key={item.servicio.id} className={styles.servicioCard}>
+                  <div className={styles.servicioHeader}>
+                    <div className={styles.servicioInfo}>
+                      <div className={styles.servicioType}>
+                        <FaRegClock className={styles.iconPendiente} />
+                        <div>
+                          <h4>{item.servicio.descripcion}</h4>
+                          <span className={styles.servicioStatus}>Pendiente de Pago</span>
+                        </div>
+                      </div>
+                      <div className={styles.servicioMonto}>{formatCurrency(item.servicio.valor)}</div>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.servicioDetails}>
+                    <div className={styles.servicioDetail}>
+                      <FaCalendarAlt />
+                      <label>Fecha Límite de Pago:</label>
+                      <span>{formatDate(item.servicio.fecha_a_pagar)}</span>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.servicioAcciones}>
+                    <button 
+                      className={styles.pagarButton}
+                      onClick={() => abrirModalPagoServicio(item.servicio)}
+                    >
+                      <FaDollarSign /> Registrar Pago de Servicio
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {serviciosPagados.length > 0 && (
+          <div className={styles.serviciosSection}>
+            <h3 className={styles.serviciosSectionTitle}>
+              <FaCheckCircle className={styles.serviciosSectionIcon} />
+              Servicios Pagados
+            </h3>
+            <div className={styles.serviciosList}>
+              {serviciosPagados.map((item: ServicioDisplay) => (
+                <div key={item.servicio.id} className={styles.servicioCard}>
+                  <div className={styles.servicioHeader}>
+                    <div className={styles.servicioInfo}>
+                      <div className={styles.servicioType}>
+                        <FaCheckCircle className={styles.iconPagado} />
+                        <div>
+                          <h4>{item.servicio.descripcion}</h4>
+                          <span className={styles.servicioStatus}>Pagado</span>
+                        </div>
+                      </div>
+                      <div className={styles.servicioMonto}>{formatCurrency(item.servicio.valor)}</div>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.servicioDetails}>
+                    <div className={styles.servicioDetail}>
+                      <FaCalendarAlt />
+                      <label>Fecha Límite:</label>
+                      <span>{formatDate(item.servicio.fecha_a_pagar)}</span>
+                    </div>
+                    
+                    {item.pagoServicio && (
+                      <>
+                        <div className={styles.servicioDetail}>
+                          <FaCheckCircle />
+                          <label>Fecha de Pago:</label>
+                          <span>{formatDate(item.pagoServicio.fechaPagado)}</span>
+                        </div>
+                        
+                        <div className={styles.servicioDetail}>
+                          <FaRegClock />
+                          <label>Registrado:</label>
+                          <span>{formatDate(item.pagoServicio.createdAt)}</span>
+                        </div>
+                        
+                        <div className={styles.servicioDetail}>
+                          <FaDollarSign />
+                          <label>Monto Pagado:</label>
+                          <span>{formatCurrency(item.pagoServicio.valor)}</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  
+                  {item.pagoServicio && (
+                    <div className={styles.servicioAcciones}>
+                      <button 
+                        className={styles.reciboButton}
+                        onClick={() => generateReciboServicioPDF(item.pagoServicio!, asignacion)}
+                        title="Descargar Recibo de Servicio"
+                      >
+                        <FaFilePdf /> Descargar Recibo
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </>
+    );
+  };
+
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -797,6 +1051,12 @@ const AsignacionDetailPage: React.FC = () => {
               <FaDollarSign /> Control de Pagos
             </button>
             <button 
+              className={`${styles.tabButton} ${activeTab === "servicios" ? styles.activeTab : ""}`}
+              onClick={() => setActiveTab("servicios")}
+            >
+              <FaCogs /> Servicios Adicionales
+            </button>
+            <button 
               className={`${styles.tabButton} ${activeTab === "tareas" ? styles.activeTab : ""}`}
               onClick={() => setActiveTab("tareas")}
             >
@@ -887,6 +1147,20 @@ const AsignacionDetailPage: React.FC = () => {
           </section>
         )}
 
+        {activeTab === "servicios" && (
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>
+                <FaCogs className={styles.sectionIcon} /> 
+                Servicios Adicionales
+              </h2>
+            </div>
+            <div className={styles.sectionContent}>
+              {renderServicios()}
+            </div>
+          </section>
+        )}
+
         {activeTab === "tareas" && (
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
@@ -901,6 +1175,17 @@ const AsignacionDetailPage: React.FC = () => {
           </section>
         )}
       </main>
+
+      {/* Modal de Pago de Servicio */}
+      {pagoServicioModal.servicio && (
+        <PagoServicioModal
+          isOpen={pagoServicioModal.isOpen}
+          onClose={cerrarModalPagoServicio}
+          onSuccess={handlePagoExitoso}
+          servicio={pagoServicioModal.servicio}
+          idAsignacionAlumno={asignacion.id}
+        />
+      )}
     </div>
   );
 };
